@@ -244,7 +244,7 @@ Bullet
                 line-height: 19px;
                 color: white;
                 font-size: 12px;
-                background: url(../image/b21.png) no-repeat;
+                background: url(/image/b21.png) no-repeat;
                 overflow: hidden;
                 cursor: pointer;
             }
@@ -266,7 +266,7 @@ Arrow
                 width: 55px;
                 height: 55px;
                 cursor: pointer;
-                background: url(../image/a21.png) center center no-repeat;
+                background: url(/image/a21.png) center center no-repeat;
                 overflow: hidden;
             }
             .jssora21l { background-position: -3px -33px; }
@@ -283,18 +283,18 @@ Slider
 #slide{
     padding: 0;
     position: relative;
-  
+
 }
 
 
 
 .slider{
-    position: relative; 
+    position: relative;
     margin: 0 auto;
-    top: 0px; 
-    left: 0px; 
-    width: 100%; 
-    height: 500px; 
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 500px;
     overflow: hidden;
     text-align: center;
 }
@@ -302,7 +302,7 @@ Slider
 .slider .wrapper{
     position: absolute;
     width: 350px;
-    height: 150px; 
+    height: 150px;
     top: 140px;
     left: 110px;
     padding: 20px;
@@ -312,7 +312,7 @@ Slider
     background-color: #ffffff;
     opacity: 0.7;
 }
-.slider .wrapper .title{ 
+.slider .wrapper .title{
   font-size: 20px;
   text-align: center;
 }
@@ -430,7 +430,7 @@ DROPDOWN CART
   font-size: 16px;
   color: #ff1654;
   text-align: center;
-  
+
 
 }
 
@@ -450,8 +450,8 @@ span{
 .dropdown-menu {
       text-align: left;
       margin-left: -50px;
-      
-    
+
+
 }
 
 /*==================================*/
@@ -496,7 +496,7 @@ text-align: center;
 
 .discount a{
   padding: 5px 10px;
-  
+
   border-radius: 2px;
   font-size: 14px;
   color: #fff;
@@ -531,7 +531,7 @@ padding: 25px;
 
 .carousel {
     width:100%;
-   
+
     margin:20px auto;
     text-align:center;
   }
@@ -543,7 +543,7 @@ width: 250px;
 }
 
 .carousel  h3{
-    
+
     color: #4a4a4a;
   }
 
@@ -565,7 +565,7 @@ width: 250px;
     margin-right:5px;
   }
 
-  .slick-prev:before, .slick-next:before { 
+  .slick-prev:before, .slick-next:before {
     color:black !important;
     font-size: 90px;
 }
@@ -589,7 +589,7 @@ width: 250px;
 }
 
 .btn-cart:hover{
- 
+
   border: 2px solid #f25f5c;
 
 
@@ -651,7 +651,7 @@ JOIN
 
 #join{
   padding: 30px;
-  background: url(../image/40.jpg)no-repeat center center;
+  background: url(/image/40.jpg)no-repeat center center;
   background-size: cover;
   background-attachment: fixed;
   text-align: center;
@@ -759,13 +759,13 @@ MEN
 Header Men Page
 ===================================*/
 header .women {
-   
+
     color: #fff;
     background: url(../image/32.jpg) center no-repeat;
 }
 
 header .men {
-   
+
     color: #fff;
     background: url(../image/men.jpg) center no-repeat;
 }
@@ -858,10 +858,10 @@ Pagination
    text-align: center;
 }
 
-.pagination>li>a, .pagination>li>span { 
+.pagination>li>a, .pagination>li>span {
   border-radius: 50% !important;
   margin: 0 5px;
- 
+
 }
 
 .catalog{
@@ -892,5 +892,3 @@ Pagination
 .product-form .image-upload li{
   cursor: pointer;
 }
-
-
