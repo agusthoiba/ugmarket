@@ -1,0 +1,56 @@
+<% include dashboard_header.html %>
+<div class="product-form">
+
+<h3> Profile </h3>
+<p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+  been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+  galley of type and scrambled it to make a type specimen book.
+</p>
+
+<form method="POST" action="/account/profile/update">
+  <div class="form-group">
+    <label for="name">Email</label>
+    <input type="text" class="form-control" id="email"  value="<%= data.user.email %>" disabled>
+  </div>
+
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= data.user.name %>" placeholder="">
+  </div>
+
+  <div class="form-group">
+    <label for="description">Phone Number</label>
+    <input type="text" class="form-control" rows="3" id="hp" name="hp" value="<%= data.user.hp %>">
+  </div>
+
+  <div class="form-group">
+    <label for="name">Profile picture</label>
+    <ul class="image-upload list-inline">
+      <li onclick="browseFile(event, $(this))" data-idx="" id="upload_image_prod" >
+          <% if (typeof data.user.image != 'undefined') { %>
+           <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+          <img src="<%= data.user.image %>">
+          <% } else { %>
+            <div  style="border: 1px solid #b7b7b7;padding: 10px">
+              <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+              <i style="color:#b7b7b7" class="fa fa-camera fa-2x" aria-hidden="true"></i>
+            </div>
+          <% } %>
+      </li>
+    </ul>
+  </div>
+
+  <div class="form-group">
+    <label for="condition">Gender</label>
+    <select class="form-control" id="condition" name="gender">
+      <option value="1" <%= data.user.gender ? 'selected' : '' %> > Male </option>
+      <option value="0" <%= !data.user.gender ? 'selected' : '' %> > Female </option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+</div>
+
+<% include dashboard_footer.html %>

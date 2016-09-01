@@ -1,0 +1,86 @@
+<% include dashboard_header.html %>
+<div class="product-form">
+
+<h3> Jual Product </h3>
+<p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+  been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+  galley of type and scrambled it to make a type specimen book.
+</p>
+
+<form>
+  <div class="form-group">
+    <label for="name">Nama Barang</label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" placeholder="">
+  </div>
+
+  <div class="form-group">
+    <label for="category">Category</label>
+    <select class="form-control" id="category" name="category">
+      <option>-- Pilih Kategori --</option>
+      <% for(var i in data.category) { %>
+      <option value="<%= data.category[i]._id %>"  <%= data.item.category == data.category[i] ? 'selected' : '' %> >
+        <%= data.category[i].name %>
+      </option>
+      <% } %>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Deskripsi Produk</label>
+    <textarea class="form-control" rows="3" id="description" name="description"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="name">Harga Satuan</label>
+    <div class="input-group">
+      <div class="input-group-addon">Rp.</div>
+      <input type="text" class="form-control" name="price" id="price" placeholder="Harga">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="name">Perkiraan Berat</label>
+    <div class="input-group">
+      <div class="input-group-addon">gram</div>
+      <input type="text" class="form-control" id="weight" name="weight" placeholder="Berat">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="name">Upload Gambar Product</label>
+    <ul class="image-upload list-inline">
+      <% for(var i=0; i < 5; i++) { %>
+      <li onclick="browseFile(event, $(this))" data-idx="<%= i %>" id="upload_image_<%= i%>" >
+          <% if (typeof data.item.image[i] != 'undefined') { %>
+           <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+          <img src="<%= image[i] %>">
+          <% } else { %>
+            <div  style="border: 1px solid #b7b7b7;padding: 10px">
+              <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+              <i style="color:#b7b7b7" class="fa fa-camera fa-2x" aria-hidden="true"></i>
+            </div>
+          <% } %>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+
+  <div class="form-group">
+    <label for="condition">Condition</label>
+    <select class="form-control" id="condition" name="condition">
+      <option value="baru" <%= data.item.condition == 'baru' ? 'selected' : '' %> > Baru </option>
+      <option value="bekas" <%= data.item.condition == 'bekas' ? 'selected' : '' %> > Bekas </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="stock">Stock</label>
+    <input type="text" class="form-control" id="stock" name="stock" value="<%= data.item.stock %>">
+  </div>
+
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+</div>
+
+<% include dashboard_footer.html %>

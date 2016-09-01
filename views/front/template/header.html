@@ -1,0 +1,121 @@
+<!--============================================================
+  TOP NAV
+================================================================-->
+<div class="top_nav">
+  <div class="container">
+    <ul class="social pull-left">
+      <li><img height="25" width="auto" src="/image/telephone.png"> &nbsp; &nbsp; 021-2799256 </li>
+      <li>
+        <a href="#">
+          <img height="25" width="auto" src="/image/envelope.png"> &nbsp;
+          market@undergroundsync.com
+        </a>
+      </li>
+    </ul>
+
+    <div class="pull-right">
+      <% if (session.user) { %>
+         <a href="/account/profile"><%= session.user.email %></a> <a href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">Login or Register</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<!--============================================================
+  NAVIGATION
+=================================================================-->
+<div class="navigation">
+  <div class="container">
+    <a class="logo" href="#"><img src="/image/1.png"></a>
+
+    <div class="pull-right" style="width: 429px">
+      <!--<form class="search">
+        <input placeholder="search..." id="search-box" type="text" class="search-box" name="q" />
+        <label for="search-box"><i class="search-icon fa fa-search fa-lg"></i>
+        </label>
+        <input type="submit" id="search-submit" />
+      </form>-->
+
+      <form class="form-inline pull-left" >
+        <div class="form-group">
+          <label class="sr-only" for="exampleInputAmount"></label>
+          <div class="input-group col-sm-10" style="width: 300px;">
+            <input type="text" class="form-control" id="exampleInputAmount" placeholder="Search">
+            <div class="input-group-addon" style="background-color: #ef3d52;">
+              <i class="search-icon fa fa-search fa-lg"></i>
+            </div>
+          </div>
+        </div>
+        <button style="display:none" type="submit" class="btn btn-primary">Transfer cash</button>
+      </form>
+
+      <ul class="nav-icon pull-right">
+        <li class="dropdown">
+          <a href="#" data-toggle="dropdown" id="cart" class="cart"><i class="fa fa-shopping-cart"></i></a><span class="cart-count">1</span>
+
+            <ul class="dropdown-menu shopping-cart-items" >
+              <div class="shopping">
+                <div class="shopping-header">
+                  <i class="fa fa-shopping-cart fa-2x cart-icon"></i>
+                  <div class="shopping-price"><span class="total-text">Total:</span><span class="price">Rp2.500.000</span>
+                  </div>
+                </div>
+                <li class="clearfix">
+                  <img src="/image/cart1.jpg" alt="item1" />
+                  <span class="item-name">1 x 250.000</span>
+                  <span class="item-price">T-Shirt</span>
+                </li>
+              </ul>
+            </li>
+        </ul>
+      </div>
+  </div>
+</div>
+
+<!--============================================================
+  BOTTOM NAVIGATION
+=================================================================-->
+
+<ul class="nav nav-pills bottom-nav">
+  <li role="presentation" class="dropdown"><a href="/">Home</a></li>
+  <li role="presentation" class="dropdown"><a href="/new-arrival">New Arrival</a></li>
+  <li role="presentation" class="dropdown"><a href="/band">Bands</a></li>
+  <li>
+    <a class="dropdown-toggle" data-toggle="dropdown" href="/men" role="button" aria-haspopup="true" aria-expanded="false">
+      Men<span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li><a href="/men/tshirt">T-Shirt</a></li>
+      <li><a href="/men/jacket">Jackets</a></li>
+      <li><a href="/men/accesories">Accesories</a></li>
+    </ul>
+    </li>
+
+    <li>
+      <a class="dropdown-toggle" data-toggle="dropdown" href="/men" role="button" aria-haspopup="true" aria-expanded="false"> Women <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="/women/tshirt">T-Shirt</a></li>
+        <li><a href="/women/jacket">Jackets</a></li>
+        <li><a href="/women/accesories">Accesories</a></li>
+      </ul>
+    </li>
+
+    <li role="presentation" class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="/men" role="button" aria-haspopup="true" aria-expanded="false"> Other Stuff <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="/hats_caps">Hats & Caps</a></li>
+        <li><a href="/badges">Badges</a></li>
+        <li><a href="/bags">Bags</a></li>
+        <li><a href="/jewellery">Jewellery</a></li>
+      </ul>
+    </li>
+    <li role="presentation" class="dropdown"><a href="#">Sale</a></li>
+    <li role="presentation" class="dropdown"><a href="#">Blog</a></li>
+
+</ul>
+
+<% include ../../front/auth.html %>
