@@ -20,45 +20,13 @@ function submitAuth(e, obj) {
   })
 }
 
-function uploadImage(files) {
-  console.log(files);
-  for (var i = 0; i < files.length; i++) {
-    var file = files[i];
-    var imageType = /^image\//;
-    
-    if (!imageType.test(file.type)) {
-      continue;
-    }
-    
-    var img = document.createElement("img");
-    img.classList.add("obj");
-    img.file = file;
-
-    $('#preview').html(img); // Assuming that "preview" is the div output where the content will be displayed.
-    
-    $('#current_image').remove()
-
-    var reader = new FileReader();
-    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
-    reader.readAsDataURL(file);
-  }
-}
-
-function browseFile(e, obj){
-  //console.log(e, obj);
-  obj.find('input[name="image"]').click();
-  e.preventDefault();
-}
-
-$(function() {
-  console.log('emang gue disini');
+/*$(function() {
   $('.dropdown-toggle').dropdown();
-  
+
    $('.dropdown').hover(function() {
       $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
     }, function() {
       $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(200);
     });
-  
   var s = skrollr.init({forceHeight: false});
-});
+});*/

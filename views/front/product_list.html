@@ -1,0 +1,67 @@
+<% include ../front/template/head.html %>
+<% include ../front/template/header.html %>
+
+<div class="container">
+<div class="row product-list">
+    <div class="col-md-2 sidebar">
+        <div class="group category">
+            <h3> Kategori </h3>
+            <ul>
+                <li>Kaos</li>
+                <li>Aksesoris</li>
+                <li>Vinil</li>
+            </ul>
+        </div>
+
+        <div class="group condition">
+            <h3> Kondisi </h3>
+            <input type="checkbox"> Baru <br />
+            <input type="checkbox"> Bekas
+        </div>
+    </div>
+
+    <div class="col-md-10">
+        <section id="item">
+            <div class="container">
+
+                <% var products = data.products.docs %>
+                <% for(var i in products) { %>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                        <div class="item">
+
+                            <a href="#/p/<%= products[i].slug %>">
+                                <img style="display: initial;" width="200" height="200" src="<%= products[i].image[0].replace('original','thumbnail') %>" class="img-responsive">
+                            </a>
+                            <div class="caption-item">
+                                <h3><%= products[i].name %></h3>
+                                <p> <%= products[i].user.name %></p>
+                                <h4>Rp. <%= products[i].price %></h4>
+                                <button type="button" class="btn btn-default">
+                                    <i class="fa fa-shopping-cart fa-lg"></i>
+                                    Add to cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+        </section>
+
+        <div class="container">
+            <div class="pag">
+                <ul class="pagination">
+                    <li><a href="#">«</a></li>
+                    <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">»</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<% include ../front/template/footer.html %>

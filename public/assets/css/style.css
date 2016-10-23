@@ -476,6 +476,26 @@ text-align: center;
   height: 250px;
 }
 
+#product-new{
+padding: 20px;
+text-align: center;
+}
+
+#product-new img{
+  width: 200px;
+  height: 200px;
+}
+
+.product-list {
+    margin-top: 15px;
+}
+
+.product-list .sidebar .group{
+    border-style: solid;
+    border-color: rgb(196, 12, 65) rgb(239, 239, 244) rgb(239, 239, 244);
+    padding: 10px;
+}
+
 
 .discount-btn{
  padding: 10px 100px;
@@ -538,8 +558,6 @@ padding: 25px;
 
 .carousel img{
 width: 250px;
-
-
 }
 
 .carousel  h3{
@@ -806,7 +824,7 @@ header .caption a:hover{
 item
 ===================================*/
 #item{
-  padding: 20px;
+  padding: 0 10px;
   text-align: center;
 }
 
@@ -821,7 +839,7 @@ item
 }
 
 #item h4{
-  font-size: 21px;
+  font-size: 14px;
   font-family: 'Montserrat', sans-serif;
   color: #292929;
 }
@@ -891,4 +909,15 @@ Pagination
 
 .product-form .image-upload li{
   cursor: pointer;
+  width: 100px;
+  height: 100px;
+  border: 1px dotted #b7b7b7;
+  border-radius: 4px;
+  margin-right: 10px;
+  padding: 0;
+}
+
+.pickfile-container {
+    background: url(/image/add-product.png) no-repeat;
+    background-position: center;
 }

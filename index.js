@@ -3,7 +3,7 @@
 const http = require('http');
 const express = require('express');
 const config = require('./config');
-const async = require('async');
+
 const underscore = require('underscore');
 const session = require('express-session');
 const app = express();
@@ -17,7 +17,14 @@ GLOBAL.express = express;
 GLOBAL.express_validator = expressValidator;
 GLOBAL._ = underscore;
 GLOBAL.mongoose = mongoose;
+GLOBAL.async = require('async');
 GLOBAL.ObjectId = mongoose.Types.ObjectId;
+GLOBAL.slug = require('slug');
+
+/*locals.meta = {
+    title: 'Situs Jual Beli Online Khusus Merchanise Mudah Dan Terpercaya | Pasar Underground',
+    description: 'Tempat jual beli online terpercaya di Indonesia, belanja murah, di Pasar Underground'
+}*/
 
 app.use(express.static('public'));
 
@@ -62,6 +69,7 @@ app.use(function(req, res, next){
 });
 
 app.use('/', require('./controllers/front/index'));
+app.use('/produk', require('./controllers/front/product'));
 app.use('/auth', require('./controllers/front/auth'));
 app.use('/account/product', require('./controllers/front/account/product'));
 app.use('/account/profile', require('./controllers/front/account/profile'));

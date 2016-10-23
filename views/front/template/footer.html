@@ -9,7 +9,7 @@
     <div class="col-md-3 box_5">
       <h3>Latest Blog Posts</h3>
       <div class="footer-list">
-          <ul>    
+          <ul>
             <p>Lorem ipsum Dolor Sit Amet<br><a href="#">15 March 2015</a></p></li>
             <p>Lorem ipsum Dolor Sit Amet<br><a href="#">15 March 2015</a></p></li>
            </ul>
@@ -48,7 +48,7 @@
     <div class="copy">
       <p>© 2015 </p>
     </div>
-  
+
   </div>
 </div>
 
@@ -61,22 +61,19 @@
 <!--<script type="text/javascript" src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>-->
 <script type="text/javascript" src="/assets/js/slick.min.js"></script>
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-        $('.carousel').slick({
-          dots: true,
-        infinite: true,
-        slidesToShow: 4,
-        slidesToScroll: 3
-    });
-    });
-  </script>
+<% if (locals.js && locals.js.length > 0) { %>
+    <% for(var i in locals.js) { %>
+        <script src="/assets/js/main/front/<%= locals.js %>.js"></script>
+    <% } %>
+<% } %>
 
 <script src="/assets/js/bootstrap.min.js"></script>
-<script src="/assets/js/slider.js"></script> 
+<script src="/assets/js/slider.js"></script>
 <script src="/assets/js/jssor.js"></script>
 <!--<script src="/assets/js/jssor.slider.mini.js"></script>-->
-
+<script src="/assets/select2/select2.min.js"></script>
+<script src="/assets/js/smartcrop.js"></script>
 <script src="/assets/js/main.js"></script>
+
 </body>
 </html>

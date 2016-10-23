@@ -35,9 +35,7 @@ router.post('/update', function (req, res, next) {
 		}
 
 		return res.redirect('/account/product');
-
 	});
-
 });
 
 module.exports = router;

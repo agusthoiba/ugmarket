@@ -1,10 +1,12 @@
 'use strict'
 var Schema = require('./global');
+var mongoosePaginate = require('mongoose-paginate');
 
-var itemSchema = Schema({
+var productSchema = Schema({
         name: {type: String, required: true},
+        slug: {type: String, required: true},
         category: {type: Schema.Types.ObjectId, ref: 'Category'},
-        band: {type: Schema.Types.ObjectId, ref: 'Band'},
+        band:  {type: Schema.Types.ObjectId, ref: 'Band'},
         image: [],
         price: {type: Number, default: 0},
         weight: {type: Number, default: 0},
@@ -16,8 +18,10 @@ var itemSchema = Schema({
         stock: {type: Number, default: 0},
         user: {type: Schema.Types.ObjectId, ref: 'User'},
     }, {
-        collection: 'item', 
+        collection: 'product',
         timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'}
     });
 
-module.exports = itemSchema;
+productSchema.plugin(mongoosePaginate);
+
+module.exports = productSchema;

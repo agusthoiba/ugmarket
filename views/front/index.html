@@ -103,37 +103,29 @@ Arrow
   Discount Product
   ========================================-->
 
-  <!--<section id="product">
+  <section id="product-new">
+    <h3>Product Baru</h3>
     <div class="container">
+
       <div class="row">
-        <div class="col-md-8">
-          <img src="image/61.jpg">
-          <div class="discount">
-            <h2>50% Discount t-shirt</h2>
-            <div class="discount-btn">
-              <a href="#">Get it Now</a>
+          <% var products = data.products.docs %>
+
+          <% for(var i in products) { %>
+              <div class="col-md-3">
+                <a href="#/p/<%= products[i].slug %>">
+                    <img src="<%= products[i].image[0].replace('original','thumbnail') %>">
+                </a>
+                <h3><%= products[i].name %></h3>
+                <p>Rp. <%= products[i].price %></p>
+                <button class="btn-cart" type="button"><span>Add to Cart</span></button>
             </div>
-          </div>
-        </div>
+          <% } %>
+
       </div>
+
+    <div class="pull-right" style="margin-top: 15px">
+        <a class="btn btn-lg btn-primary" href="/produk">Lihat Semua Produk</a>
     </div>
-  </section>-->
-
-<!--==========================================
-  Featured product
-  ========================================-->
-  <section id="featured">
-    <h3>NEW ARRIVAL</h3>
-    <div class="container">
-
-      <div class="carousel">
-        <div><img src="/image/1a.jpg">
-          <h3>Shoes</h3>
-          <p>Rp. 1.200.000</p>
-          <button class="btn-cart" type="button"><span>Add to Cart</span></button>
-        </div>
-
-      </div>
   </div>
 </section>
 
@@ -183,10 +175,6 @@ Arrow
 
 
     </div>
-
-
-
-
   </section>
 
   <% include ../front/template/footer.html %>

@@ -11,17 +11,19 @@ var Band = function(){
 
 Band.prototype.find = function(query, sort) {
 	query = query || {};
-	sort = sort || {created_at: 'desc'};
+	sort = sort || {name: 'asc'};
 
-    var Promise = Model.find(query).sort(sort).exec();
+    var prom = Model.find(query).sort(sort).exec();
 
-    Promise.then(null, function(err){
-        return fn(err);
-    })
+	return new Promise(function(resolve, reject) {
+	    prom.then(null, function(err){
+	        reject(err);
+	    })
 
-    Promise.then(function(doc){
-        return fn(null, doc);
-    })
+	    prom.then(function(doc){
+	        resolve(doc);
+	    })
+	})
 };
 
 Band.prototype.findOne = function(query) {
@@ -38,7 +40,7 @@ Band.prototype.findOne = function(query) {
 
 Band.prototype.create = function(payload, fn){
   var Promise = Model.create(payload);
- 
+
   Promise.then(null, function(err){
     return fn(err);
   })
@@ -50,7 +52,7 @@ Band.prototype.create = function(payload, fn){
 
 Band.prototype.update = function(query, payload, fn){
   var Promise = Model.update(query, payload);
- 
+
   Promise.then(null, function(err){
     return fn(err);
   })
