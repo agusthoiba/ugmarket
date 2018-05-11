@@ -9,18 +9,21 @@ var User = require(config.base_dir + '/models/user');
 var upload = require(config.base_dir + '/upload');
 var fs = require('fs.extra');
 var crypto = require('crypto');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op
+
 
 router.get('/', function (req, res, next) {
-    var userId = ObjectId(req.session.user.id);
+    var userId = parseInt(req.session.user.id);
 
     var obj = {error: null, data: null};
 
-    var query = {user: userId};
+    var query = {prod_user_id: userId};
     var options = {sort: {created_at: 'desc'}};
-    Product.find(query, options).then(function(doc){
-        if (doc.length === 0) {
-            return res.redirect('/account/product/add');
-        }
+
+
+    //return res.render('front/account/product_list', obj);
+    Product.find(query, {}).then(doc => {
 
         obj.data = {
             products: doc
@@ -75,36 +78,20 @@ router.put('/update/:id', function (req, res, next) {
     });
 });
 
-
 router.get('/add', function (req, res, next) {
+    var obj = {
+        error: null,
+        data: {},
+        js: ['account_product']
+    };
 
-    async.parallel({
-        categories: function(fn) {
-            Category.find({}, function(err, doc){
-                if (err) return fn(err);
-                fn(null, doc)
-            })
-        },
-        bands: function(fn) {
-            Band.find({}).then(function(doc) {
-                fn(null, doc);
-            }, function(err) {
-                fn(err);
-            })
-        },
-        item: function(fn) {
-            fn(null, itemData())
-        }
-    }, function(err, results){
-
-        var obj = {
-            error: null,
-            data: results,
-    		js: ['account_product']
-        };
-
-        //return res.json(obj);
+    getSyncData().then(doc =>  {
+        obj.data = doc
+        obj.data.item = itemData()
+        //return res.json(obj)
         return res.render('front/account/product_form', obj);
+    }, err => {
+        return res.json(obj)
     })
 });
 
@@ -115,19 +102,16 @@ router.post('/create', function (req, res, next) {
     cleanPost(req.body, function(err, payload) {
         if (err) {
             console.error(err);
-            //obj.error = 'An Error occured while add new product';
-            //return res.render('/error', obj);
-            return res.json(err);
+            obj.error = 'An Error occured while add new product';
+            return res.render('front/account/product_form', obj);
         }
 
-        Product.create(payload, function(err, doc){
-            if (err) {
-                console.error(err);
-                obj.error = 'An Error occured while add new product';
-                return res.render('/error', obj);
-            }
-
+        Product.create(payload).then(doc => {
             return res.redirect('/account/product');
+        }, err => {
+            console.error(err);
+            obj.error = 'An Error occured while add new product';
+            return res.render('front/account/product_form', obj);
         });
     })
 });
@@ -140,6 +124,7 @@ function itemData(){
         category: '',
         description: '',
         price: 0,
+        size: '',
         weight: 0,
         stock: 1,
         image: [],
@@ -165,20 +150,19 @@ function itemData(){
 
 function cleanPost(body, fn){
     var payload = {
-       name: body.name.trim(),
-       slug: slug(body.name.trim().toLowerCase()),
-       category: ObjectId(body.category),
-       description: body.description.trim(),
-       price: parseInt(body.price),
-       weight: parseInt(body.weight),
-       condition: body.condition,
-       stock: parseInt(body.stock),
-       band: body.band,
-       user: ObjectId(body.user_id),
-       is_visible: body.is_visible == 'publish',
+       prod_name: body.name.trim(),
+       prod_slug: slug(body.name.trim().toLowerCase()),
+       prod_cat_id: body.category,
+       prod_desc: body.description.trim(),
+       prod_price: parseInt(body.price),
+       prod_weight: parseInt(body.weight),
+       prod_condition: body.condition,
+       prod_stock: parseInt(body.stock),
+       prod_band_id: body.band,
+       prod_user_id: parseInt(body.user_id),
+       prod_is_visible: body.is_visible == 'publish',
        image: [],
-       thumbnail: [],
-       user: ObjectId(body.user_id)
+       thumbnail: []
     }
 
     if (typeof body.image_ori == 'string' ) {
@@ -191,7 +175,7 @@ function cleanPost(body, fn){
     var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
     var fileName = payload.slug + '-' + randomName;
 
-    async.parallel({
+    /*async.parallel({
         img: function(cbPar) {
             async.forEachOf(body.image_ori, function(val, k, cb) {
                 var filePathName = 'product/original/' + fileName;
@@ -228,7 +212,7 @@ function cleanPost(body, fn){
     }, function(err, results) {
         if (err) return fn(err)
         return fn(null, payload);
-    })
+    })*/
 }
 
 function uploadImages(req, files){
@@ -282,4 +266,40 @@ function copyResize(src, name) {
             resolve(results);
         });
     });
+}
+
+function getCategory() {
+    return new Promise((resolve, reject) => {
+        Category.find({}, {}).then(doc => {
+            return resolve(doc);
+        }, err => {
+            return reject(err);
+        });
+    })
+}
+
+function getBand() {
+    let query = {}
+    let option = {
+        order: [
+           ['band_name','asc']
+        ]
+    }
+
+    return new Promise((resolve, reject) => {
+        Band.find(query, option).then(doc => {
+            console.log('doc', doc)
+            return resolve(doc);
+        }, err => {
+            return reject(err);
+        });
+    })
+}
+
+async function getSyncData() {
+    let result = {
+        categories: await getCategory(),
+        bands: await getBand()
+    }
+    return result;
 }

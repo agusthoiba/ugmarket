@@ -1,24 +1,79 @@
 'use strict'
 
-var schema = require('../schema/category');
-var mongoose = require('mongoose');
+const db = require('../connect');
+const Sequelize = require('sequelize');
 
-var Model = mongoose.model('Category', schema);
+class Category {
+    constructor() {
+        this.tableName = 'category';
+        this.schema = db.define('category', {
+            cat_id: {type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true},
+            cat_slug: {type: Sequelize.STRING, allowNull: false},
+            cat_name: {type: Sequelize.STRING, allowNull: false},
+            cat_parent_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0},
+            cat_parent_rank: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0},
+            cat_image: {type: Sequelize.STRING, allowNull: true},
+            cat_icon: {type: Sequelize.STRING, allowNull: true},
+  
+            cat_is_visible: {type: Sequelize.TINYINT(1), defaultValue: 0},
+            cat_is_deleted: {type: Sequelize.TINYINT(1), defaultValue: 0},
+  
+            cat_created_at: {type: Sequelize.DATE},
+            cat_updated_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW}
+        }, {
+            timestamps: false,
+            underscored: true,
+            freezeTableName: true,
+            tableName: this.tableName
+        });
 
-var Category = function(){
+        //this.schema.sync();
+    }
 
-}
+    find(query, options) {
+        return new Promise((resolve, reject) => {
+            this.schema.findAndCountAll({
+                where: query, 
+                //order: options.sort
+            }).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 
-Category.prototype.find = function(query, fn) {
-    var Promise = Model.find(query).sort({name: 'asc'}).exec();
+    findOne(query) {
+        return new Promise((resolve, reject) => {
+            this.schema.findOne({
+                where: query, 
+            }).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 
-    Promise.then(null, function(err){
-        return fn(err);
-    })
+    create(payload) {
+        return new Promise((resolve, reject) => {
+            this.schema.create(payload).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 
-    Promise.then(function(doc){
-        return fn(null, doc);
-    })
+    update(query, payload) {
+        return new Promise((resolve, reject) => {
+            this.schema.update(query, payload).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = new Category();

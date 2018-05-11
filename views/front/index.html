@@ -108,19 +108,23 @@ Arrow
     <div class="container">
 
       <div class="row">
-          <% var products = data.products.docs %>
+          
+        <% var products = data.products.docs %>
 
-          <% for(var i in products) { %>
-              <div class="col-md-3">
-                <a href="#/p/<%= products[i].slug %>">
-                    <img src="<%= products[i].image[0].replace('original','thumbnail') %>">
-                </a>
-                <h3><%= products[i].name %></h3>
-                <p>Rp. <%= products[i].price %></p>
-                <button class="btn-cart" type="button"><span>Add to Cart</span></button>
-            </div>
+        <% if (products != undefined && products.length == 0) { %>
+            No product found
+        <% } else {
+            for(var i in products) { %>
+            <div class="col-md-3">
+              <a href="#/p/<%= products[i].slug %>">
+                  <img src="<%= products[i].image[0].replace('original','thumbnail') %>">
+              </a>
+              <h3><%= products[i].name %></h3>
+              <p>Rp. <%= products[i].price %></p>
+              <button class="btn-cart" type="button"><span>Add to Cart</span></button>
+          </div>
           <% } %>
-
+        <% } %>
       </div>
 
     <div class="pull-right" style="margin-top: 15px">

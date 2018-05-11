@@ -29,60 +29,59 @@ router.post('/login', function (req, res, next) {
         return res.json(obj);
     }
 
-    var query = {email: obj.data.email};
+    var query = {user_email: obj.data.email};
 
-    User.findOne(query, function (err, doc) {
-        if (err) {
-            obj.error = 'An error occured while login or register. Please try again!';
-            return res.json(obj);
+    User.findOne(query).then(doc => {
+        let payload = {
+            user_email: obj.data.email,
+            user_password: crypto.createHash('sha1').update(req.body.password).digest("hex")
         }
 
-        req.body.password = crypto.createHash('sha1').update(req.body.password).digest("hex");
-
         if (!doc) {
-            User.create(req.body, function (err, docCreate) {
-                if (err) {
-                    console.error('error in line 43');
-                    console.error(err);
-                    obj.error = 'An error occured while register. Please try again!';
-                    return res.json(obj);
-                }
+            User.create(payload).then(docCreate => {
+                var docUserJson = docCreate.toJSON()
 
                 var userData = {
-                    id: docCreate._id,
-                    email: docCreate.email
+                    id: docUserJson.user_id,
+                    email: docUserJson.user_email
                 }
 
                 authSession(req, userData);
 
                 obj.data = userData;
                 return res.json(obj);
+            }, err => {
+                console.error(err);
+                obj.error = 'An error occured while login or register. Please try again!';
+                return res.json(obj);
             });
         } else {
-            query.password = req.body.password;
+            query.user_password = crypto.createHash('sha1').update(req.body.password).digest("hex");
 
-            User.findOne(query, function (err, docLogin) {
-                if (err) {
-                    obj.error = 'An error occured while login. Please try again!';
-                    return res.json(obj);
-                }
-
+            User.findOne(query).then(docLogin => {
                 if (!docLogin) {
                     obj.error = 'Username and password is totally wrong. Please try again!';
                     return res.json(obj);
                 }
-                
+
+                docLogin = docLogin.toJSON()
                 var userData = {
-                    id: docLogin._id,
-                    email: docLogin.email
+                    id: docLogin.user_id,
+                    email: docLogin.user_email
                 }
                 
                 authSession(req, userData);
                 obj.data = docLogin;
                 return res.json(obj);
+            }, err => {
+                obj.error = 'An error occured while login or register. Please try again!';
+                return res.json(obj);
             });
         }
-    })
+    }, err => {
+        obj.error = 'An error occured while login or register. Please try again!';
+        return res.json(obj);
+    });
 });
 
 router.get('/logout', function (req, res, next) {
@@ -98,6 +97,7 @@ function authSession(req, user) {
     req.session.login_type = 'frontend';
     req.session.user = user;
     req.session.save();
+
     
     return;
 }

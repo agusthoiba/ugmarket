@@ -1,63 +1,80 @@
-'use strict'
 
-var schema = require('../schema/user');
-var mongoose = require('mongoose');
+const db = require('../connect');
+const Sequelize = require('sequelize');
 
-var Model = mongoose.model('User', schema);
+class User {
+    constructor() {
+        this.tableName = 'user';
+        this.schema = db.define('user', {
+            user_id: {type: Sequelize.INTEGER(11).UNSIGNED , primaryKey: true, autoIncrement: true},
+            user_email: {type: Sequelize.STRING, allowNull: false, unique: true},
+            user_username: {type: Sequelize.STRING(100)},
+            user_name: {type: Sequelize.STRING},
+            user_gender: {type: Sequelize.ENUM('m','f',''), defaultValue: ''},
+            user_password: {type: Sequelize.STRING},
+            user_hp: {type: Sequelize.STRING(20)},
+            user_avatar: {type: Sequelize.STRING},
+            user_is_verified: {type: Sequelize.TINYINT(1), defaultValue: 0},
+            user_is_deleted: {type: Sequelize.TINYINT(1), defaultValue: 0},
+            user_created_at: {type: Sequelize.DATE},
+            user_updated_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW}
+        }, {
+            timestamps: false,
+            underscored: true,
+            freezeTableName: true,
+            tableName: this.tableName
+        });
+        //this.schema.sync();
+    }
 
-var User = function(){
+    find(query, options) {
+        return new Promise((resolve, reject) => {
+            this.schema.findAndCountAll({
+                where: query, 
+                order: options.sort,
+                offset: options.page - 1 * options.limit,
+                limit: options.limit
+            }).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 
-}
+    findOne(query) {
+        return new Promise((resolve, reject) => {
+            this.schema.findOne({
+                where: query, 
+            }).then(result => {
+                resolve(result);
+            }, err => {
+                reject(err);
+            });
+        });
+    }
 
-User.prototype.find = function(query, sort, fn) {
-    query = query || {};
-    sort = sort || {created_at: 'desc'};
+    create(payload) {
+        return new Promise((resolve, reject) => {
+            this.schema.create(payload).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 
-    var Promise = Model.find(query).sort(sort).exec();
-
-    Promise.then(null, function(err){
-        return fn(err);
-    })
-
-    Promise.then(function(doc){
-        return fn(null, doc);
-    })
-};
-
-User.prototype.findOne = function(query, fn) {
-    var Promise = Model.findOne(query).exec();
-
-    Promise.then(null, function(err){
-        return fn(err);
-    })
-
-    Promise.then(function(doc){
-        return fn(null, doc);
-    })
-};
-
-User.prototype.create = function(payload, fn){
-    var Promise = Model.create(payload);
-
-    Promise.then(null, function(err){
-        return fn(err)
-    })
-
-    Promise.then(function(doc){
-        return fn(null, doc)
-    })
-}
-
-User.prototype.update = function(query, payload, fn){
-    var Promise = Model.update(query, payload);
-
-    Promise.then(null, function(err){
-        return fn(err)
-    })
-
-    Promise.then(function(doc){
-        return fn(null, doc)
-    })
+    update(query, payload) {
+        return new Promise((resolve, reject) => {
+            this.schema.update(payload, {
+                where: query, 
+            }).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = new User();

@@ -10,17 +10,17 @@
 <form method="POST" action="/account/profile/update">
   <div class="form-group">
     <label for="name">Email</label>
-    <input type="text" class="form-control" id="email"  value="<%= data.user.email %>" disabled>
+    <input type="text" class="form-control" id="email"  value="<%= data.user.user_email %>" disabled>
   </div>
 
   <div class="form-group">
     <label for="name">Name</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= data.user.name %>" placeholder="">
+    <input type="text" class="form-control" id="name" name="name" value="<%= data.user.user_name %>" placeholder="">
   </div>
 
   <div class="form-group">
     <label for="description">Phone Number</label>
-    <input type="text" class="form-control" rows="3" id="hp" name="hp" value="<%= data.user.hp %>">
+    <input type="text" class="form-control" rows="3" id="hp" name="hp" value="<%= data.user.user_hp %>">
   </div>
 
   <div class="form-group">

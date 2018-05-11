@@ -1,59 +1,103 @@
-'use strict'
 
-var schema = require('../schema/product');
-var mongoose = require('mongoose');
-//var Promise = require('promise');
-var Model = mongoose.model('Product', schema);
+const db = require('../connect');
+const Sequelize = require('sequelize');
 
-var Product = function(){
+class Product {
+    constructor() {
+        this.tableName = 'product';
+        this.schema = db.define('product', {
+            prod_id: {type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true},
+            prod_user_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false},
+            prod_name: {type: Sequelize.STRING, allowNull: false},
+            prod_slug: {type: Sequelize.STRING, allowNull: false},
+            prod_cat_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false},
+            prod_band_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0},
 
-}
+            prod_image: {type: Sequelize.STRING},
+            prod_thumbnail: {type: Sequelize.STRING},
 
-Product.prototype.find = function(query, options) {
-    query = query || {};
-    options = options || {};
+            prod_price: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
+            prod_weight: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
+            prod_desc: {type: Sequelize.TEXT, allowNull: false},
 
-    options = Object.assign(options, {populate: ['category', 'band', 'user']})
-    return new Promise(function(resolve, reject) {
-        Model.paginate(query, options, function(err, doc) {
-            if (err) return reject(err);
+            prod_is_featured: {type: Sequelize.TINYINT(1), defaultValue: 0},
+            prod_is_visible: {type: Sequelize.TINYINT(1), defaultValue: 0},
+            prod_is_deleted: {type: Sequelize.TINYINT(1), defaultValue: 0},
 
-            resolve(doc);
+            prod_condition: {type: Sequelize.ENUM('b','s',''), defaultValue: ''},
+            prod_stock: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
+
+            prod_created_at: {type: Sequelize.DATE},
+            prod_updated_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW}
+        }, {
+            timestamps: false,
+            underscored: true,
+            freezeTableName: true,
+            tableName: this.tableName
         });
-    })
-};
 
-Product.prototype.findOne = function(query) {
-    return new Promise(function(resolve, reject) {
-        Model.findOne(query, function(err, doc) {
-            if(err) return reject(err);
-            resolve(doc);
-        })
-    })
-};
+        this.schemaProdImage = db.define('product_image', {
+            pim_id: {type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true},
+            pim_prod_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false},
+            pim_image: {type: Sequelize.STRING, allowNull: false},
+            pim_thumbnail: {type: Sequelize.STRING, allowNull: false},
+        }, {
+            timestamps: false,
+            underscored: true,
+            freezeTableName: true,
+            tableName: this.tableName
+        });
 
-Product.prototype.create = function(payload, fn){
-  var Promise = Model.create(payload);
+        //this.schema.sync();
+        this.schemaProdImage.sync();
+    }
 
-  Promise.then(null, function(err){
-    return fn(err)
-  })
+  find(query, options) {
+      return new Promise((resolve, reject) => {
+          this.schema.findAndCountAll({
+              where: query, 
+              //order: options.sort,
+              //offset: options.page - 1 * options.limit,
+              //limit: options.limit
+          }).then(result => {
+              resolve(result);
+          }, (err) => {
+              reject(err);
+          });
+      });
+  }
 
-  Promise.then(function(doc){
-    return fn(null, doc)
-  })
-};
+  findOne(query) {
+      return new Promise((resolve, reject) => {
+          this.schema.findOne({
+              where: query, 
+          }).then(result => {
+              resolve(result);
+          }, (err) => {
+              reject(err);
+          });
+      });
+  }
 
-Product.prototype.update = function(query, payload, fn){
-  var Promise = Model.update(query, payload);
+  create(payload) {
+      return new Promise((resolve, reject) => {
+          this.schema.create(payload).then(result => {
+              resolve(result);
+          }, (err) => {
+              reject(err);
+          });
+      });
+  }
 
-  Promise.then(null, function(err){
-    return fn(err)
-  })
-
-  Promise.then(function(doc){
-    return fn(null, doc)
-  })
-};
+  update(query, payload) {
+      return new Promise((resolve, reject) => {
+          this.schema.update(query, payload).then(result => {
+              resolve(result);
+          }, (err) => {
+              reject(err);
+          });
+      });
+  }
+}
 
 module.exports = new Product();

@@ -29,4 +29,12 @@ router.get('/', function (req, res, next) {
     })
 });
 
+router.get('/edit/:id', function (req, res, next) {
+    var userId = ObjectId(req.session.user.id);
+
+    Product.findOne({ slug}, function(err, doc){
+        fn(err, doc);
+    });
+});
+
 module.exports = router;

@@ -2,7 +2,8 @@
 
 var fs = require('fs');
 var config = require('./config');
-var lwip = require('lwip');
+//var lwip = require('lwip');
+var sharp = require('sharp');
 
 module.exports = new Upload();
 
@@ -42,7 +43,7 @@ Upload.prototype.resize = function(src, maxWidth, maxHeight, fn){
 
     var imgArr = src.split('.');
     var ext = imgArr[imgArr.length - 1];
-    lwip.open(src, ext, function(err, image) {
+    /*lwip.open(src, ext, function(err, image) {
         if(err) return fn(err);
 
         var w = 0, h = 0;
@@ -59,5 +60,15 @@ Upload.prototype.resize = function(src, maxWidth, maxHeight, fn){
            if(err) return fn(err);
            fn(null, src);
         })
-    })
+    })*/
+
+
+    //let fileOutput = pathCDN + filename + '.' + extension;
+    //let fileOutputPath = config.cdn.dir + '/' + fileOutput;
+    //let fileOutputLink = config.cdn.host + '/' + fileOutput;
+    sharp(src).resize(maxWidth)
+    .toFile(src, (err, info) => {
+        console.log('info upload large', JSON.stringify(info));
+        cb(err, src);
+    });
 }

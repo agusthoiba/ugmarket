@@ -6,20 +6,22 @@ const config = require('./config');
 
 const underscore = require('underscore');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
 const app = express();
 const ejs = require('ejs');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 
-GLOBAL.config = config;
-GLOBAL.express = express;
-GLOBAL.express_validator = expressValidator;
-GLOBAL._ = underscore;
-GLOBAL.mongoose = mongoose;
-GLOBAL.async = require('async');
-GLOBAL.ObjectId = mongoose.Types.ObjectId;
-GLOBAL.slug = require('slug');
+global.config = config;
+global.express = express;
+global.express_validator = expressValidator;
+global._ = underscore;
+global.mongoose = mongoose;
+//global.async = require('async');
+global.ObjectId = mongoose.Types.ObjectId;
+global.slug = require('slug');
 
 /*locals.meta = {
     title: 'Situs Jual Beli Online Khusus Merchanise Mudah Dan Terpercaya | Pasar Underground',

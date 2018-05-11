@@ -1,18 +1,19 @@
 var router = express.Router();
 
-var Product = require(config.base_dir + '/models/product');
+var Product = require('../../models/product');
 
 
 router.get('/', function (req, res, next) {
 	var obj = {error: null, data: null};
-	var query = {is_visible: true};
-    var options = {sort: {created_at: 'desc'}};
+	var query = {prod_is_visible: 1};
+    var options = {sort: {prod_created_at: 'desc'}};
 	Product.find(query, options).then(function(doc){
 		//var
 		obj.data = {
 			products: doc
 		}
 		
+		//res.json(obj);
 		res.render('front/index', obj);
 	}, function(err) {
 		obj.error = 'An Error occured while load your product';
