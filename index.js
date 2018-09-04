@@ -5,8 +5,8 @@ const express = require('express');
 const config = require('./config');
 
 const underscore = require('underscore');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+//const session = require('express-session');
+//const MongoStore = require('connect-mongo')(session);
 
 const app = express();
 const ejs = require('ejs');
@@ -18,9 +18,8 @@ global.config = config;
 global.express = express;
 global.express_validator = expressValidator;
 global._ = underscore;
-global.mongoose = mongoose;
-//global.async = require('async');
-global.ObjectId = mongoose.Types.ObjectId;
+
+
 global.slug = require('slug');
 
 /*locals.meta = {
@@ -30,11 +29,16 @@ global.slug = require('slug');
 
 app.use(express.static('public'));
 
-app.use(session({
-    secret: 'ugmarket-secret',
-    resave: false,
-    saveUninitialized: true
-}));
+var cookieSession = require('cookie-session')
+
+app.set('trust proxy', 1)
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secretkeysblabla'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 app.use(function(err, req, res, next){
     if (!err) { return next(); }
@@ -61,11 +65,13 @@ app.use(expressValidator());
 app.use(function(req, res, next){
   var path = req.path.split('/');
 
-  if (path[1] == 'account' &&
+  if (path[1] == 'account' && 
     req.session.login_type == undefined &&
     req.session.user == undefined) {
     return res.redirect('/')
   }
+
+  
 
   return next();
 });

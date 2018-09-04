@@ -94,10 +94,12 @@ router.get('/logout', function (req, res, next) {
 });
 
 function authSession(req, user) {
+    console.log('im here', req.session)
     req.session.login_type = 'frontend';
     req.session.user = user;
     req.session.save();
 
+    console.log(req.session.cookie)
     
     return;
 }

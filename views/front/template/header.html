@@ -14,7 +14,7 @@
     </ul>
 
     <div class="pull-right">
-      <% if (session.user) { %>
+      <% if (session != undefined && 'user' in session) { %>
          <a href="/account/profile"><%= session.user.email %></a> | <a href="/auth/logout">Logout</a>
       <% } else { %>
         <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">Login or Register</a>

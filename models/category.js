@@ -2,6 +2,7 @@
 
 const db = require('../connect');
 const Sequelize = require('sequelize');
+const product = require('./product')
 
 class Category {
     constructor() {
@@ -28,6 +29,8 @@ class Category {
         });
 
         //this.schema.sync();
+
+        //this.schema.belongsTo(categoryModel.schema, {foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category'})
     }
 
     find(query, options) {

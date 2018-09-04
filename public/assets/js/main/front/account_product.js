@@ -12,9 +12,9 @@ function uploadImage(files, obj) {
     var file = files[i];
     var imageType = /^image\//;
 
-    if (file.size > (5 * 1024 * 1024)) {
+    if (file.size > (25 * 1024 * 1024)) {
         console.log(file.size);
-        alert('Image tidak boleh lebih dari 5 MB');
+        alert('Image tidak boleh lebih dari 25 MB');
         return false;
     }
 

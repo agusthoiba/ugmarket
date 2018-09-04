@@ -1,33 +1,38 @@
-'use strict'
+
 
 var router = express.Router();
 
-var Product = require(config.base_dir + '/models/product');
-var Category = require(config.base_dir + '/models/category');
-var Band = require(config.base_dir + '/models/band');
-var User = require(config.base_dir + '/models/user');
-var upload = require(config.base_dir + '/upload');
+var Product = require('../../../models/product');
+var Category = require('../../../models/category');
+var Band = require('../../../models/band');
+//var User = require(config.base_dir + '/models/user');
+
 var fs = require('fs.extra');
 var crypto = require('crypto');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op
-
+//const Sequelize = require('sequelize');
+//const Op = Sequelize.Op
+const promisify = require('util').promisify;
+const copyFile = promisify(fs.copyFile)
+const asyncLan = require('async');
+const moment = require('moment')
+const upload = require('../../../upload')
 
 router.get('/', function (req, res, next) {
     var userId = parseInt(req.session.user.id);
 
     var obj = {error: null, data: null};
 
-    var query = {prod_user_id: userId};
-    var options = {sort: {created_at: 'desc'}};
+    var query = {prod_user_id: userId, prod_is_deleted: 0};
+    var options = {sort: {prod_created_at: 'desc'}};
 
 
     //return res.render('front/account/product_list', obj);
     Product.find(query, {}).then(doc => {
-
+        //console.log('doc cont', doc)
         obj.data = {
             products: doc
         }
+        return res.json(doc)
         return res.render('front/account/product_list', obj);
 
     }, function(err) {
@@ -95,26 +100,24 @@ router.get('/add', function (req, res, next) {
     })
 });
 
-router.post('/create', function (req, res, next) {
+router.post('/create', async function (req, res, next) {
     var obj = { error: null, data: null};
 
     req.body.user_id = req.session.user.id;
-    cleanPost(req.body, function(err, payload) {
-        if (err) {
-            console.error(err);
-            obj.error = 'An Error occured while add new product';
-            return res.render('front/account/product_form', obj);
-        }
 
-        Product.create(payload).then(doc => {
-            return res.redirect('/account/product');
-        }, err => {
-            console.error(err);
-            obj.error = 'An Error occured while add new product';
-            return res.render('front/account/product_form', obj);
-        });
-    })
-});
+    //return res.json(req.body)
+    try {
+        const payload = await cleanPost(req.body)
+        //return res.json(payload)
+        await Product.create(payload)
+        return res.redirect('/account/product');
+    } catch (err) {
+        console.error(err);
+        obj.error = 'An Error occured while add new product';
+        return res.json(obj)
+        //return res.render('front/account/product_form', obj);
+    }
+})
 
 module.exports = router;
 
@@ -148,7 +151,7 @@ function itemData(){
     return errVal;
 }*/
 
-function cleanPost(body, fn){
+async function cleanPost(body){
     var payload = {
        prod_name: body.name.trim(),
        prod_slug: slug(body.name.trim().toLowerCase()),
@@ -161,8 +164,10 @@ function cleanPost(body, fn){
        prod_band_id: body.band,
        prod_user_id: parseInt(body.user_id),
        prod_is_visible: body.is_visible == 'publish',
-       image: [],
-       thumbnail: []
+       prod_images: '',
+       prod_thumbnails: '',
+       prod_sizes_available: '',
+       prod_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
     }
 
     if (typeof body.image_ori == 'string' ) {
@@ -170,10 +175,32 @@ function cleanPost(body, fn){
         body.image_thumbnail = [body.image_thumbnail];
     }
 
+    if (typeof body.sizes == 'string') {
+        body.sizes = [body.sizes]
+    }
+
+    payload.prod_sizes_available = body.sizes.join(',')
+
     var current_date = (new Date()).valueOf().toString();
     var random = Math.random().toString();
     var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
-    var fileName = payload.slug + '-' + randomName;
+    var fileName = payload.prod_slug + '-' + randomName;
+
+    try {
+        const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
+        payload.prod_images = oris.join(',')
+
+        const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
+        payload.prod_thumbnails = thumbs.join(',')
+        
+        return new Promise((resolve, reject) => {
+            return resolve(payload)
+        })
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            return reject(err)
+        })
+    }
 
     /*async.parallel({
         img: function(cbPar) {
@@ -215,57 +242,93 @@ function cleanPost(body, fn){
     })*/
 }
 
-function uploadImages(req, files){
+async function uploadImageBase(path, val, fileName) {
+    let imgUrls = []
+    const filePathName = path + fileName;
+    let img
 
+    try {
+        img = await upload.createImageBase64(val, filePathName)
+        console.log('img', img)
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            return reject(err)
+        })
+    }
+
+    try {
+        if (path == 'product/original/') {
+            const resize = await copyResize(img.path, fileName+'.'+img.ext)
+            console.log('resize', resize)
+        }
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            return reject(err)
+        })
+    }
+
+    return fileName+'.'+img.ext
 }
 
-function copyResize(src, name) {
-    return new Promise(function (resolve, reject) {
-        async.parallel({
-            large: function(fn) {
-                var dest = config.file_dir + 'product/large/'+ name;
-                fs.copy(src, dest, {replace: false}, function(err) {
-                    if (err) {
-                        console.error('error controllers/product.js:216:63');
-                        return fn(err);
-                    }
+async function processMultipleUpload(path, images, filename) {
+    let imgs = []
+    try {
+        for (let image of images) {
+            const img = await uploadImageBase(path, image, filename)
+            imgs.push(img)
+        }
+        return new Promise((resolve, reject) => {
+            return resolve(imgs)
+        })
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            return reject(err)
+        })
+    }
+}
 
-                    upload.resize(dest, 500, 1000, function(err, img) {
-                        if (err) {
-                            console.error('error controllers/product.js:222:55');
-                            return fn(err);
-                        }
+/*async function copyResize(src, name) {
+    var destLarge = config.file_dir + 'product/large/'+ name;
+        
+    let fileLarge
+    let fileMedium
 
-                        fn(null, dest);
-                    })
-                })
-            },
-            medium: function(fn) {
-                var dest = config.file_dir + 'product/medium/'+ name;
-                fs.copy(src, dest, {replace: false}, function(err) {
-                    if (err) {
-                        console.error('error controllers/product.js:228:63');
-                        return fn(err);
-                    }
+    try {
+        await copyFile(src, destLarge)
+    } catch (err) {
+        return err
+    }
 
-                    upload.resize(dest, 300, 600, function(err, img) {
-                        if (err) {
-                            console.error('error controllers/product.js:234:55');
-                            return fn(err);
-                        }
+    try {
+        fileLarge = await upload.resize(destLarge, 500, 1000)
+    } catch (err) {
+        return err
+    }
+    
+    return fileLarge
+}*/
 
-                        fn(null, dest);
-                    });
-                });
-            }
-        }, function(err, results) {
-            if (err) {
-                console.error('error controllers/product.js:244:21');
-                return reject(err);
-            }
-            resolve(results);
-        });
-    });
+
+async function copyResize(src, name) {
+    console.log('src', src)
+    
+    try {
+        const destLarge = config.file_dir + 'product/large/'+ name
+        await copyFile(src, destLarge, {replace: false})
+        const imgLarge = await upload.resize(src, destLarge, 500, 1000)
+
+        //const destMedium = config.file_dir + 'product/medium/'+ name
+        //await copyFile(src, destMedium, {replace: false})
+        
+        //const imgMedium = await upload.resize(destMedium, 300, 600)
+        return {l: imgLarge}
+        //m: imgMedium
+    } catch (err) {
+        return new Promise((resolve, reject) => {
+            return reject(err)
+        })
+    }
+    
 }
 
 function getCategory() {
@@ -288,7 +351,6 @@ function getBand() {
 
     return new Promise((resolve, reject) => {
         Band.find(query, option).then(doc => {
-            console.log('doc', doc)
             return resolve(doc);
         }, err => {
             return reject(err);

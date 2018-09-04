@@ -1,6 +1,7 @@
 
 const db = require('../connect');
 const Sequelize = require('sequelize');
+const categoryModel = require('./category')
 
 class Product {
     constructor() {
@@ -13,9 +14,9 @@ class Product {
             prod_cat_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false},
             prod_band_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0},
 
-            prod_image: {type: Sequelize.STRING},
-            prod_thumbnail: {type: Sequelize.STRING},
-
+            prod_images: {type: Sequelize.TEXT},
+            prod_thumbnails: {type: Sequelize.TEXT},
+            prod_sizes_available: {type: Sequelize.STRING},
             prod_price: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
             prod_weight: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
             prod_desc: {type: Sequelize.TEXT, allowNull: false},
@@ -28,7 +29,9 @@ class Product {
             prod_stock: {type: Sequelize.INTEGER, allowNull: false, defaultValue: 0},
 
             prod_created_at: {type: Sequelize.DATE},
-            prod_updated_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW}
+            prod_updated_at: {type: Sequelize.DATE, defaultValue: Sequelize.NOW},
+
+            
         }, {
             timestamps: false,
             underscored: true,
@@ -36,25 +39,14 @@ class Product {
             tableName: this.tableName
         });
 
-        this.schemaProdImage = db.define('product_image', {
-            pim_id: {type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true},
-            pim_prod_id: {type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false},
-            pim_image: {type: Sequelize.STRING, allowNull: false},
-            pim_thumbnail: {type: Sequelize.STRING, allowNull: false},
-        }, {
-            timestamps: false,
-            underscored: true,
-            freezeTableName: true,
-            tableName: this.tableName
-        });
-
-        //this.schema.sync();
-        this.schemaProdImage.sync();
+        categoryModel.schema.hasMany(this.schema, {foreignKey: 'prod_cat_id', sourceKey: 'cat_id', as: 'category'})
+        this.schema.belongsTo(categoryModel.schema, {foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category'})
+        //db.sync()
     }
 
   find(query, options) {
       return new Promise((resolve, reject) => {
-          this.schema.findAndCountAll({
+          this.schema.findAll({
               where: query, 
               //order: options.sort,
               //offset: options.page - 1 * options.limit,
