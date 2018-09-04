@@ -23,7 +23,7 @@ class Band {
             tableName: this.tableName
         });
 
-        //this.schema.sync();
+        this.schema.sync();
     }
 
     find(query, options) {

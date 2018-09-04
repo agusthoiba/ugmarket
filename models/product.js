@@ -2,6 +2,7 @@
 const db = require('../connect');
 const Sequelize = require('sequelize');
 const categoryModel = require('./category')
+const bandModel = require('./band')
 
 class Product {
     constructor() {
@@ -39,9 +40,9 @@ class Product {
             tableName: this.tableName
         });
 
-        categoryModel.schema.hasMany(this.schema, {foreignKey: 'prod_cat_id', sourceKey: 'cat_id', as: 'category'})
+        this.schema.sync()
         this.schema.belongsTo(categoryModel.schema, {foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category'})
-        //db.sync()
+        this.schema.belongsTo(bandModel.schema, {foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band'})
     }
 
   find(query, options) {
@@ -51,6 +52,16 @@ class Product {
               //order: options.sort,
               //offset: options.page - 1 * options.limit,
               //limit: options.limit
+              include: [
+                  {
+                    model: categoryModel.schema,
+                    as: 'category'
+                  },
+                  {
+                    model: bandModel.schema,
+                    as: 'band'
+                  },
+                ]
           }).then(result => {
               resolve(result);
           }, (err) => {
@@ -63,7 +74,18 @@ class Product {
       return new Promise((resolve, reject) => {
           this.schema.findOne({
               where: query, 
+              include: [
+                {
+                  model: categoryModel.schema,
+                  as: 'category'
+                },
+                {
+                  model: bandModel.schema,
+                  as: 'band'
+                },
+              ]
           }).then(result => {
+              console.log('mode', result)
               resolve(result);
           }, (err) => {
               reject(err);

@@ -28,7 +28,7 @@ class Category {
             tableName: this.tableName
         });
 
-        //this.schema.sync();
+        this.schema.sync();
 
         //this.schema.belongsTo(categoryModel.schema, {foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category'})
     }

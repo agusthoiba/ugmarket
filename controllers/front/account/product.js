@@ -25,14 +25,20 @@ router.get('/', function (req, res, next) {
     var query = {prod_user_id: userId, prod_is_deleted: 0};
     var options = {sort: {prod_created_at: 'desc'}};
 
-
-    //return res.render('front/account/product_list', obj);
     Product.find(query, {}).then(doc => {
-        //console.log('doc cont', doc)
         obj.data = {
-            products: doc
+            products: doc.map(val => {
+                const pathThumb = `${config.file_host}/product/thumbnail`
+                val.thumbnail =  `${pathThumb}/${val.prod_thumbnails}`
+                if (val.prod_thumbnails.includes(',')) {
+                    let thumbArr = val.prod_thumbnails.split(',')
+                    val.thumbnail = `${pathThumb}/${thumbArr[0]}`
+                }
+                
+                return val
+            })
         }
-        return res.json(doc)
+        //return res.json(obj)
         return res.render('front/account/product_list', obj);
 
     }, function(err) {
@@ -42,31 +48,43 @@ router.get('/', function (req, res, next) {
     })
 });
 
-router.get('/edit/:id', function (req, res, next) {
-    var userId = ObjectId(req.session.user.id);
+router.get('/edit/:id', async function (req, res, next) {
+    var userId = req.session.user.id;
 
-    async.parallel({
-        product: function(fn){
-            Product.findOne({user: userId, _id: req.params.id}, function(err, doc){
-                fn(err, doc);
-            });
-        },
-        category: function(fn){
-            Category.find({}, function(err, doc){
-                fn(err, doc)
-            });
+    var obj = { error: null, data: {
+        item: {},
+        categories: [],
+        bands: []
+    }};
+
+    try {
+        const product = await Product.findOne({prod_id: parseInt(req.params.id)})
+        obj.data.item = {
+            id: product.prod_id,
+            name: product.prod_name,
+            category: product.prod_cat_id,
+            band: product.prod_band_id,
+            image: '',
+            thumbnail: '',
+            price: product.prod_price,
+            weight: product.prod_weight,
+            desc: product.prod_desc,
+            is_visible: product.prod_is_visible,
+            sizes_available: product.prod_sizes_available,
+            condition: product.prod_condition,
+            stock: product.prod_stock,
+            created_at: product.prod_created_at
         }
-    }, function(err, results){
-        var obj = { error: err, data: results};
+        obj.data.categories = await Category.find()
+        obj.data.bands = await Band.find({}, {order: [ ['band_name', 'ASC']]})
+    } catch (err) {
+        console.error(err)
+        obj.error = 'An Error occured while load your product';
+        return res.json(obj);
+    }
 
-        if (err) {
-            obj.error = 'An Error occured while load your product';
-            console.error(err);
-            return res.render('front/error', obj);
-        }
-
-        return res.render('front/account/product_edit.html', obj);
-    });
+    //return res.json(obj)
+    return res.render('front/account/product_form', obj);
 });
 
 router.put('/update/:id', function (req, res, next) {
@@ -249,7 +267,6 @@ async function uploadImageBase(path, val, fileName) {
 
     try {
         img = await upload.createImageBase64(val, filePathName)
-        console.log('img', img)
     } catch (err) {
         return new Promise((resolve, reject) => {
             return reject(err)
@@ -259,7 +276,6 @@ async function uploadImageBase(path, val, fileName) {
     try {
         if (path == 'product/original/') {
             const resize = await copyResize(img.path, fileName+'.'+img.ext)
-            console.log('resize', resize)
         }
     } catch (err) {
         return new Promise((resolve, reject) => {
@@ -310,8 +326,6 @@ async function processMultipleUpload(path, images, filename) {
 
 
 async function copyResize(src, name) {
-    console.log('src', src)
-    
     try {
         const destLarge = config.file_dir + 'product/large/'+ name
         await copyFile(src, destLarge, {replace: false})
