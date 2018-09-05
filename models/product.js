@@ -85,7 +85,6 @@ class Product {
                 },
               ]
           }).then(result => {
-              console.log('mode', result)
               resolve(result);
           }, (err) => {
               reject(err);
@@ -105,7 +104,7 @@ class Product {
 
   update(query, payload) {
       return new Promise((resolve, reject) => {
-          this.schema.update(query, payload).then(result => {
+          this.schema.update(payload, {where: query}).then(result => {
               resolve(result);
           }, (err) => {
               reject(err);

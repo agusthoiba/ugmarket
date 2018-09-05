@@ -19,8 +19,13 @@ global.express = express;
 global.express_validator = expressValidator;
 global._ = underscore;
 
-
 global.slug = require('slug');
+
+app.locals.strToArr = function(str, delimeter) {
+  if (str.length == 0) return []
+  if (!str.includes(delimeter)) return [str]
+  return str.split(delimeter)
+}
 
 /*locals.meta = {
     title: 'Situs Jual Beli Online Khusus Merchanise Mudah Dan Terpercaya | Pasar Underground',

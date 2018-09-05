@@ -7,7 +7,7 @@
   galley of type and scrambled it to make a type specimen book.
 </p>
 
-<form method="POST" action="/account/product/create" id="add_product">
+<form method="POST" action="<%= action %>" id="add_product">
   <div class="form-group">
     <label for="name">Nama Barang</label>
     <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" required>
@@ -62,21 +62,25 @@
   <div class="form-group">
     <label for="condition">Ukuran</label>
 
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox1" value="s">
+    <div class="form-check form-check-inline"> 
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox1" value="s" <%= data.item.sizes.includes('s') ? "checked" : "" %> >
         <label class="form-check-label" for="inlineCheckbox1"> S </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox2" value="m">
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox2" value="m" <%= data.item.sizes.indexOf('m') > -1 ? 'checked' : '' %> >
         <label class="form-check-label" for="inlineCheckbox2"> M </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox3" value="l">
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox3" value="l" <%= data.item.sizes.indexOf('l') > -1 ? 'checked' : '' %> >
         <label class="form-check-label" for="inlineCheckbox3"> L </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox4" value="xl">
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox4" value="xl" <%= data.item.sizes.indexOf('xl') > -1 ? 'checked' : '' %>>
         <label class="form-check-label" for="inlineCheckbox4"> XL </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckbox4" value="xxl" <%= data.item.sizes.indexOf('xxl') > -1 ? 'checked' : '' %>>
+        <label class="form-check-label" for="inlineCheckbox4"> XXL </label>
       </div>
   </div>
 
@@ -85,10 +89,10 @@
     <ul class="image-upload list-inline">
         <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, $(this))">
 
-        <% if (data.item.image.length > 0) { %>
-            <% for(var i in data.item.image) { %>
+        <% if (data.item.thumbnails.length > 0) { %>
+            <% for(var i in data.item.thumbnails) { %>
                 <li id="thumb_image_<%= i %>" >
-                    <img src="<%=  data.item.image.thumbnail[i] %>">
+                    <img class="preview" width="100" style="vertical-align: baseline;"" src="<%=  data.item.thumbnails[i] %>">
                 </li>
             <% } %>
         <% } %>

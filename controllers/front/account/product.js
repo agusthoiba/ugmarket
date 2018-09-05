@@ -1,5 +1,4 @@
 
-
 var router = express.Router();
 
 var Product = require('../../../models/product');
@@ -50,31 +49,43 @@ router.get('/', function (req, res, next) {
 
 router.get('/edit/:id', async function (req, res, next) {
     var userId = req.session.user.id;
+    const prodId = parseInt(req.params.id)
 
     var obj = { error: null, data: {
-        item: {},
-        categories: [],
-        bands: []
-    }};
+            item: {},
+            categories: [],
+            bands: [],
+        }, 
+        action: `/account/product/update/${prodId}`,
+        js: ['account_product']
+    };
 
     try {
-        const product = await Product.findOne({prod_id: parseInt(req.params.id)})
+        const product = await Product.findOne({prod_id: prodId, prod_user_id: userId})
+
         obj.data.item = {
             id: product.prod_id,
             name: product.prod_name,
             category: product.prod_cat_id,
             band: product.prod_band_id,
-            image: '',
-            thumbnail: '',
+            images: [],
+            thumbnails: [],
             price: product.prod_price,
             weight: product.prod_weight,
             desc: product.prod_desc,
             is_visible: product.prod_is_visible,
-            sizes_available: product.prod_sizes_available,
+            sizes: req.app.locals.strToArr(product.prod_sizes_available, ','),
             condition: product.prod_condition,
             stock: product.prod_stock,
             created_at: product.prod_created_at
         }
+
+        const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
+
+        obj.data.item.thumbnails = thumbs.map(val => {
+            return `${config.file_host}product/thumbnail/${val}`
+        })
+
         obj.data.categories = await Category.find()
         obj.data.bands = await Band.find({}, {order: [ ['band_name', 'ASC']]})
     } catch (err) {
@@ -87,24 +98,33 @@ router.get('/edit/:id', async function (req, res, next) {
     return res.render('front/account/product_form', obj);
 });
 
-router.put('/update/:id', function (req, res, next) {
-    Product.update({ _id: req.params.id}, req.body, function(err, doc){
-        var obj = { error: null, data: null};
+router.post('/update/:id', async function (req, res, next) {
+    const prodId = parseInt(req.params.id)
+   
+    const query = {
+        prod_id: prodId
+    }
 
-        if (err) {
-            obj.error = 'An Error occured while update your product';
-            console.error(err);
-            return res.render('/error', obj);
-        }
+    var obj = { error: null, data: null};
 
+    try {
+        const payload = await cleanPost(req.body, 'update')
+        const docUpd = await Product.update(query, payload)
+        
         return res.redirect('/account/product');
-    });
+    } catch (err) {
+        console.error(err)
+        obj.error = 'An Error occured while update your product';
+        res.json(obj);
+        return res.render('/error', obj);
+    }
 });
 
 router.get('/add', function (req, res, next) {
     var obj = {
         error: null,
         data: {},
+        action: '/account/product/create',
         js: ['account_product']
     };
 
@@ -146,9 +166,11 @@ function itemData(){
         description: '',
         price: 0,
         size: '',
+        sizes: [],
         weight: 0,
         stock: 1,
-        image: [],
+        images: [],
+        thumbnails: [],
         band:''
     }
 }
@@ -169,7 +191,7 @@ function itemData(){
     return errVal;
 }*/
 
-async function cleanPost(body){
+async function cleanPost(body, tipe = 'create'){
     var payload = {
        prod_name: body.name.trim(),
        prod_slug: slug(body.name.trim().toLowerCase()),
@@ -180,45 +202,55 @@ async function cleanPost(body){
        prod_condition: body.condition,
        prod_stock: parseInt(body.stock),
        prod_band_id: body.band,
-       prod_user_id: parseInt(body.user_id),
+
        prod_is_visible: body.is_visible == 'publish',
-       prod_images: '',
-       prod_thumbnails: '',
-       prod_sizes_available: '',
-       prod_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+       prod_sizes_available: ''
     }
 
-    if (typeof body.image_ori == 'string' ) {
-        body.image_ori = [body.image_ori];
-        body.image_thumbnail = [body.image_thumbnail];
-    }
-
-    if (typeof body.sizes == 'string') {
-        body.sizes = [body.sizes]
-    }
-
-    payload.prod_sizes_available = body.sizes.join(',')
-
-    var current_date = (new Date()).valueOf().toString();
-    var random = Math.random().toString();
-    var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
-    var fileName = payload.prod_slug + '-' + randomName;
-
-    try {
-        const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
-        payload.prod_images = oris.join(',')
-
-        const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
-        payload.prod_thumbnails = thumbs.join(',')
-        
-        return new Promise((resolve, reject) => {
-            return resolve(payload)
-        })
-    } catch (err) {
-        return new Promise((resolve, reject) => {
-            return reject(err)
+    if (tipe == 'create') {
+        payload = Object.assign(payload, {
+            prod_user_id: parseInt(body.user_id),
+            prod_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
         })
     }
+
+    if (body.image_ori != undefined) {
+        if (typeof body.image_ori == 'string' ) {
+            body.image_ori = [body.image_ori];
+            body.image_thumbnail = [body.image_thumbnail];
+        }
+
+        if (typeof body.sizes == 'string') {
+            body.sizes = [body.sizes]
+        }
+
+        payload.prod_sizes_available = body.sizes.join(',')
+
+        var current_date = (new Date()).valueOf().toString();
+        var random = Math.random().toString();
+        var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
+        var fileName = payload.prod_slug + '-' + randomName;
+
+        try {
+            const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
+            payload.prod_images = oris.join(',')
+
+            const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
+            payload.prod_thumbnails = thumbs.join(',')
+            
+            return new Promise((resolve, reject) => {
+                return resolve(payload)
+            })
+        } catch (err) {
+            return new Promise((resolve, reject) => {
+                return reject(err)
+            })
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        return resolve(payload)
+    })
 
     /*async.parallel({
         img: function(cbPar) {

@@ -65,7 +65,7 @@ class Band {
 
     update(query, payload) {
         return new Promise((resolve, reject) => {
-            this.schema.update(query, payload).then(result => {
+            this.schema.update(payload, {where: query}).then(result => {
                 resolve(result);
             }, (err) => {
                 reject(err);
