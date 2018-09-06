@@ -1,96 +1,36 @@
 <% include ../front/template/head.html %>
 <% include ../front/template/header.html %>
 
-<section id="slide">
-  <div id="slider1_container" class="slider">
-    <!-- Loading Screen -->
-    <div u="loading" style="position: absolute; top: 0px; left: 0px;">
-      <div style="filter: alpha(opacity=70); opacity: 0.7; position: absolute; display: block;
-      top: 0px; left: 0px; width: 100%; height: 100%;">
-    </div>
-    <div style="position: absolute; display: block; /*background: url(../img/loading.gif) no-repeat center center;*/
-    top: 0px; left: 0px; width: 100%; height: 100%;">
+
+<section>
+  <div class="home-banner">
+      <div class="content">
+        <h1> Merchandise Music and Action Figure Marketplace </h1>
+        <p>Buy, sell and trade your music merchandise with fellow music fans</p>
+      </div>
   </div>
-</div>
-
-<!-- Slides Container -->
-<div u="slides" class="slider">
-
-<div>
-  <img u="image" src="/image/b1.jpg" />
-
-  <div class="wrapper">
-    <div class="title">New High Collection</div>
-    <p>Lorem ipsum dipsum lorem ipsum dipsum lorem</p>
-    <a class="btn-shop" href="#">Shop Now</a>
-  </div>
-</div>
-
-<div>
-  <img u="image" src="/image/b2.jpg" />
-
-  <div class="wrapper">
-    <div class="title">New High Collection</div>
-    <p>Lorem ipsum dipsum lorem ipsum dipsum lorem</p>
-    <a class="btn-shop" href="#">Shop Now</a>
-  </div>
-</div>
-
-<div>
-  <img u="image" src="/image/b3.jpg" />
-
-  <div class="wrapper">
-    <div class="title"> New High Collection </div>
-    <p>Lorem ipsum dipsum lorem ipsum dipsum lorem</p>
-    <a class="btn-shop" href="#">Shop Now</a>
-  </div>
-</div>
-
-</div>
-
-
-  <!--========================================
-  Bullet
-  ==========================================-->
-  <div u="navigator" class="jssorb21" style="bottom: 26px; right: 6px;">
-
-    <div u="prototype"></div>
-  </div>
-<!--==========================================
-Arrow
-===========================================-->
-<!-- Arrow Left -->
-<span u="arrowleft" class="jssora21l" style="top: 123px; left: 8px;">
-</span>
-<!-- Arrow Right -->
-<span u="arrowright" class="jssora21r" style="top: 123px; right: 8px;">
-</span>
-</section>
-
+</section> 
 <section id="product">
   <div class="container">
     <div class="row">
       <div class="col-md-4">
 
-        <img src="/image/shoes1.jpg">
+        <img src="/image/formen-373x290.jpg">
         <div class="discount">
-          <h2>T - Shirts</h2>
-          <a class="btn-shop" href="#">Shop Now</a>
+          <!--h2>Men</h2-->
         </div>
       </div>
 
       <div class="col-md-4">
-        <img src="/image/watch.jpg">
+        <img src="/image/forwomen-373x290.jpg">
         <div class="discount">
-          <h2>Jacket</h2>
-          <a class="btn-shop" href="#">Shop Now</a>
+          <!--h2>Women</h2-->
         </div>
       </div>
       <div class="col-md-4">
-        <img src="/image/shoes.jpg">
+        <img src="/image/toysnfiguresbw-373x290.jpg">
         <div class="discount">
-          <h2>60% Discount Shoes</h2>
-          <a class="btn-shop" href="#">Shop Now</a>
+          <!--h2>Action Figure</h2-->
         </div>
       </div>
 
@@ -109,15 +49,15 @@ Arrow
 
       <div class="row">
           
-        <% var products = data.products.docs %>
+        <% var products = data.products %>
 
         <% if (products != undefined && products.length == 0) { %>
             No product found
         <% } else {
             for(var i in products) { %>
             <div class="col-md-3">
-              <a href="#/p/<%= products[i].slug %>">
-                  <img src="<%= products[i].image[0].replace('original','thumbnail') %>">
+              <a href="/product/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
+                  <img src="<%= products[i].thumbnail %>">
               </a>
               <h3><%= products[i].name %></h3>
               <p>Rp. <%= products[i].price %></p>

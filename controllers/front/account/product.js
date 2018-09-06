@@ -29,6 +29,7 @@ router.get('/', function (req, res, next) {
     Product.find(query, {}).then(doc => {
         if (doc.length > 0) {
             obj.data.products = doc.map(val => {
+                val.is_visible = val.prod_is_visible == 1
                 const pathThumb = `${config.file_host}/product/thumbnail`
                 val.thumbnail =  `${pathThumb}/${val.prod_thumbnails}`
                 if (val.prod_thumbnails.includes(',')) {
@@ -75,7 +76,7 @@ router.get('/edit/:id', async function (req, res, next) {
             price: product.prod_price,
             weight: product.prod_weight,
             desc: product.prod_desc,
-            is_visible: product.prod_is_visible,
+            is_visible: product.prod_is_visible == 1,
             sizes: req.app.locals.strToArr(product.prod_sizes_available, ','),
             condition: product.prod_condition,
             stock: product.prod_stock,
@@ -90,6 +91,8 @@ router.get('/edit/:id', async function (req, res, next) {
 
         obj.data.categories = await Category.find()
         obj.data.bands = await Band.find({}, {order: [ ['band_name', 'ASC']]})
+
+        //return res.json(obj)
     } catch (err) {
         console.error(err)
         obj.error = 'An Error occured while load your product';
@@ -205,7 +208,7 @@ async function cleanPost(body, tipe = 'create'){
        prod_stock: parseInt(body.stock),
        prod_band_id: body.band,
 
-       prod_is_visible: body.is_visible == 'publish',
+       prod_is_visible: body.is_visible == 'publish' ? 1 : 0,
        prod_sizes_available: ''
     }
 
