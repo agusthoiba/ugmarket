@@ -35,7 +35,6 @@ router.get('/', function (req, res, next) {
                     let thumbArr = val.prod_thumbnails.split(',')
                     val.thumbnail = `${pathThumb}/${thumbArr[0]}`
                 }
-                
                 return val
             })
         }
