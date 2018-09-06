@@ -19,14 +19,16 @@ const upload = require('../../../upload')
 router.get('/', function (req, res, next) {
     var userId = parseInt(req.session.user.id);
 
-    var obj = {error: null, data: null};
+    var obj = {error: null, data: {
+        products: []
+    }};
 
     var query = {prod_user_id: userId, prod_is_deleted: 0};
     var options = {sort: {prod_created_at: 'desc'}};
 
     Product.find(query, {}).then(doc => {
-        obj.data = {
-            products: doc.map(val => {
+        if (doc.length > 0) {
+            obj.data.products = doc.map(val => {
                 const pathThumb = `${config.file_host}/product/thumbnail`
                 val.thumbnail =  `${pathThumb}/${val.prod_thumbnails}`
                 if (val.prod_thumbnails.includes(',')) {
@@ -37,6 +39,7 @@ router.get('/', function (req, res, next) {
                 return val
             })
         }
+
         //return res.json(obj)
         return res.render('front/account/product_list', obj);
 
