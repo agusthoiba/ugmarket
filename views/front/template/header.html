@@ -13,13 +13,56 @@
       </li>
     </ul>
 
-    <div class="pull-right">
-      <% if (session != undefined && session.user != undefined) { %>
-         <a href="/account/profile"><%= session.user.email %></a> | <a href="/auth/logout">Logout</a>
-      <% } else { %>
-        <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">Login or Register</a>
-      <% } %>
-    </div>
+    
+    <ul class="nav-icon pull-right">
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown">
+          <i class="fa fa-user fa-2x" aria-hidden="true"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <% if (session != undefined && session.user != undefined) { %>
+            <li>
+              <a href="/account/profile">Profile</a>
+              <a href="/account/product">Penjualan</a>
+              <!--a href="/account/pembelian">Pembelian</a-->
+              <a href="/auth/logout">Logout</a>
+            </li>
+          <% } else { %>
+            <li>
+              <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">
+                Login
+              </a>
+              <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">
+                Register
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </li>
+      <li class="dropdown">
+          <a href="#" data-toggle="dropdown" id="cart" class="cart"><i class="fa fa-shopping-cart"></i></a><span class="cart-count">1</span>
+
+            <ul class="dropdown-menu shopping-cart-items" >
+              <div class="shopping">
+                <div class="shopping-header">
+                  <i class="fa fa-shopping-cart fa-2x cart-icon"></i>
+                  <div class="shopping-price"><span class="total-text">Total:</span><span class="price">Rp2.500.000</span>
+                  </div>
+                </div>
+                <li class="clearfix">
+                  <img src="/image/cart1.jpg" alt="item1" />
+                  <span class="item-name">1 x 250.000</span>
+                  <span class="item-price">T-Shirt</span>
+                </li>
+              </ul>
+            </li>
+    </ul>
+
+        
+      
+        
+
+    
   </div>
 </div>
 
@@ -111,9 +154,8 @@
     </li>
 
     <li role="presentation" class="dropdown">
-        <a href="/aksesoris"> Action Figure </a>
-        </a>
-      </li>
+      <a href="/aksesoris"> Action Figure </a></a>
+    </li>
 
     <li role="presentation" class="dropdown"><a href="#">Sale</a></li>
     <li role="presentation" class="dropdown"><a href="#">Blog</a></li>
