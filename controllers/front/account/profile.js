@@ -6,7 +6,8 @@ const User = require(config.base_dir + '/models/user')
 router.get('/', function (req, res, next) {
 	var obj = { error: null, data: null};
 	var userId = req.session.user.id;
-	User.findOne({user_id: userId}).then(doc => {
+	const user = new User()
+	user.findOne({user_id: userId}).then(doc => {
 		obj.data = {user : doc};
 
 		//return res.json(obj);
@@ -22,7 +23,8 @@ router.post('/update', function (req, res, next) {
 	var obj = { error: null, data: null};
 	var userId = req.session.user.id;
 	var payload = cleanPost(req.body);
-	User.update({user_id: userId}, payload).then(doc => {
+	const user = new User()
+	user.update({user_id: userId}, payload).then(doc => {
 		return res.redirect('/account/product');
 	}, err => {
 		console.error(err);

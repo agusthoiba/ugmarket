@@ -24,18 +24,18 @@
         <section id="item">
             <div class="container">
 
-                <% var products = data.products.docs %>
+                <% var products = data.products %>
                 <% for(var i in products) { %>
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
                         <div class="item">
 
-                            <a href="#/p/<%= products[i].slug %>">
-                                <img style="display: initial;" width="200" height="200" src="<%= products[i].image[0].replace('original','thumbnail') %>" class="img-responsive">
+                            <a href="/p/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
+                                <img style="display: initial;" width="200" height="200" src="<%= products[i].thumbnail %>" class="img-responsive">
                             </a>
                             <div class="caption-item">
-                                <h3><%= products[i].name %></h3>
-                                <p> <%= products[i].user.name %></p>
-                                <h4>Rp. <%= products[i].price %></h4>
+                                <h3><%= products[i].prod_name %></h3>
+                                <p> <%= // products[i].user.user_name %></p>
+                                <h4>Rp. <%= products[i].prod_price %></h4>
                                 <button type="button" class="btn btn-default">
                                     <i class="fa fa-shopping-cart fa-lg"></i>
                                     Add to cart

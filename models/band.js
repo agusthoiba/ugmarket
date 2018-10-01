@@ -72,6 +72,16 @@ class Band {
             });
         });
     }
+
+    remove(query) {
+        return new Promise((resolve, reject) => {
+            this.schema.update(payload, {where: query}).then(result => {
+                resolve(result);
+            }, (err) => {
+                reject(err);
+            });
+        });
+    }
 }
 
 module.exports = new Band();

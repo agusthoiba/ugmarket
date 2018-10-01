@@ -31,14 +31,16 @@ router.post('/login', function (req, res, next) {
 
     var query = {user_email: obj.data.email};
 
-    User.findOne(query).then(doc => {
+    const user = new User()
+
+    user.findOne(query).then(doc => {
         let payload = {
             user_email: obj.data.email,
             user_password: crypto.createHash('sha1').update(req.body.password).digest("hex")
         }
 
         if (!doc) {
-            User.create(payload).then(docCreate => {
+            user.create(payload).then(docCreate => {
                 var docUserJson = docCreate.toJSON()
 
                 var userData = {
@@ -58,7 +60,7 @@ router.post('/login', function (req, res, next) {
         } else {
             query.user_password = crypto.createHash('sha1').update(req.body.password).digest("hex");
 
-            User.findOne(query).then(docLogin => {
+            user.findOne(query).then(docLogin => {
                 if (!docLogin) {
                     obj.error = 'Username and password is totally wrong. Please try again!';
                     return res.json(obj);

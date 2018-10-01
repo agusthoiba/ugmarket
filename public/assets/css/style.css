@@ -947,3 +947,34 @@ Pagination
   margin: 0.75em auto;
   max-width: 22.5em;
 }
+
+.product-detail-name {
+  padding-bottom: 15px;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 700;
+  height: auto;
+  margin: 0;
+  text-transform: capitalize;
+  word-break: break-word;
+  color: #333;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.product-detail-price {
+  font-size: 32px;
+  line-height: 1.2;
+  margin: 20px 0;
+  color: #d71149;
+}
+
+.detail-size {
+  border-radius: 50%;
+  border: 1.5px solid #e5e5e5;
+  padding: 1rem;
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  text-align: center;
+  text-transform: uppercase
+}
