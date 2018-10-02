@@ -54,7 +54,7 @@ class Product {
         {
           model: bandModel.schema,
           as: 'band'
-        },
+        }
       ]
     }
 
@@ -71,7 +71,7 @@ class Product {
     }
 
     return new Promise((resolve, reject) => {
-      this.schema.find(obj).then(result => {
+      this.schema.findAll(obj).then(result => {
         const data = JSON.parse(JSON.stringify(result))
         resolve(data)
       }, (err) => {

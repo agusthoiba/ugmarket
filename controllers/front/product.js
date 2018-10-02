@@ -2,7 +2,7 @@
 
 const router = express.Router()
 
-const Product = require(config.base_dir + '/models/product')
+const Product = require('../../models/product')
 // var Category = require(config.base_dir + '/models/category');
 // var Band = require(config.base_dir + '/models/band');
 // var User = require(config.base_dir + '/models/user');
@@ -20,12 +20,8 @@ router.get('/', async (req, res, next) => {
     }
   }
 
-  let query = {
+  var query = {
     prod_is_visible: 1
-  }
-
-  if (req.query.kategori) {
-    
   }
 
   var options = { sort: { created_at: 'desc' } }
