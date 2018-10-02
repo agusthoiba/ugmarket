@@ -1,4 +1,5 @@
 
+
 const router = express.Router()
 
 const Product = require(config.base_dir + '/models/product')
@@ -19,8 +20,12 @@ router.get('/', async (req, res, next) => {
     }
   }
 
-  var query = {
+  let query = {
     prod_is_visible: 1
+  }
+
+  if (req.query.kategori) {
+    
   }
 
   var options = { sort: { created_at: 'desc' } }
@@ -40,6 +45,8 @@ router.get('/', async (req, res, next) => {
         }
 
         const datum = Object.assign({}, val, { thumbnail: thumbnail })
+
+        datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
 
         return datum
       })
@@ -92,9 +99,7 @@ router.get('/:id/:slug', async (req, res, next) => {
         }
       }
 
-      console.log('asd', obj.data.product.images)
-      
-
+      obj.data.product.prod_price = req.app.locals.currency(obj.data.product.prod_price).format('$0,0')
       /* let thumbnail = `${pathThumb}/${product.prod_thumbnails}`
 
       if (product.prod_thumbnails.includes(',')) {

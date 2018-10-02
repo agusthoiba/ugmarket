@@ -4,55 +4,69 @@
 <div class="container">
   <div class="row product-detail">
     <div class="col-md-6">
-        <div class="container">
-          <div class="row">
-            <img class="img-responsive" src="<%= data.product.images[0] %>" width="427" height="auto">
-          </div>
-          <div class="row">
-              <img class="img-responsive" src="<%= data.product.thumbnails[0] %>" width="107" height="auto">
-          </div>
+      <div class="container">
+        <div class="row">
+          <img class="img-responsive" src="<%= data.product.images[0] %>" width="427" height="auto">
         </div>
+        <div class="row">
+          <img class="img-responsive" src="<%= data.product.thumbnails[0] %>" width="107" height="auto">
+        </div>
+      </div>
     </div>
 
     <div class="col-md-6">
       <div class="row">
-          <div class="col">
-            <div class="product-detail-name"><%= data.product.prod_name %></div>
+        <div class="col">
+          <div class="product-detail-name">
+            <%= data.product.prod_name %>
           </div>
+        </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <div class="product-detail-price">Rp. <%= data.product.prod_price %></div>
+          <div class="product-detail-price">
+            <%= data.product.prod_price %>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="row">
+        <div class="col">
+          <div class="product-detail-size">
+            <h3>Size</h3>
+            <% if (data.product.sizes.length > 0)  { %>
+              <ul class="list-inline">
+                <% for (let i in data.product.sizes) { %>
+                <li class="detail-size" id="size-<%= data.product.sizes[i] %>">
+                  <%= data.product.sizes[i] %>
+                </li>
+                <% } %>
+              </ul>
+            <% } %>
+          </div>
         </div>
       </div>
 
       <div class="row">
         <button type="button" class="btn btn-default">
           <i class="fa fa-shopping-cart fa-lg"></i>
-              Add to cart
+          Add to cart
         </button>
         <button type="button" class="btn btn-primary">
           Add to wishlist
         </button>
       </div>
-      
+
       <div class="row">
-          <div class="col">
-            <div class="product-detail-size">
-                <h3>Size</h3>
-                <% if (data.product.sizes.length > 0)  { %>
-                  <% for (let i in data.product.sizes) { %>
-                    <div class="detail-size clearfix">
-                      <span>
-                        <%= data.product.sizes[i] %>
-                      </span>
-                    </div>
-                  <% } %>
-                <% } %>
-            </div>
+        <div class="col">
+          <div class="product-detail-desc">
+            <h3>Detail</h3>
+            <p><%= data.product.prod_desc %></p>
           </div>
         </div>
+      </div>
+
     </div>
   </div>
 

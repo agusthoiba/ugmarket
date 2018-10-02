@@ -5,7 +5,7 @@ const categoryModel = require('./category')
 const bandModel = require('./band')
 
 class Product {
-  constructor() {
+  constructor () {
     this.tableName = 'product';
     this.schema = db.define('product', {
       prod_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
@@ -71,7 +71,7 @@ class Product {
     }
 
     return new Promise((resolve, reject) => {
-      this.schema.findAll(obj).then(result => {
+      this.schema.find(obj).then(result => {
         const data = JSON.parse(JSON.stringify(result))
         resolve(data)
       }, (err) => {

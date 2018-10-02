@@ -153,7 +153,7 @@ color: #f25f5c;
 }
 
 .bottom-nav {
-  width: 80%;
+  /* width: 80%; */
   margin: 0 auto;
 }
 
@@ -968,6 +968,10 @@ Pagination
   color: #d71149;
 }
 
+.product-detail-size {
+  margin-bottom: 30px;
+}
+
 .detail-size {
   border-radius: 50%;
   border: 1.5px solid #e5e5e5;
@@ -976,5 +980,6 @@ Pagination
   height: 40px;
   margin-right: 20px;
   text-align: center;
-  text-transform: uppercase
+  text-transform: uppercase;
+  cursor: pointer;
 }

@@ -22,6 +22,27 @@ app.locals.strToArr = function (str, delimeter) {
   return str.split(delimeter)
 }
 
+const numeral = require('numeral');
+numeral.register('locale', 'id', {
+  delimiters: {
+    thousands: '.',
+    decimal: ','
+  },
+  abbreviations: {
+    thousand: 'k',
+    million: 'j',
+    billion: 'm',
+    trillion: 't'
+  },
+  currency: {
+    symbol: 'Rp. '
+  }
+})
+numeral.locale('id')
+
+app.locals.currency = numeral
+
+
 /* locals.meta = {
     title: 'Situs Jual Beli Online Khusus Merchanise Mudah Dan Terpercaya | Pasar Underground',
     description: 'Tempat jual beli online terpercaya di Indonesia, belanja murah, di Pasar Underground'

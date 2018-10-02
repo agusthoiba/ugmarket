@@ -55,12 +55,12 @@
             No product found
         <% } else {
             for(var i in products) { %>
-            <div class="col-md-3">
-              <a href="/product/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
+            <div class="col-md-3" id="item">
+              <a href="/p/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
                   <img src="<%= products[i].thumbnail %>">
               </a>
-              <h3><%= products[i].name %></h3>
-              <p>Rp. <%= products[i].price %></p>
+              <h3><%= products[i].prod_name %></h3>
+              <p>Rp. <%= products[i].prod_price %></p>
               <button class="btn-cart" type="button"><span>Add to Cart</span></button>
           </div>
           <% } %>
