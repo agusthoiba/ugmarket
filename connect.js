@@ -1,23 +1,30 @@
 
-const fs = require('fs');
-const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+const config = require('./config');
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.db.name, config.db.username, config.db.password, {
-  host: config.db.host,
-  dialect: 'mysql',
 
-  pool: {
-    max: 100,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
-  },
 
-  // SQLite only
-  //storage: 'path/to/database.sqlite',
+const connect = async () => {
+  console.log(`Connecting Mysql to ${config.db.host}:${config.db.port}...`)
+  const sequelize = new Sequelize(config.db.name, config.db.username, config.db.password, {
+    host: config.db.host,
+    dialect: 'mysql',
 
-  // http://docs.sequelizejs.com/manual/tutorial/querying.html#operators
-  operatorsAliases: false
-});
+    pool: {
+      max: 100,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  });
 
-module.exports = sequelize;
+  try {
+    await sequelize.authenticate()
+    console.log('Connection has been established successfully.');
+    return sequelize
+  } catch (err) {
+    console.error('Unable to connect to the database:', err);
+    setTimeout(connect, 1000);
+  }
+}
+
+module.exports = connect;

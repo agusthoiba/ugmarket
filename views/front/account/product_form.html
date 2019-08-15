@@ -17,9 +17,9 @@
     <label for="category">Kategori</label>
     <select class="form-control" id="category" name="category" required>
       <option value="">-- Pilih Kategori --</option>
-      <% for(var i in data.categories.rows) { %>
-      <option value="<%= data.categories.rows[i].cat_id %>"  <%= data.item.category == data.categories.rows[i].cat_id ? 'selected' : '' %> >
-        <%= data.categories.rows[i].cat_name %>
+      <% for(var i in data.categories) { %>
+      <option value="<%= data.categories[i].cat_id %>"  <%= data.item.category == data.categories[i].cat_id ? 'selected' : '' %> >
+        <%= data.categories[i].cat_name %>
       </option>
       <% } %>
     </select>

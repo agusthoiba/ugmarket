@@ -16,7 +16,7 @@ const copyFile = promisify(fs.copyFile)
 const moment = require('moment')
 const upload = require('../../../upload')
 
-router.get('/', function (req, res, next) {
+router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)
 
   var obj = {
@@ -29,8 +29,9 @@ router.get('/', function (req, res, next) {
   var query = { prod_user_id: userId, prod_is_deleted: 0 }
   // var options = { sort: { prod_created_at: 'desc' } };
 
-  Product.find(query, {}).then(doc => {
-    if (doc.length > 0) {
+  const doc = await res.locals.productModel.find(query, {});
+  
+  if (doc.length > 0) {
       obj.data.products = doc.map(val => {
         val.is_visible = val.prod_is_visible == 1
         const pathThumb = `${config.file_host}/product/thumbnail`
@@ -43,16 +44,11 @@ router.get('/', function (req, res, next) {
       })
     }
 
-    // return res.json(obj)
-    return res.render('front/account/product_list', obj)
-  }, function (err) {
-    obj.error = 'An Error occured while load your product'
-    console.error(err)
-    return res.json(err)
-  })
+  // return res.json(obj)
+  return res.render('front/account/product_list', obj)
 })
 
-router.get('/edit/:id', async function (req, res, next) {
+router.get('/edit/:id', async (req, res, next) => {
   var userId = req.session.user.id;
   const prodId = parseInt(req.params.id)
 
@@ -67,7 +63,7 @@ router.get('/edit/:id', async function (req, res, next) {
   };
 
   try {
-    const product = await Product.findOne({ prod_id: prodId, prod_user_id: userId })
+    const product = await res.locals.productModel.findOne({ prod_id: prodId, prod_user_id: userId })
 
     obj.data.item = {
       id: product.prod_id,
@@ -89,11 +85,15 @@ router.get('/edit/:id', async function (req, res, next) {
     const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
 
     obj.data.item.thumbnails = thumbs.map(val => {
-      return `${config.file_host}product/thumbnail/${val}`
+      return `${config.file_host}/product/thumbnail/${val}`
     })
 
-    obj.data.categories = await Category.find()
-    obj.data.bands = await Band.find({}, { order: [['band_name', 'ASC']] })
+    obj.data.categories = await res.locals.categoryModel.find()
+    obj.data.bands = await res.locals.bandModel.find({}, {
+      order: [['band_name', 'ASC']],
+      page: 1,
+      limit: 20
+    })
 
     //return res.json(obj)
   } catch (err) {
@@ -117,7 +117,7 @@ router.post('/update/:id', async function (req, res, next) {
 
   try {
     const payload = await cleanPost(req.body, 'update')
-    const docUpd = await Product.update(query, payload)
+    const docUpd = await res.locals.productModel.update(query, payload)
 
     return res.redirect('/account/product');
   } catch (err) {
@@ -128,7 +128,7 @@ router.post('/update/:id', async function (req, res, next) {
   }
 })
 
-router.get('/add', function (req, res, next) {
+router.get('/add', async (req, res, next) => {
   var obj = {
     error: null,
     data: {},
@@ -136,33 +136,24 @@ router.get('/add', function (req, res, next) {
     js: ['account_product']
   };
 
-  getSyncData().then(doc => {
-    obj.data = doc
-    obj.data.item = itemData()
-    //return res.json(obj)
-    return res.render('front/account/product_form', obj);
-  }, err => {
-    return res.json(obj)
-  })
+  obj.data = {
+    categories: await res.locals.categoryModel.find(),
+    bands:  await res.locals.bandModel.find(),
+    item: itemData()
+  }
+  
+  // return res.json(obj)
+  return res.render('front/account/product_form', obj);
 })
 
-router.post('/create', async function (req, res, next) {
+router.post('/create', async (req, res, next) => {
   var obj = { error: null, data: null };
 
   req.body.user_id = req.session.user.id;
 
-  //return res.json(req.body)
-  try {
-    const payload = await cleanPost(req.body)
-    //return res.json(payload)
-    await Product.create(payload)
-    return res.redirect('/account/product');
-  } catch (err) {
-    console.error(err);
-    obj.error = 'An Error occured while add new product';
-    return res.json(obj)
-    //return res.render('front/account/product_form', obj);
-  }
+  const payload = await cleanPost(req.body)
+  await res.locals.productModel.create(payload)
+  return res.redirect('/account/product');
 })
 
 module.exports = router;
@@ -222,7 +213,7 @@ async function cleanPost(body, tipe = 'create') {
     })
   }
 
-  if (body.image_ori != undefined) {
+  if (body.image_ori) {
     if (typeof body.image_ori == 'string') {
       body.image_ori = [body.image_ori];
       body.image_thumbnail = [body.image_thumbnail];
@@ -371,10 +362,10 @@ async function copyResize(src, name) {
     await copyFile(src, destLarge, { replace: false })
     const imgLarge = await upload.resize(src, destLarge, 500, 1000)
 
-    //const destMedium = config.file_dir + 'product/medium/'+ name
-    //await copyFile(src, destMedium, {replace: false})
+    // const destMedium = config.file_dir + 'product/medium/'+ name
+    // await copyFile(src, destMedium, {replace: false})
 
-    //const imgMedium = await upload.resize(destMedium, 300, 600)
+    // const imgMedium = await upload.resize(destMedium, 300, 600)
     return { l: imgLarge }
     //m: imgMedium
   } catch (err) {
@@ -385,9 +376,9 @@ async function copyResize(src, name) {
 
 }
 
-function getCategory() {
+function getCategory(categoryModel) {
   return new Promise((resolve, reject) => {
-    Category.find({}, {}).then(doc => {
+    categoryModel.find({}, {}).then(doc => {
       return resolve(doc);
     }, err => {
       return reject(err);
@@ -412,10 +403,10 @@ function getBand() {
   })
 }
 
-async function getSyncData() {
+async function getSyncData(catModel, bandModel) {
   let result = {
-    categories: await getCategory(),
-    bands: await getBand()
+    categories: await getCategory(catModel),
+    bands: await getBand(bandModel)
   }
   return result;
-}
+};

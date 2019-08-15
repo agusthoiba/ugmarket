@@ -1,12 +1,12 @@
 
-const db = require('../connect')
 const Sequelize = require('sequelize') 
-// const product = require('./product')
 
 class Category {
-  constructor () {
+  constructor (args) {
+    Object.assign(this, args)
+
     this.tableName = 'category'
-    this.schema = db.define('category', {
+    this.schema = this.db.define('category', {
       cat_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
       cat_slug: { type: Sequelize.STRING, allowNull: false },
       cat_name: { type: Sequelize.STRING, allowNull: false },
@@ -35,7 +35,7 @@ class Category {
 
   find (query) {
     return new Promise((resolve, reject) => {
-      this.schema.find({
+      this.schema.findAll({
         where: query
       }).then(result => {
         resolve(result)
@@ -92,4 +92,4 @@ class Category {
   }
 }
 
-module.exports = new Category();
+module.exports = Category;

@@ -1,20 +1,43 @@
 
-const db = require('../connect');
 const Sequelize = require('sequelize');
 const categoryModel = require('./category')
 const bandModel = require('./band')
 
 class Product {
-  constructor () {
+  constructor (args) {
+    Object.assign(this, args);
+
+    console.log('this.category ---', this.category.schema);
+
     this.tableName = 'product';
-    this.schema = db.define('product', {
+    this.schema = this.db.define('product', {
       prod_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
       prod_user_id: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false },
       prod_name: { type: Sequelize.STRING, allowNull: false },
       prod_slug: { type: Sequelize.STRING, allowNull: false },
-      prod_cat_id: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false },
-      prod_band_id: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0 },
-
+      prod_cat_id: { 
+        type: Sequelize.INTEGER(11).UNSIGNED, 
+        allowNull: false,
+        references: {
+          // This is a reference to another model
+          model: this.category.schema,
+     
+          // This is the column name of the referenced model
+          key: 'cat_id'
+        }
+      },
+      prod_band_id: { 
+        type: Sequelize.INTEGER(11).UNSIGNED, 
+        allowNull: false, 
+        defaultValue: 0,
+        references: {
+          // This is a reference to another model
+          model: this.band.schema,
+     
+          // This is the column name of the referenced model
+          key: 'cat_id'
+        }
+      },
       prod_images: { type: Sequelize.TEXT },
       prod_thumbnails: { type: Sequelize.TEXT },
       prod_sizes_available: { type: Sequelize.STRING },
@@ -39,20 +62,21 @@ class Product {
     })
 
     this.schema.sync()
-    this.schema.belongsTo(categoryModel.schema, { foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category' })
-    this.schema.belongsTo(bandModel.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
+    this.schema.belongsTo(this.category.schema, { foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category' })
+    this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
   }
 
-  find (query, options) {
+  async find (query, options) {
     let obj = {
       where: query,
+      raw: true,
       include: [
         {
-          model: categoryModel.schema,
+          model: this.category.schema,
           as: 'category'
         },
         {
-          model: bandModel.schema,
+          model: this.band.schema,
           as: 'band'
         }
       ]
@@ -70,84 +94,59 @@ class Product {
       }
     }
 
-    return new Promise((resolve, reject) => {
-      this.schema.findAll(obj).then(result => {
-        const data = JSON.parse(JSON.stringify(result))
-        resolve(data)
-      }, (err) => {
-        reject(err)
-      })
-    })
+    let products;
+    try {
+      products = await this.schema.findAll(obj)
+    } catch (e) {
+      throw new Error(e);
+    }
+
+    return products;
   }
 
-  findOne (query) {
-    return new Promise((resolve, reject) => {
-      this.schema.findOne({
+  async findOne (query) {
+    let product;
+    try {
+      product = await this.schema.findOne({
         where: query,
+        raw: true,
         include: [
           {
-            model: categoryModel.schema,
+            model: this.category.schema,
             as: 'category'
           },
           {
-            model: bandModel.schema,
-            as: 'band'
-          },
-        ]
-      }).then(result => {
-        resolve(result);
-      }, (err) => {
-        reject(err);
-      });
-    });
-  }
-
-  /**
-   * Product find one by Id
-   * @param {Int} id
-   */
-  findOneById (id) {
-    return new Promise((resolve, reject) => {
-      return this.schema.findOne({
-        where: { prod_id: id },
-        include: [
-          {
-            model: categoryModel.schema,
-            as: 'category'
-          },
-          {
-            model: bandModel.schema,
+            model: this.band.schema,
             as: 'band'
           }
         ]
-      }).then(result => {
-        const datum = JSON.parse(JSON.stringify(result))
-        resolve(datum)
-      }, (err) => {
-        reject(err)
-      })
-    })
+      });
+      
+    } catch (e) {
+      throw new Error(e)
+    }
+    return product
   }
 
-  create (payload) {
-    return new Promise((resolve, reject) => {
-      this.schema.create(payload).then(result => {
-        resolve(result)
-      }, (err) => {
-        reject(err)
-      })
-    })
+  async create (payload) {
+    let insertObj;
+    try {
+      insertObj = this.schema.create(payload)
+    } catch (e) {
+      throw new Error(e)
+    }
+    return insertObj
   }
 
-  update (query, payload) {
-    return new Promise((resolve, reject) => {
-      this.schema.update(payload, { where: query }).then(result => {
-        resolve(result)
-      }, (err) => {
-        reject(err)
-      })
-    })
+  async update (query, payload) {
+    let updateObj
+    try {
+      updateObj = this.schema.update(payload, { where: query })
+    } catch (e) {
+      throw new Error(e)
+    }
+    return updateObj
   }
 }
 
-module.exports = new Product()
+module.exports = Product

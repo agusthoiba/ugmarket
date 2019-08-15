@@ -2,11 +2,6 @@
 
 const router = express.Router()
 
-const Product = require('../../models/product')
-// var Category = require(config.base_dir + '/models/category');
-// var Band = require(config.base_dir + '/models/band');
-// var User = require(config.base_dir + '/models/user');
-
 router.get('/', async (req, res, next) => {
   let obj = {
     error: null,
@@ -28,7 +23,7 @@ router.get('/', async (req, res, next) => {
 
   let doc
   try {
-    doc = await Product.find(query, options)
+    doc = await res.locals.productModel.find(query, options)
 
     if (doc.length > 0) {
       obj.data.products = doc.map(val => {
@@ -68,7 +63,7 @@ router.get('/:id/:slug', async (req, res, next) => {
   }
 
   try {
-    const product = await Product.findOneById(prodId)
+    const product = await res.locals.productModel.findOne({prod_id: prodId})
 
     if (product) {
       obj.data.product = Object.assign({}, product, {

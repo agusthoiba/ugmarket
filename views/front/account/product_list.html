@@ -19,8 +19,8 @@
         <% for(var i in products) { %>
             <tr>
                 <td><%= products[i].prod_name %></td>
-                <td><%= products[i].category.cat_name %></td>
-                <td><%= products[i].band.band_name %></td>
+                <td><%- products[i]['category.cat_name'] %></td>
+                <td><%- products[i]['band.band_name'] %></td>
                 <td><img width="100" height="100" src="<%= products[i].thumbnail %>"></td>
                 <td><%= products[i].prod_condition == 'b' ? 'baru': 'bekas' %></td>
                 <td><%= products[i].is_visible ? 'publish' : 'draft' %></td>

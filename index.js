@@ -94,6 +94,20 @@ app.use(function (req, res, next) {
   return next()
 });
 
+const { connectDb, modelMid } = require('./middleware')
+
+/**
+ * dbInitialization
+ * @param {Object} app - app
+ */
+const connect = require('./connect')
+const connMysql = async() => {
+  app.locals.db = await connect()
+}
+
+connMysql()
+app.use(modelMid)
+
 app.use('/', require('./controllers/front/index'))
 app.use('/p', require('./controllers/front/product'))
 app.use('/auth', require('./controllers/front/auth'))
@@ -122,3 +136,20 @@ server.listen(config.port, () => {
 
   console.log('Ugmarket listening http://%s:%s', host, port)
 })
+
+const closeConnDb = async () => {
+  await app.locals.db.close()
+}
+/**
+ * stopServer
+ * @param {object} signal - signal object
+ * @returns {function} - stop signal
+ */
+const stopServer = () => {
+  closeConnDb
+  return server.close();
+};
+
+process.on('SIGINT', stopServer);
+process.on('SIGTERM', stopServer);
+

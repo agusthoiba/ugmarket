@@ -4,12 +4,12 @@ const Sequelize = require('sequelize');
 const _ = require('underscore')
 
 class User {
-  constructor () {
-    // console.log('db', db)
+  constructor (args) {
+    Object.assign(this, args)
 
     this.tableName = 'user'
 
-    this.schema = db.define('user', {
+    this.schema = this.db.define('user', {
       user_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
       user_email: { type: Sequelize.STRING, allowNull: false, unique: true },
       user_username: { type: Sequelize.STRING(100) },
@@ -29,7 +29,7 @@ class User {
       tableName: this.tableName
     })
 
-    // this.schema.sync();
+    this.schema.sync();
   }
 
   async create (payload) {

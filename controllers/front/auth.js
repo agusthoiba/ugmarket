@@ -3,8 +3,6 @@
 var router = express.Router();
 var crypto = require('crypto');
 
-var User = require(config.base_dir + '/models/user');
-
 router.post('/login', function (req, res, next) {
     var obj = { error: null, data: null };
 
@@ -30,10 +28,7 @@ router.post('/login', function (req, res, next) {
     }
 
     var query = {user_email: obj.data.email};
-
-    const user = new User()
-
-    user.findOne(query).then(doc => {
+    return res.locals.userModel.findOne(query).then(doc => {
         let payload = {
             user_email: obj.data.email,
             user_password: crypto.createHash('sha1').update(req.body.password).digest("hex")
@@ -60,7 +55,7 @@ router.post('/login', function (req, res, next) {
         } else {
             query.user_password = crypto.createHash('sha1').update(req.body.password).digest("hex");
 
-            user.findOne(query).then(docLogin => {
+            res.locals.userModel.findOne(query).then(docLogin => {
                 if (!docLogin) {
                     obj.error = 'Username and password is totally wrong. Please try again!';
                     return res.json(obj);
