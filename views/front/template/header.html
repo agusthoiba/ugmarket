@@ -1,178 +1,87 @@
-<!--============================================================
-  TOP NAV
-================================================================-->
-<div class="top_nav">
-  <div class="container">
-    <ul class="social pull-left">
-      <li><img height="25" width="auto" src="/image/telephone.png"> &nbsp; &nbsp; 021-2799256 </li>
-      <li>
-        <a href="#">
-          <img height="25" width="auto" src="/image/envelope.png"> &nbsp;
-          market@undergroundsync.com
-        </a>
-      </li>
-    </ul>
+<header class="body__header header__skeleton js-floatWrapper">
+  <div class="size1of1 seg-bar">
+    <span class="seg-bar__logo">
+      <a href="/">
+        <img src="/image/logo-ug-text075x.png">
+      </a>
+    </span>
+    <span class="phl seg-bar__segments">
+      <ul>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=pria">PRIA</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=wanita">WANITA</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=action-figure">ACTION
+            FIGURE</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=cd">CD</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=others">OTHERS</a>
+        </li>
+      </ul>
+    </span>
 
-    
-    <ul class="nav-icon pull-right">
-      <li class="dropdown">
-        <a href="#" data-toggle="dropdown">
-          <i class="fa fa-user fa-2x" aria-hidden="true"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <% if (session != undefined && session.user != undefined) { %>
-            <li>
-              <a href="/account/profile">Profile</a>
-              <a href="/account/product">Penjualan</a>
-              <!--a href="/account/pembelian">Pembelian</a-->
-              <a href="/auth/logout">Logout</a>
-            </li>
-          <% } else { %>
-            <li>
-              <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">
-                Login
-              </a>
-              <a href="javascript:void(0)" data-toggle="modal" data-target="#exampleModal">
-                Register
-              </a>
-            </li>
-          <% } %>
-        </ul>
-      </li>
-      <li class="dropdown">
-          <a href="#" data-toggle="dropdown" id="cart" class="cart"><i class="fa fa-shopping-cart"></i></a><span class="cart-count">1</span>
+    <span class="js-seg-bar__search seg-bar__search ptl pbl">
+      <form id="onsiteSearch" action="/catalog/" method="get" autocapitalize="on" autocorrect="on">
+        <input class="lfloat js-seg-bar-search__selSearchInput seg-bar-search__selSearchInput" name="q" type="text"
+          autocomplete="off" tmpplaceholder="Cari produk, tren, dan merek" placeholder="Cari produk, tren, dan merek"
+          style="font-style: italic;">
+        <!--div class="js-search-gender-select" data-gender="men"></div-->
+        <!--button class="rfloat seg-bar-search__selSearchButton" type="submit">
+          <i class="icon_loupe-dark"></i>
+          <span class="hdSearchButton"></span>
+        </button>
+        <div class="js-searchsuggest__popup searchsuggest__popup display-none"></div>
+        <div class="js-recent-search__popup recent-search__popup display-none ssg-item--hide" style="display: none;"
+        </div-->
+      </form>
+    </span>
 
-            <ul class="dropdown-menu shopping-cart-items" >
-              <div class="shopping">
-                <div class="shopping-header">
-                  <i class="fa fa-shopping-cart fa-2x cart-icon"></i>
-                  <div class="shopping-price"><span class="total-text">Total:</span><span class="price">Rp2.500.000</span>
-                  </div>
-                </div>
-                <li class="clearfix">
-                  <img src="/image/cart1.jpg" alt="item1" />
-                  <span class="item-name">1 x 250.000</span>
-                  <span class="item-price">T-Shirt</span>
+    <span class="seg-bar__utils rfloat txtCenter ptl pll">
+      <ul>
+        <li class="utils pll">
+          <i class="fa fa-user fa-2x js-seg-bar__account seg-bar__account" id="segbar_account" aria-hidden="true"></i>
+
+          <div class="account-menu__popup txtLeft  b-header-shadow js-custom-popup b-header__nonclickable" id="account_menu_popup" style="width: 200px;left: 817.5px;top: 57px;display:none">
+            <div class="account-menu__head pal pts txtUpper fontsizeM">
+              Selamat datang! </div>
+            <div class="account-menu__body phl pal fontsizeS txtUpper">
+              <ul role="menu" aria-labelledby="dLabel">
+                <% if (session != undefined && session.user != undefined) { %>
+                <li class="pbm">
+
+                  <a href="/account/profile" rel="follow">Profile</a>
+                  <a href="/account/product" rel="follow">Penjualan</a>
+                  <!--a href="/account/pembelian">Pembelian</a-->
+                  <a href="/auth/logout" rel="follow">Logout</a>
                 </li>
+                <% } else { %>
+                <li class="pbm">
+                  <a href="javascript:void(0)" data-toggle="modal" title="Masuk" data-target="#exampleModal">
+                    Masuk
+                  </a>
+                  <a href="javascript:void(0)" data-toggle="modal" title="Buat Akun" data-target="#exampleModal">
+                    Buat Akun
+                  </a>
+                </li>
+                <% } %>
               </ul>
-            </li>
-    </ul>
-
-        
-      
-        
-
-    
-  </div>
-</div>
-
-<!--============================================================
-  NAVIGATION
-=================================================================-->
-<div class="navigation">
-  <div class="container">
-    <a class="logo" href="/"><img src="/image/1.png"></a>
-
-    <div class="pull-right" style="width: 429px">
-      <!--<form class="search">
-        <input placeholder="search..." id="search-box" type="text" class="search-box" name="q" />
-        <label for="search-box"><i class="search-icon fa fa-search fa-lg"></i>
-        </label>
-        <input type="submit" id="search-submit" />
-      </form>-->
-
-      <form class="form-inline pull-left" >
-        <div class="form-group">
-          <label class="sr-only" for="exampleInputAmount"></label>
-          <div class="input-group col-sm-10" style="width: 300px;">
-            <input type="text" class="form-control" id="exampleInputAmount" placeholder="Search">
-            <div class="input-group-addon" style="background-color: #ef3d52;">
-              <i class="search-icon fa fa-search fa-lg"></i>
             </div>
           </div>
-        </div>
-        <button style="display:none" type="submit" class="btn btn-primary">Transfer cash</button>
-      </form>
 
-      <ul class="nav-icon pull-right">
-        <li class="dropdown">
-          <a href="#" data-toggle="dropdown" id="cart" class="cart"><i class="fa fa-shopping-cart"></i></a><span class="cart-count">1</span>
 
-            <ul class="dropdown-menu shopping-cart-items" >
-              <div class="shopping">
-                <div class="shopping-header">
-                  <i class="fa fa-shopping-cart fa-2x cart-icon"></i>
-                  <div class="shopping-price"><span class="total-text">Total:</span><span class="price">Rp2.500.000</span>
-                  </div>
-                </div>
-                <li class="clearfix">
-                  <img src="/image/cart1.jpg" alt="item1" />
-                  <span class="item-name">1 x 250.000</span>
-                  <span class="item-price">T-Shirt</span>
-                </li>
-              </ul>
-            </li>
-        </ul>
-      </div>
+
+        </li>
+      </ul>
+    </span>
+
+
   </div>
-</div>
-
-<!--============================================================
-  BOTTOM NAVIGATION
-=================================================================-->
-
-<div class="container">
-<ul class="nav nav-pills bottom-nav">
-  <li role="presentation" class="dropdown"><a href="/">Home</a></li>
-  <!--li role="presentation" class="dropdown"><a href="/new-arrival">New Arrival</a></li-->
-  <li role="presentation" class="dropdown"><a href="/band">Bands</a></li>
-  <li>
-    <a class="dropdown-toggle" data-toggle="dropdown" href="/pria" role="button" aria-haspopup="true" aria-expanded="false">
-      Pria<span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      <li><a href="/pria/kaos">Kaos</a></li>
-      <li><a href="/pria/jaket">Jaket</a></li>
-    </ul>
-    </li>
-
-    <li>
-      <a class="dropdown-toggle" data-toggle="dropdown" href="/wanita" role="button" aria-haspopup="true" aria-expanded="false"> Wanita <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a href="/wanita/kaos">Kaos</a></li>
-        <li><a href="/wanita/jaket">Jaket</a></li>
-      </ul>
-    </li>
-
-    <li role="presentation" class="dropdown">
-      <a class="dropdown-toggle" data-toggle="dropdown" href="/aksesoris" role="button" aria-haspopup="true" aria-expanded="false"> Aksesoris <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a href="/product">Topi</a></li>
-        <li><a href="/tas">Tas</a></li>
-      </ul>
-    </li>
-
-    <li role="presentation" class="dropdown">
-      <a href="/aksesoris"> Action Figure </a></a>
-    </li>
-
-    <li role="presentation" class="dropdown"><a href="#">Sale</a></li>
-    <li role="presentation" class="dropdown"><a href="#">Blog</a></li>
-
-</ul>
-</div>
-
-<div class="container">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="/">Home</a></li>
-      <!--<li class="breadcrumb-item"><a href="#">Library</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Data</li>
-      -->
-    </ol>
-  </nav>
-</div>
+</header>
 
 <% include ../../front/auth.html %>

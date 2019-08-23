@@ -16,19 +16,193 @@ p{
   font-size: 15px;
 }
 
+dd, fieldset, ol, ul {
+  margin: 0;
+  padding: 0;
+}
+dd, ol, ul {
+  list-style: none;
+  list-style-image: none;
+}
+
 .page .container {
   padding: 20px 0;
 }
 
-.top_nav{
-  background: #3c3c3c;
-  color: #ffffff;
+body {
+  color: #000;
+  font-size: 12px;
+  letter-spacing: .05em;
+  line-height: 1.6;
+  margin: 0;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
 }
 
-.top_nav .container{
+input[type=email], input[type=password], input[type=text], textarea {
+  -webkit-appearance: none;
+  padding: 8px;
+}
+
+input[type=email], input[type=password], input[type=text], select, textarea {
+  border: 1px solid #dfdfdf;
+  border-radius: 0;
+  transition: border .3s;
+  width: 100%;
+}
+
+button, input, select, textarea {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  background: #fff;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  outline: 0;
+}
+input {
+  line-height: normal;
+}
+button, input, optgroup, select, textarea {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+a.a-white {
+  color: #fff;
+}
+.b-header__segment-text {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+.txtUpper, table th {
+  text-transform: uppercase;
+}
+/*a {
+  color: #000;
+  text-decoration: none;
+}
+a {
+  background-color: transparent;
+}*/
+user agent stylesheet
+a:-webkit-any-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.body__header {
+  background-color: #000;
+  color: #fff;
+}
+
+.seg-bar{
+  /*line-height: 60px;
+  white-space: nowrap;*/
+  display: table;
   height: 60px;
-  line-height: 60px;
+  margin: auto;
+  width: 996px;
+}
+
+.size1of1{
+  float: none;
+}
+
+.seg-bar__logo, .seg-bar__segments {
   white-space: nowrap;
+  width: 1px;
+}
+
+.seg-bar__logo {
+  display: table-cell;
+  padding-right: 16px;
+  vertical-align: middle;
+}
+
+.seg-bar .seg-bar__search, .seg-bar .seg-bar__segments, .seg-bar .seg-bar__utils, .shop-select-bar .shop-select {
+  cursor: pointer;
+  display: table-cell;
+  vertical-align: middle;
+}
+.seg-bar .seg-bar__segments .segSelect, .seg-bar .seg-bar__shop-select .shop-select, .seg-bar .seg-bar__utils .utils {
+  cursor: pointer;
+  display: inline;
+  text-decoration: none;
+}
+
+.seg-bar .seg-bar__search {
+  position: relative;
+  width: 100%;
+}
+
+.seg-bar .seg-bar-search__selSearchInput {
+  background-color: #fff;
+  color: #404040;
+  padding: 2px;
+}
+
+.seg-bar__utils {
+  white-space: nowrap;
+  width: 145px;
+}
+
+.lfloat {
+  float: left;
+}
+.pal, .pbl, .pvl {
+  padding-bottom: 20px;
+}
+
+.pal, .ptl, .pvl {
+  padding-top: 20px;
+}
+
+.pal, .phl, .pll {
+  padding-left: 20px;
+}
+.pal, .phl, .prl {
+  padding-right: 20px;
+}
+
+.segSelect {
+  position: relative;
+}
+.txtCenter {
+  text-align: center;
+}
+
+.seg-bar__utils div {
+  white-space: normal;
+}
+.b-header-shadow {
+  box-shadow: -1px 3px 7px #c9c9c9;
+}
+.b-header__nonclickable {
+  cursor: default!important;
+}
+.js-custom-popup {
+  color: #000;
+  z-index: 100;
+}
+.js-custom-popup, .recent-search__popup {
+  background-color: #fff;
+  position: absolute;
+}
+.txtLeft {
+  text-align: left;
+}
+
+.b-header__padding {
+  height: 100%;
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  z-index: -100;
 }
 
 
@@ -430,16 +604,7 @@ DROPDOWN CART
   font-size: 16px;
   color: #ff1654;
   text-align: center;
-
-
 }
-
-
-
-span{
-  color: #000;
-}
-
 
 .clearfix:after {
   content: "";
@@ -450,8 +615,6 @@ span{
 .dropdown-menu {
       text-align: left;
       margin-left: -50px;
-
-
 }
 
 /*==================================*/

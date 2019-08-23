@@ -20,13 +20,20 @@ function submitAuth(e, obj) {
   })
 }
 
-/*$(function() {
+$(document).ready(function(){
+  console.log('im here?')
   $('.dropdown-toggle').dropdown();
 
-   $('.dropdown').hover(function() {
+  /*$('.dropdown').hover(function() {
       $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
     }, function() {
       $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(200);
     });
-  var s = skrollr.init({forceHeight: false});
-});*/
+  var s = skrollr.init({forceHeight: false});*/
+
+  $('#segbar_account').mouseenter(function() {
+    $('#account_menu_popup').show();
+  }).mouseleave(function() {
+    $('#account_menu_popup').hide();
+  });
+});
