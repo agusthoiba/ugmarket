@@ -15,7 +15,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-    working_directory: /home/sharecom
+    working_directory: ~/ugmarket
 
     steps:
       - checkout
@@ -40,7 +40,7 @@ jobs:
   deploy:
     machine:
         enabled: true
-    working_directory: /home/sharecom
+    working_directory: ~/ugmarket
     environment:
       APP_PORT: 4000
     steps:
