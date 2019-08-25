@@ -37,18 +37,18 @@ jobs:
       # run tests!
       # run: npm test
 
-    deploy:
-      machine:
-          enabled: true
-      working_directory: ~/home/ugmarket
-      environment:
-        APP_PORT: 4000
-      steps:
-        - checkout
-        - run:
-            name: Deploy Master to Digital Ocean
-            command: |
-              git push git@github.com:agusfantasy/ugmarket.git master
+  deploy:
+    machine:
+        enabled: true
+    working_directory: ~/home/ugmarket
+    environment:
+      APP_PORT: 4000
+    steps:
+      - checkout
+      - run:
+          name: Deploy Master to Digital Ocean
+          command: |
+            git push git@github.com:agusfantasy/ugmarket.git master
 
 workflows:
   version: 2
@@ -61,4 +61,7 @@ workflows:
           filters:
             branches:
               only: sequential-branch-filter
+
+
+
  
