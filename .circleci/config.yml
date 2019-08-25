@@ -33,32 +33,9 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
-      # run: npm test
-
-  deploy:
-    machine:
-        enabled: true
-    working_directory: ~/ugmarket
-    environment:
-      APP_PORT: 4000
-    steps:
-      - checkout
-      - run: git push git@github.com:agusfantasy/ugmarket.git master
-
-workflows:
-  version: 2
-  build-and-deploy:
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only: sequential-branch-filter
-
-
-
+      
+      # copy dist files to digitalocean
+      - run: scp -o StrictHostKeyChecking=no -r .~/ugmarket/* sharecom@167.71.222.8://home/sharecom/ugmarket/
  
+
+    
