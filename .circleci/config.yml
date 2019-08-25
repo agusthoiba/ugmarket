@@ -3,6 +3,7 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2
+
 jobs:
   build:
     docker:
@@ -35,3 +36,29 @@ jobs:
 
       # run tests!
       # run: npm test
+
+    deploy:
+      machine:
+          enabled: true
+      working_directory: ~/home/ugmarket
+      environment:
+        APP_PORT: 4000
+      steps:
+        - checkout
+        - run:
+            name: Deploy Master to Digital Ocean
+            command: |
+              git push git@github.com:agusfantasy/ugmarket.git master
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: sequential-branch-filter
+ 
