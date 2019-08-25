@@ -15,7 +15,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-    working_directory: ~/ugmarket
+    working_directory: /home/sharecom
 
     steps:
       - checkout
@@ -40,15 +40,12 @@ jobs:
   deploy:
     machine:
         enabled: true
-    working_directory: ~/home/ugmarket
+    working_directory: /home/sharecom
     environment:
       APP_PORT: 4000
     steps:
       - checkout
-      - run:
-          name: Deploy Master to Digital Ocean
-          command: |
-            git push git@github.com:agusfantasy/ugmarket.git master
+      - run: git push git@github.com:agusfantasy/ugmarket.git master
 
 workflows:
   version: 2
