@@ -41,7 +41,7 @@ jobs:
       - run:
           name: Deploy app to Digital Ocean Server via Docker
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh $DOCKER_USERNAME/ugmarket"
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./home/circleci/ugmarket/do_deploy.sh $DOCKER_USERNAME/ugmarket"
  
 
     
