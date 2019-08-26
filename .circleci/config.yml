@@ -35,7 +35,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       
       # run pull to docker
-      - run: ./do_deploy.sh
+      - run: cd ~/ugmarket && ./do_deploy.sh
  
 
     
