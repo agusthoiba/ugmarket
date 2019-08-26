@@ -35,13 +35,13 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
-            docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$TAG .
+            docker build -t $DOCKER_USERNAME/ugmarket .
             echo $DOCKER_PWD | docker login -u $DOCKER_USERNAME --password-stdin
-            docker push $DOCKER_USERNAME/$IMAGE_NAME:$TAG
+            docker push $DOCKER_USERNAME/ugmarket
       - run:
           name: Deploy app to Digital Ocean Server via Docker
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh $DOCKER_USERNAME/$IMAGE_NAME:$TAG"
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh $DOCKER_USERNAME/ugmarket"
  
 
     
