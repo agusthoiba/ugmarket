@@ -34,8 +34,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       
-      # copy dist files to digitalocean
-      - run: scp -o StrictHostKeyChecking=no -r ~/ugmarket/* sharecom@167.71.222.8://home/sharecom/ugmarket/
+      # run pull to docker
+      - run: ./do_deploy.sh
  
 
     
