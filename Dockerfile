@@ -14,4 +14,4 @@ COPY . .
 
 # Expose then start the server.
 EXPOSE ${SERVICE_PORT}
-CMD ["node", "./index.js"]
+CMD ["node", "./src/index.js"]

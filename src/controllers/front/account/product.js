@@ -8,13 +8,10 @@ var Band = require('../../../models/band')
 
 var fs = require('fs.extra');
 var crypto = require('crypto');
-// const Sequelize = require('sequelize');
-// const Op = Sequelize.Op
 const promisify = require('util').promisify
 const copyFile = promisify(fs.copyFile)
-// const asyncLan = require('async')
 const moment = require('moment')
-const upload = require('../../../upload')
+const upload = require('../../../helpers/upload')
 
 router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)

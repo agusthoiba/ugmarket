@@ -1,8 +1,5 @@
-'use strict'
-
 var fs = require('fs');
-var config = require('./config');
-//var lwip = require('lwip');
+var config = require('../config');
 var sharp = require('sharp');
 
 module.exports = new Upload();

@@ -24,7 +24,7 @@ const connect = async () => {
     return sequelize
   } catch (err) {
     console.error('Unable to connect to the database:', err);
-    setTimeout(connect, 1000);
+    setTimeout(connect, 10000);
   }
 }
 

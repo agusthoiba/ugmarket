@@ -15,6 +15,9 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
+    environment:
+      IMAGE_NAME: gust0/ugmarket
+
     working_directory: ~/ugmarket
 
     steps:
@@ -26,6 +29,17 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
+      
+      - run: 
+          name: "Setup custom environment variables"
+          command: |
+            echo 'export MY_ENV_VAR="FOO"' >> $BASH_ENV
+            echo 'export DB_HOST=$DB_HOST' >> $BASH_ENV
+            echo 'export DB_PORT=$DB_PORT' >> $BASH_ENV
+            echo 'export DB_NAME=$DB_NAME' >> $BASH_ENV
+            echo 'export DB_USERNAME=$DB_USERNAME >> $BASH_ENV
+            echo 'export DB_PASSWORD=$DB_PASSWORD >> $BASH_ENV
+            source $BASH_ENV
 
       - run: npm install
 
@@ -33,13 +47,19 @@ jobs:
           docker_layer_caching: true
 
       - run:
-          name: Build and push Docker image
+          name: Build Docker image
           command: |
             docker build -t $DOCKER_USERNAME/ugmarket .
-            echo $DOCKER_PWD | docker login -u $DOCKER_USERNAME --password-stdin
-            docker push $DOCKER_USERNAME/ugmarket
+
       - run:
-          name: Deploy app to Digital Ocean Server via Docker
+          name: Push Docker Image
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh $DOCKER_USERNAME/ugmarket"
+            echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
+            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:$CIRCLE_SHA1
+
+     - run:
+          name: Deploy Code
+          command: ./script/do_deploy.sh
  
