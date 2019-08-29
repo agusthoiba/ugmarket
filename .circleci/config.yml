@@ -59,7 +59,7 @@ jobs:
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$CIRCLE_SHA1
 
-     - run:
+      - run:
           name: Deploy Code
           command: ./script/do_deploy.sh
  
