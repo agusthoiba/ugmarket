@@ -62,5 +62,6 @@ jobs:
 
       - run:
           name: Deploy Code
-          command: ./script/do_deploy.sh
+          command: |
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./script/do_deploy.sh"
  
