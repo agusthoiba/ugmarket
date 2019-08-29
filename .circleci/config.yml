@@ -16,7 +16,7 @@ jobs:
       # - image: circleci/mongo:3.4.4
 
     environment:
-      IMAGE_NAME: gust0/ugmarket
+      IMAGE_NAME: ugmarket
 
     working_directory: ~/ugmarket
 
@@ -37,8 +37,8 @@ jobs:
             echo 'export DB_HOST=$DB_HOST' >> $BASH_ENV
             echo 'export DB_PORT=$DB_PORT' >> $BASH_ENV
             echo 'export DB_NAME=$DB_NAME' >> $BASH_ENV
-            echo 'export DB_USERNAME=$DB_USERNAME >> $BASH_ENV
-            echo 'export DB_PASSWORD=$DB_PASSWORD >> $BASH_ENV
+            echo 'export DB_USERNAME=$DB_USERNAME' >> $BASH_ENV
+            echo 'export DB_PASSWORD=$DB_PASSWORD' >> $BASH_ENV
             source $BASH_ENV
 
       - run: npm install
@@ -49,12 +49,13 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $DOCKER_USERNAME/ugmarket .
+            docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
 
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker build -t $DOCKER_USERNAME/$IMAGE_NAME:latest .
             docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
             docker push $IMAGE_NAME:latest
             docker push $IMAGE_NAME:$CIRCLE_SHA1
