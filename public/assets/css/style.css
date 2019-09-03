@@ -169,6 +169,10 @@ a:-webkit-any-link {
   padding-right: 20px;
 }
 
+.pam, .paml, .pbm, .pbml, .pvm, .pvml {
+  padding-bottom: 12px;
+}
+
 .segSelect {
   position: relative;
 }
@@ -231,9 +235,27 @@ a:-webkit-any-link {
   color: #f25f5c;
 }
 
+.js-arrow {
+  bottom: 100%;
+  content: " ";
+  position: absolute;
+  margin-left: -10px;
+  border: 10px solid transparent;
+  border-bottom-color: #fff;
+}
 
+.js-arrow-dark {
+  border-color: transparent transparent #6d6e6e;
+}
 
-
+.account-menu__head, .minicart__head, .wl-info__head {
+  background-color: #6d6e6e;
+  padding: 12px;
+  color: #fff;
+}
+.txtUpper, table th {
+  text-transform: uppercase;
+}
 
 .right{
   float: right;

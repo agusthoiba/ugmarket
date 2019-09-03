@@ -34,6 +34,8 @@ $(document).ready(function(){
   $('#segbar_account').mouseenter(function() {
     $('#account_menu_popup').show();
   }).mouseleave(function() {
-    $('#account_menu_popup').hide();
+    $('#account_menu_popup').mouseleave(function() {
+      $('#account_menu_popup').hide();
+    })
   });
 });
