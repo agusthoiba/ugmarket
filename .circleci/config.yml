@@ -34,12 +34,6 @@ jobs:
           name: "Setup custom environment variables"
           command: |
             echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
-            echo 'export MY_ENV_VAR="FOO"' >> $BASH_ENV
-            echo 'export DB_HOST=$DB_HOST' >> $BASH_ENV
-            echo 'export DB_PORT=$DB_PORT' >> $BASH_ENV
-            echo 'export DB_NAME=$DB_NAME' >> $BASH_ENV
-            echo 'export DB_USERNAME=$DB_USERNAME' >> $BASH_ENV
-            echo 'export DB_PASSWORD=$DB_PASSWORD' >> $BASH_ENV
             source $BASH_ENV
 
       - run: npm install
