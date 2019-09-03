@@ -70,7 +70,7 @@ app.use(function (err, req, res, next) {
 
 // Using the .html extension instead of having to name the views as *.ejs
 app.set('view engine', 'html')
-app.engine('html', ejs.renderFile())
+app.engine('html', ejs.renderFile)
 
 app.use(function (req, res, next) {
   res.locals.session = req.session
