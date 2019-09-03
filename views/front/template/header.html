@@ -56,20 +56,23 @@
               <ul role="menu" aria-labelledby="dLabel">
                 <% if (session != undefined && session.user != undefined) { %>
                 <li class="pbm">
-
                   <a href="/account/profile" rel="follow">Profile</a>
+                </li>
+                <li class="pbm">
                   <a href="/account/product" rel="follow">Penjualan</a>
+                </li>
+                <li class="pbm">
                   <!--a href="/account/pembelian">Pembelian</a-->
                   <a href="/auth/logout" rel="follow">Logout</a>
                 </li>
                 <% } else { %>
                 <li class="pbm">
-                  <a href="javascript:void(0)" data-toggle="modal" title="Masuk" data-target="#exampleModal">
+                  <a href="/auth/login" title="Masuk" >
                     Masuk
                   </a>
                 </li>
                 <li class="pbm">
-                  <a href="/register" data-toggle="modal" title="Buat Akun">
+                  <a href="/auth/register" title="Buat Akun">
                     Buat Akun
                   </a>
                 </li>
@@ -87,5 +90,3 @@
 
   </div>
 </header>
-
-<% include ../../front/auth.html %>

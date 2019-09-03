@@ -209,6 +209,68 @@ a:-webkit-any-link {
   z-index: -100;
 }
 
+.b-LoginContainer__fbOrLine span {
+  position: relative;
+  top: -18px;
+  padding: 0 10px;
+  background-color: #fff;
+  width: auto;
+  font-size: 20px;
+  color: #6d6e6e;
+}
+.b-LoginContainer__fbOrLine span, .b-register__fbOrLine span {
+  position: relative;
+  top: -18px;
+  padding: 0 10px;
+  background-color: #fff;
+  width: auto;
+  font-size: 20px;
+  color: #6d6e6e;
+}
+.b-LoginContainer__fb .fbLoginButton {
+  margin: 30px auto;
+  width: 321px;
+}
+.fbLoginButton, .fbLoginNotes {
+  margin: 30px auto;
+  width: 321px;
+  text-align: center;
+}
+
+.b-LoginContainer__fbOrLine {
+  position: relative;
+  border-top: 1px solid #6d6e6e;
+  height: 0;
+}
+.b-LoginContainer__fbOrLine, .b-register__fbOrLine {
+  position: relative;
+  border-top: 1px solid #6d6e6e;
+  height: 0;
+}
+.align-center {
+  text-align: center;
+}
+.mal, .mtl, .mvl {
+  margin-top: 20px;
+}
+.text-lower {
+  text-transform: lowercase;
+}
+#content, .box, .box-bd, .box-ft, .box-hd, .clearfix, .l-pageWrapper {
+  zoom: 1;
+}
+.box, .box-bd, .box-ft, .box-hd {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.box {
+  margin: 0 auto;
+  width: 371px;
+  position: relative;
+  display: block;
+}
+
 
 .top_nav a{
   color: #ffffff;
@@ -1040,7 +1102,7 @@ item
 
 .btn-default{
   font-family: 'Open Sans', sans-serif;
-  background-color: #ff1654;
+  background-color: #000000;
   color: #fff;
   transition:all 0.5s;
   -moz-transition:all 0.5s;
@@ -1049,8 +1111,8 @@ item
 }
 
 .btn-default:hover{
-  background-color: #ee0c48;
-  color: #fff;
+  background-color: #ffffff;
+  color: #000000;
 }
 
 

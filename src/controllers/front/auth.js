@@ -1,7 +1,28 @@
-'use strict'
+const router = express.Router();
+const crypto = require('crypto');
+const { getFbAccessToken, inspectFbToken } = require('../../helpers/facebookApi') ;
 
-var router = express.Router();
-var crypto = require('crypto');
+router.get('/login', function (req, res, next) {
+    const objView = { error: null, data: null };
+    return res.render('front/auth', objView);
+});
+
+router.get('/login/facebook', function (req, res, next) {
+    const fbConfig = req.app.locals.config.facebook;
+    const url = `${fbConfig.appOauthUrl}?client_id=${fbConfig.appId}&redirect_uri=${fbConfig.appRedirectUri}`;
+    // &state={"{st=state123abc,ds=123456789}"}`
+    return res.redirect(url)
+})
+
+router.get('/login/callback', async (req, res, next) => {
+    const fbConfig = req.app.locals.config.facebook;
+    const clientFb = {
+        id: fbConfig.appId,
+        secret: fbConfig.appClientSecret
+    }
+    const response = await getFbAccessToken(fbConfig.graphBaseUrl, clientFb, fbConfig.appRedirectUri, req.query.code);
+    return res.json(response.data);
+});
 
 router.post('/login', function (req, res, next) {
     var obj = { error: null, data: null };

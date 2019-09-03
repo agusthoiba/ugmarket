@@ -1,19 +1,28 @@
 require('dotenv').config()
 
+const env = process.env;
 
 const config = {
-    protocol: process.env.APP_PROTOCOL,
-    host: process.env.APP_HOST,
-    port: process.env.APP_PORT,
+    protocol: env.APP_PROTOCOL,
+    host: env.APP_HOST,
+    port: env.APP_PORT,
     db: {
-        "host": process.env.DB_HOST,
-        "port": process.env.DB_PORT,
-        "name": process.env.DB_NAME, 
-        "username": process.env.DB_USERNAME, 
-        "password": process.env.DB_PASSWORD
+        "host": env.DB_HOST,
+        "port": env.DB_PORT,
+        "name": env.DB_NAME, 
+        "username": env.DB_USERNAME, 
+        "password": env.DB_PASSWORD
     },
-    "file_host": "http://0.0.0.0:4000",
-    "file_dir": "/home/ugmarket/public/"
+    file_host: "http://0.0.0.0:4000",
+    file_dir: "/home/ugmarket/public/",
+    facebook: {
+        appOauthUrl: env.FB_APP_OAUTH_URL,
+        appId: env.FB_APP_ID,
+        appClientSecret: env.FB_APP_CLIENT_SECRET,
+        appRedirectUri: env.FB_APP_REDIRECT_URI,
+        graphBaseUrl: env.FB_GRAPH_BASEURL,
+        graphOauthTokenUrl: env.FB_GRAPH_OAUTH_TOKEN_URL
+    }
 }
 
 
