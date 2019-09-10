@@ -4,13 +4,23 @@
 
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">Login</h4>
-      </div>
+        <div class="row tab__container" style="margin: 0">
+            <div class="col-md-6 pvl txtCenter <%= data.urlActive === '/login' ? 'tab__active' : '' %>">
+              <a href="<%= data.urlActive === '/login' ?  '#' : '/auth/login' %>">
+                <h4 class="modal-title" id="exampleModalLabel">Login</h4>
+              </a>
+            </div>
+            <div class="col-md-6 pvl txtCenter <%= data.urlActive === '/register' ? 'tab__active' : '' %>">
+              <a href="<%= data.urlActive === '/register' ? '#' : '/auth/register' %>">
+                <h4 class="modal-title" id="exampleModalLabel">Register</h4>
+              </a>
+            </div>
+          </div>
+     
+
       <div class="modal-body">
 
-        <p id="auth_alert_msg" class="bg-danger"></p>
+        <p id="auth_alert_msg" class="bg-danger"><%= error %></p>
         
         <div class="fbLoginButton">
           <a href="/auth/login/facebook">
@@ -27,7 +37,7 @@
 
         <div class="box">
           <div class="login__form ptl pbxl">
-            <form id="auth_form">
+            <form id="auth_form" method="POST" action="<%= data.action %>">
               <div class="form-group">
                 <label for="auth-name" class="control-label"> Email address:</label>
                 <input type="email" class="form-control" name="email" id="auth_email" required>
@@ -36,14 +46,16 @@
                 <label for="auth-password" class="control-label"> Password:</label>
                 <input type="password" class="form-control" name="password" id="auth_password" required>
               </div>
+              <% if (data.urlActive === '/register') { %>
+                <div class="form-group">
+                  <label for="auth-password" class="control-label"> Confirm Password:</label>
+                  <input type="password" class="form-control" name="confirm_password" id="auth_password" required>
+                </div>
+              <% } %>
+              <button type="submit" class="btn btn-default"  style="width: 100%; margin: 10px 0;">Submit</button>
             </form>
           </div>
         </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-default" onclick="submitAuth(event, $(this))">Submit</button>
       </div>
     </div>
   </div>

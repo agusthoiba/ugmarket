@@ -271,6 +271,31 @@ a:-webkit-any-link {
   display: block;
 }
 
+.tab__container {
+  border-bottom: 1px solid #e6e6e6;
+}
+.container {
+  margin: 0 auto;
+}
+
+.tab__active {
+  border-bottom: 3px solid #000;
+  color: #000;
+}
+.tab__registerLogin {
+  font-size: 18px;
+  color: #6d6e6e;
+}
+.size1of2 {
+  width: 50%;
+}
+.txtCenter {
+  text-align: center;
+}
+.lfloat {
+  float: left;
+}
+
 
 .top_nav a{
   color: #ffffff;

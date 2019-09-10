@@ -35,7 +35,19 @@ async function inspectFbToken(graphFbUrl, tokenType, accessToken) {
   }
 }
 
+async function graphApiGet(graphFbUrl, path, accessToken, fields = []) {
+  const url = `${graphFbUrl}/${path}?fields=${fields.join(',')}&access_token=${accessToken}`;
+  try {
+    const response = await axios.get(url);
+    return response
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error graphApi facebook')
+  }
+}
+
 module.exports = {
   getFbAccessToken,
-  inspectFbToken
+  inspectFbToken,
+  graphApiGet
 };

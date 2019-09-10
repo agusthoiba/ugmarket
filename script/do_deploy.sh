@@ -6,6 +6,8 @@ CONTAINER_NAME="ugmarket-web"
 
 echo "Starting Ugmarket Web"
 
-docker run -d --restart=always --name $CONTAINER_NAME -p 80:4000 gust0/ugmarket
+#Check for running container & stop it before starting a new one
+docker rm $(docker stop $(docker ps -q -f name="$CONTAINER_NAME"))
+docker run -d --restart=always --env_file=.env --name $CONTAINER_NAME -p 80:4000 gust0/ugmarket
 
 echo 'success'
