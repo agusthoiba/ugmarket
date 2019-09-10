@@ -50,4 +50,13 @@ jobs:
           name: Deploy Code
           command: |
             ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh"
+
+workflows:
+  version: 2
+  build-master:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
  
