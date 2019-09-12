@@ -27,7 +27,6 @@ jobs:
           name: Setup Env
           command: |
             echo 'export IMAGE_NAME=ugmarket' >> $BASH_ENV
-            echo 'export BUILD_SHA1=$CIRCLE_SHA1' >> $BASH_ENV
             npm install
 
       - setup_remote_docker:
@@ -37,13 +36,12 @@ jobs:
           name: Build Docker image
           command: |
             docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
-            docker tag $DOCKER_USERNAME/$IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:$BUILD_SHA1
 
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push $DOCKER_USERNAME/$IMAGE_NAME:$BUILD_SHA1
+            docker push $DOCKER_USERNAME/$IMAGE_NAME
 
       - run:
           name: Deploy Code
