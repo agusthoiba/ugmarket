@@ -38,7 +38,7 @@ jobs:
           command: |
             docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
             docker tag $DOCKER_USERNAME/$IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:$BUILD_SHA1
-	
+
       - run:
           name: Push Docker Image
           command: |
