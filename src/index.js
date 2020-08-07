@@ -8,6 +8,7 @@ const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const expressValidator = require('express-validator')
+const morgan = require('morgan');
 
 global.config = config
 global.express = express
@@ -48,6 +49,8 @@ app.locals.currency = numeral
     description: 'Tempat jual beli online terpercaya di Indonesia, belanja murah, di Pasar Underground'
 } */
 
+
+app.use(morgan('combined'));
 app.use(express.static('public'));
 
 var cookieSession = require('cookie-session')
