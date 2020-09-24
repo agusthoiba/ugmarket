@@ -1220,6 +1220,14 @@ Pagination
   max-width: 22.5em;
 }
 
+.product-detail {
+  border-top: 1px solid #ddd;
+  display: flex;
+  flex-flow: row wrap;
+  min-height: 760px;
+  padding: 48px 0;
+}
+
 .product-detail-name {
   padding-bottom: 15px;
   font-size: 18px;
@@ -1254,4 +1262,44 @@ Pagination
   text-align: center;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.c-bl-breadcrumb {
+  padding: 24px 0 26px;
+}
+
+.c-bl-breadcrumb__list {
+  margin-left: 0;
+  font-size: 12px;
+  list-style: none;
+}
+
+.c-bl-breadcrumb__item {
+  float: left;
+  max-width: 350px;
+  padding-left: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.c-bl-breadcrumb__item .c-icon, .elysium .c-bl-breadcrumb__item a {
+  color: #999;
+}
+
+.c-icon {
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.u-mrgn-right--1 {
+  margin-right: 6px!important;
+}
+.u-mrgn-left--1 {
+  margin-left: 6px!important;
 }
