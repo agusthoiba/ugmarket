@@ -34,9 +34,9 @@
     "joi": "^8.4.2",
     "moment": "^2.24.0",
     "morgan": "^1.10.0",
-    "mysql2": "^1.6.5",
+    "mysql2": "^2.2.5",
     "numeral": "^2.0.6",
-    "sequelize": "^5.14.0",
+    "sequelize": "^6.3.5",
     "sharp": "^0.18.4",
     "slug": "^0.9.1",
     "underscore": "^1.8.3"
