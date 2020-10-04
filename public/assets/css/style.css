@@ -1264,6 +1264,10 @@ Pagination
   cursor: pointer;
 }
 
+.product-detail-pelapak {
+  border-top: 1px solid #ddd;
+}
+
 .c-bl-breadcrumb {
   padding: 24px 0 26px;
 }
