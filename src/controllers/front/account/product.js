@@ -216,12 +216,6 @@ async function cleanPost(body, tipe = 'create') {
       body.image_thumbnail = [body.image_thumbnail];
     }
 
-    if (typeof body.sizes == 'string') {
-      body.sizes = [body.sizes]
-    }
-
-    payload.prod_sizes_available = body.sizes.join(',')
-
     var current_date = (new Date()).valueOf().toString();
     var random = Math.random().toString();
     var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');

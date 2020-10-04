@@ -1244,12 +1244,13 @@ Pagination
 .product-detail-price {
   font-size: 32px;
   line-height: 1.2;
-  margin: 20px 0;
+  margin-top: 20px;
   color: #d71149;
 }
 
 .product-detail-size {
   margin-bottom: 30px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .detail-size {

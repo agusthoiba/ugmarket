@@ -13,8 +13,8 @@ const config = {
         "username": env.DB_USERNAME, 
         "password": env.DB_PASSWORD
     },
-    file_host: "http://0.0.0.0:4000",
-    file_dir: "/home/ugmarket/public/",
+    file_host: env.FILE_HOST,
+    file_dir:  env.FILE_DIR,
     facebook: {
         appOauthUrl: env.FB_APP_OAUTH_URL,
         appId: env.FB_APP_ID,

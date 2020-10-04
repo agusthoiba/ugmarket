@@ -1,7 +1,11 @@
 var router = express.Router();
 
 router.get('/', function (req, res, next) {
-	var obj = { error: null, data: null};
+	var obj = { 
+		error: null, 
+		data: null,
+		js: ['account_product']
+	};
 	var userId = req.session.user.id;
 	return res.locals.userModel.findOne({user_id: userId}).then(doc => {
 		obj.data = {user : doc};

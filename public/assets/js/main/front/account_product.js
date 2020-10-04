@@ -42,21 +42,21 @@ function uploadImage(files, obj) {
             canvas.height = options.height;
             ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
 
-            var nextIdx = $('.thumb-image').length;
-            $('.image-upload').prepend('<li class="thumb-image" id="thumb_image_' + nextIdx + '"></li>');
+            //$('.image-upload').prepend('<li class="thumb-image" id="thumb_image_0"></li>');
 
-            $('#thumb_image_' + nextIdx).append(img);
-            $('#thumb_image_' + nextIdx).find('.ori').css({ display: 'none' });
-            $('#thumb_image_' + nextIdx).append('<img class="preview">');
-            $('#thumb_image_' + nextIdx).append('<textarea style="display: none" name="image_ori">' + img.src + '"</textarea>');
+            $('#thumb_image_0').append(img);
+            $('#thumb_image_0').removeClass("pickfile-container")
+            $('#thumb_image_0').find('.ori').css({ display: 'none' });
+            $('#thumb_image_0').append('<img class="preview">');
+            $('#thumb_image_0').append('<textarea style="display: none" name="image_ori">' + img.src + '"</textarea>');
 
             var dataURL = canvas.toDataURL(file.type);
-            var imgPrev = $('#thumb_image_' + nextIdx).find('.preview')[0];
+            var imgPrev = $('#thumb_image_0').find('.preview')[0];
             imgPrev.style['vertical-align'] = 'baseline';
             imgPrev.src = dataURL;
             imgPrev.width = 100;
             imgPrev.heigth = 100;
-            $('#thumb_image_' + nextIdx).append('<textarea style="display: none" name="image_thumbnail">' + imgPrev.src + '"</textarea>');
+            $('#thumb_image_0').append('<textarea style="display: none" name="image_thumbnail">' + imgPrev.src + '"</textarea>');
           })
         }
       }

@@ -26,17 +26,18 @@
   <div class="form-group">
     <label for="name">Profile picture</label>
     <ul class="image-upload list-inline">
-      <li onclick="browseFile(event, $(this))" data-idx="" id="upload_image_prod" >
-          <% if (typeof data.user.image != 'undefined') { %>
-           <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
-          <img src="<%= data.user.image %>">
-          <% } else { %>
-            <div  style="text-align: center; width: 50%; line-height: 110px; margin-left: auto; margin-right: auto">
-              <input type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+      <input id="upload_image"  type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
+          
+          <li id="thumb_image_0" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this))" >
+              <% if (typeof data.user.image != 'undefined') { %>
+                <img src="<%= data.user.image %>">
+              <% }%>
+            </li>
+          
+            <!--div  style="text-align: center; width: 50%; line-height: 110px; margin-left: auto; margin-right: auto">
               <i style="color:#b7b7b7" class="fa fa-camera fa-2x" aria-hidden="true"></i>
-            </div>
-          <% } %>
-      </li>
+            </div-->
+          
     </ul>
   </div>
 

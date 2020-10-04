@@ -7,12 +7,21 @@ class Product {
   constructor (args) {
     Object.assign(this, args);
 
-    console.log('this.category ---', this.category.schema);
 
     this.tableName = 'product';
     this.schema = this.db.define('product', {
       prod_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
-      prod_user_id: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false },
+      prod_user_id: { 
+        type: Sequelize.INTEGER(11).UNSIGNED, 
+        allowNull: false,
+        references: {
+          // This is a reference to another model
+          model: this.user.schema,
+     
+          // This is the column name of the referenced model
+          key: 'user_id'
+        }
+      },
       prod_name: { type: Sequelize.STRING, allowNull: false },
       prod_slug: { type: Sequelize.STRING, allowNull: false },
       prod_cat_id: { 
@@ -62,6 +71,7 @@ class Product {
     })
 
     this.schema.sync()
+    this.schema.belongsTo(this.user.schema, { foreignKey: 'prod_user_id', targetKey: 'user_id', as: 'user' })
     this.schema.belongsTo(this.category.schema, { foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category' })
     this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
   }
@@ -111,6 +121,10 @@ class Product {
         where: query,
         raw: true,
         include: [
+          {
+            model: this.user.schema,
+            as: 'user'
+          },
           {
             model: this.category.schema,
             as: 'category'
