@@ -51,14 +51,6 @@
   </div>
 
   <div class="form-group">
-    <label for="name">MarketPlace</label>
-    <div class="input-group">
-      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/tokopedia.png"></div>
-      <input type="text" class="form-control" id="weight" name="weight"  value="" placeholder="<Tokopedia link>">
-    </div>
-  </div>
-
-  <div class="form-group">
     <label for="name">Upload Gambar Produk</label>
     <ul class="image-upload list-inline">
         <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, $(this))">
@@ -69,6 +61,24 @@
           <% } %>
         </li>
     </ul>
+  </div>
+
+  <div class="form-group">
+    <label for="name">MarketPlaces</label>
+    <div class="input-group">
+      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/tokopedia.png"></div>
+      <input type="url" class="form-control marketplace" id="mp-tokopedia" name="mp_tokopedia"  value="" placeholder="<Tokopedia link>">
+    </div>
+    
+    <div class="input-group">
+      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/bukalapak-logo-primary.svg"></div>
+      <input type="url" class="form-control marketplace" id="mp-bukalapak" name="mp_bukalapak"  value="" placeholder="<Bukalapak link>">
+    </div>
+    <div class="input-group">
+      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/shopee.png"></div>
+      <input type="url" class="form-control marketplace" id="mp-shopee" name="mp_shopee"  value="" placeholder="<Shopee link>">
+    </div>
+  </div>
   </div>
 
   <div class="form-group">

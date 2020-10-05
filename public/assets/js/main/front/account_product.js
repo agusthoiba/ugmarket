@@ -43,7 +43,7 @@ function uploadImage(files, obj) {
             ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
 
             //$('.image-upload').prepend('<li class="thumb-image" id="thumb_image_0"></li>');
-
+            
             $('#thumb_image_0').append(img);
             $('#thumb_image_0').removeClass("pickfile-container")
             $('#thumb_image_0').find('.ori').css({ display: 'none' });

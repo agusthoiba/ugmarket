@@ -238,6 +238,19 @@ async function cleanPost(body, tipe = 'create') {
     }
   }
 
+  payload.prod_marketplaces = []
+  if (body.mp_tokopedia) {
+      payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
+  }
+
+  if (body.mp_bukalapak) {
+      payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
+  }
+
+  if (body.mp_shopee) {
+      payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
+  }
+
   return new Promise((resolve, reject) => {
     return resolve(payload)
   })
