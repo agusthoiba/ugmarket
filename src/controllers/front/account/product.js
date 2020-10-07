@@ -180,7 +180,12 @@ function itemData() {
     stock: 1,
     images: [],
     thumbnails: [],
-    band: ''
+    band: '',
+    marketplaces: {
+      tokopedia: '',
+      bukalapak: '',
+      shopee: ''
+    },
   }
 }
 
