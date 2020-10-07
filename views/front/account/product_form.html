@@ -65,18 +65,21 @@
 
   <div class="form-group">
     <label for="name">MarketPlaces</label>
+
+    
     <div class="input-group">
       <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/tokopedia.png"></div>
-      <input type="url" class="form-control marketplace" id="mp-tokopedia" name="mp_tokopedia"  value="" placeholder="<Tokopedia link>">
+      <input type="url" class="form-control marketplace" id="mp-tokopedia" name="mp_tokopedia"  value="<%= data.item.marketplaces.tokopedia %>" placeholder="<Tokopedia link>">
+      
     </div>
     
     <div class="input-group">
-      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/bukalapak-logo-primary.svg"></div>
-      <input type="url" class="form-control marketplace" id="mp-bukalapak" name="mp_bukalapak"  value="" placeholder="<Bukalapak link>">
+      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/bukalapak.png"></div>
+      <input type="url" class="form-control marketplace" id="mp-bukalapak" name="mp_bukalapak"  value="<%= data.item.marketplaces.bukalapak %>" placeholder="<Bukalapak link>">
     </div>
     <div class="input-group">
       <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/shopee.png"></div>
-      <input type="url" class="form-control marketplace" id="mp-shopee" name="mp_shopee"  value="" placeholder="<Shopee link>">
+      <input type="url" class="form-control marketplace" id="mp-shopee" name="mp_shopee"  value="<%= data.item.marketplaces.shopee %>" placeholder="<Shopee link>">
     </div>
   </div>
   </div>

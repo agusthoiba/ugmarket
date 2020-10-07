@@ -35,10 +35,13 @@
             <h3>Marketplaces</h3>
             <div class="row" style="margin-right:0; margin-left: 0;">
               <ul>
-                <li style="margin-bottom: 10px;"><a href="https://tokopedia.com"><img width="auto" height="25" src="/marketplace/tokopedia.png"></a></li>
-                <li style="margin-bottom: 10px;"><a href="https://bukapalak.com"><img  width="auto" height="25" src="/marketplace/bukalapak-logo-primary.svg"></a></li>
-                <li style="margin-bottom: 10px;"><a href="https://blibli.com"><img  width="auto" height="25" src="/marketplace/blibli.png"></a></li>
-                <li style="margin-bottom: 10px;"><a href="https://shopee.com"><img  width="auto" height="25" src="/marketplace/shopee.png"></a></li>
+                <% 
+                  var mps = data.product.prod_marketplaces;
+                  if (mps && mps.length > 0) {
+                    for(var i=0 ; i < mps.length; i++) {
+                 %>
+                  <li style="margin-bottom: 10px;"><a target="_blank" href="<%= mps[i].url %>"><img width="auto" height="25" src="/marketplace/<%= mps[i].name %>.png"></a></li>
+                <% }} %>
               </ul>
             </div>
           </div>

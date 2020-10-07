@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js | bunyan",
+    "dev": "nodemon -e js,json,css,html ./src/index.js | bunyan",
     "dev:debug": "node --inspect-brk ./src/index.js | bunyan",
     "test": "LOG_LEVEL=fatal mocha ./test --recursive",
     "test:debug": "mocha --inspect-brk ./test --recursive",

@@ -72,11 +72,24 @@ router.get('/edit/:id', async (req, res, next) => {
       price: product.prod_price,
       weight: product.prod_weight,
       desc: product.prod_desc,
+      marketplaces: {
+        tokopedia: '',
+        bukalapak: '',
+        shopee: ''
+      },
       is_visible: product.prod_is_visible == 1,
       sizes: req.app.locals.strToArr(product.prod_sizes_available, ','),
       condition: product.prod_condition,
       stock: product.prod_stock,
       created_at: product.prod_created_at
+    }
+
+    let mps = [];
+    if (product.prod_marketplaces && product.prod_marketplaces.length > 0) {
+      mps = product.prod_marketplaces;
+      for(let i = 0; i < mps.length; i++) {
+        obj.data.item.marketplaces[mps[i].name] = mps[i].url
+      }
     }
 
     const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
