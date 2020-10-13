@@ -29,8 +29,8 @@
       <input id="upload_image"  type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
           
           <li id="thumb_image_0" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this))" >
-              <% if (typeof data.user.image != 'undefined') { %>
-                <img src="<%= data.user.image %>">
+              <% if (typeof data.user.user_avatar != 'undefined') { %>
+                <img class="preview" width="100" height="auto" src="/user/thumbnail/<%= data.user.user_avatar %>">
               <% }%>
             </li>
           
