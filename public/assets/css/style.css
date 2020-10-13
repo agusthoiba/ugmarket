@@ -1308,3 +1308,9 @@ Pagination
 .u-mrgn-left--1 {
   margin-left: 6px!important;
 }
+
+.avatar-image {
+  width: 100px;
+  height: auto;
+  border-radius: 50%;
+}

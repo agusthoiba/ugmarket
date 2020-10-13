@@ -1,3 +1,4 @@
 /node_modules/*
-/public/product/*
-/public/band/*
+/public/*
+/data/*
+.env

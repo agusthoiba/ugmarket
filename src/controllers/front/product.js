@@ -58,7 +58,8 @@ router.get('/:id/:slug', async (req, res, next) => {
   let obj = {
     error: null,
     data: {
-      product: null
+      product: null,
+      user: null
     }
   }
 
@@ -71,6 +72,13 @@ router.get('/:id/:slug', async (req, res, next) => {
         thumbnails: [],
         sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
       })
+
+      obj.data.user = {
+        name: product['user.user_name'],
+        avatar: product['user.user_avatar']
+      };
+
+      console.log('obj.data', obj.data)
 
       const pathThumb = `${config.file_host}/product/thumbnail`
       const pathLarge = `${config.file_host}/product/large`
