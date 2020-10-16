@@ -11,18 +11,22 @@ const modelMiddleware = (req, res, next) => {
     res.locals.categoryModel = new Category({
         db: req.app.locals.db
     });
+
+    res.locals.userModel = new User({
+        db: req.app.locals.db
+    });
+
     res.locals.productModel = new Product({
         db: req.app.locals.db,
         category: res.locals.categoryModel,
-        band: res.locals.bandModel
+        band: res.locals.bandModel,
+        user: res.locals.userModel
     });
 
     // req.locals.merchantModel = new Merchant({
     //    db: req.app.locals.db
     // });
-    res.locals.userModel = new User({
-        db: req.app.locals.db
-    });
+
     return next();
 }
 

@@ -1,16 +1,18 @@
 <% include ../front/template/head.html %>
 <% include ../front/template/header.html %>
 
+
 <div class="container">
+  <% include ../front/template/breadcumb.html %>
   <div class="row product-detail">
     <div class="col-md-6">
       <div class="container">
         <div class="row">
             <img class="img-responsive" src="<%= data.product.images[0] %>" width="427" height="auto" style="border: 1px solid #e8e8e8;">
         </div>
-        <div class="row">
+      <!--div class="row">
             <img class="img-responsive" src="<%= data.product.thumbnails[0] %>" width="107" height="auto" style="border: 1px solid #e8e8e8;">
-        </div>
+        </div-->
       </div>
     </div>
 
@@ -18,51 +20,57 @@
       <div class="row">
         <div class="col">
           <div class="product-detail-name">
-            <%= data.product.prod_name %>
+            <h1><%= data.product.prod_name %></h1>
+            <div class="product-detail-price">
+              <%= data.product.prod_price %>
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <div class="product-detail-price">
-            <%= data.product.prod_price %>
-          </div>
+          
         </div>
       </div>
  
       <div class="row">
         <div class="col">
           <div class="product-detail-size">
-            <h3>Size</h3>
-            <% if (data.product.sizes.length > 0)  { %>
-              <ul class="list-inline">
-                <% for (let i in data.product.sizes) { %>
-                <li class="detail-size" id="size-<%= data.product.sizes[i] %>">
-                  <%= data.product.sizes[i] %>
-                </li>
-                <% } %>
+            <h3>Marketplaces</h3>
+            <div class="row" style="margin-right:0; margin-left: 0;">
+              <ul>
+                <% 
+                  var mps = data.product.prod_marketplaces;
+                  if (mps && mps.length > 0) {
+                    for(var i=0 ; i < mps.length; i++) {
+                 %>
+                  <li style="margin-bottom: 10px;"><a target="_blank" href="<%= mps[i].url %>"><img width="auto" height="25" src="/marketplace/<%= mps[i].name %>.png"></a></li>
+                <% }} %>
               </ul>
-            <% } %>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="row">
-        <button type="button" class="btn btn-default">
-          <i class="fa fa-shopping-cart fa-lg"></i>
-          Add to cart
-        </button>
-        <button type="button" class="btn btn-primary">
-          Add to wishlist
-        </button>
-      </div>
 
       <div class="row">
         <div class="col">
           <div class="product-detail-desc">
             <h3>Detail</h3>
             <p><%= data.product.prod_desc %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="product-detail-pelapak">
+            <h3>Informasi Pelapak</h3>
+            <div class="row">
+              <div class="col-md-3">
+                <img src="/user/thumbnail/<%= data.user.avatar %>" class="avatar-image" >
+              </div>
+              <div class="col-md-9">
+                <h4><%= data.user.name %></h4>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>

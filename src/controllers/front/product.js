@@ -58,7 +58,8 @@ router.get('/:id/:slug', async (req, res, next) => {
   let obj = {
     error: null,
     data: {
-      product: null
+      product: null,
+      user: null
     }
   }
 
@@ -71,6 +72,13 @@ router.get('/:id/:slug', async (req, res, next) => {
         thumbnails: [],
         sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
       })
+
+      obj.data.user = {
+        name: product['user.user_name'],
+        avatar: product['user.user_avatar']
+      };
+
+      console.log('obj.data', obj.data)
 
       const pathThumb = `${config.file_host}/product/thumbnail`
       const pathLarge = `${config.file_host}/product/large`
@@ -91,21 +99,13 @@ router.get('/:id/:slug', async (req, res, next) => {
       }
 
       obj.data.product.prod_price = req.app.locals.currency(obj.data.product.prod_price).format('$0,0')
-      /* let thumbnail = `${pathThumb}/${product.prod_thumbnails}`
-
-      if (product.prod_thumbnails.includes(',')) {
-        let thumbArr = product.prod_thumbnails.split(',')
-        thumbnail = `${pathThumb}/${thumbArr[0]}`
-      }
-
-      const datum = Object.assign({}, val, { thumbnail: thumbnail }) */
     }
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product'
   }
 
-  // return res.json(obj)
+  //return res.json(obj)
 
   return res.render('front/product_detail', obj)
 })

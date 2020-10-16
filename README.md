@@ -1,16 +1,26 @@
 # ugmarket
-Undergroundsync Marketplace
+Lapak Undergroundsync Marketplace
 
+
+## System Requirement
+nodejs 10 https://nodejs.org/dist/latest-v10.x/
+mysql 8 https://dev.mysql.com/downloads/mysql/
 
 ## Installation
 ```bash
-git clone https://github.com/agusfantasy/ugmarket.git
+git clone https://github.com/agusthoiba/ugmarket.git
+cp .env.example .env
 npm install
 ```
 
 ## Usage
+Development
 ```bash
-node ./src/index.js
+npm run dev
+```
+Production
+```bash
+npm start
 ```
 
 ## Compatibility
@@ -18,5 +28,5 @@ node ./src/index.js
 
 ## License
 
-See [LICENSE](https://github.com/agusfantasy/ugmarket/blob/master/LICENSE).
+See [LICENSE](https://github.com/agusthoiba/ugmarket/blob/master/LICENSE).
 
