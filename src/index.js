@@ -10,6 +10,8 @@ const bodyParser = require('body-parser')
 const expressValidator = require('express-validator')
 const morgan = require('morgan');
 
+const CategoryModel = require('./models/category');
+
 global.config = config
 global.express = express
 global.express_validator = expressValidator
@@ -106,6 +108,11 @@ const { connectDb, modelMid } = require('./middleware')
 const connect = require('./connect')
 const connMysql = async() => {
   app.locals.db = await connect()
+  const catModel = new CategoryModel({
+    db: app.locals.db
+  });
+  app.locals.categoryList = await catModel.find();
+   // console.log(app.locals.categoryList)
 }
 
 connMysql()

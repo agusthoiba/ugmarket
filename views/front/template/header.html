@@ -1,92 +1,69 @@
-<header class="body__header header__skeleton js-floatWrapper">
-  <div class="size1of1 seg-bar">
-    <span class="seg-bar__logo">
-      <a href="/">
-        <img src="/image/logo-ug-text075x.png">
-      </a>
-    </span>
-    <span class="phl seg-bar__segments">
-      <ul>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=pria">PRIA</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=wanita">WANITA</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=action-figure">ACTION
-            FIGURE</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=cd">CD</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" href="/p?kategori=others">OTHERS</a>
-        </li>
-      </ul>
-    </span>
-
-    <span class="js-seg-bar__search seg-bar__search ptl pbl">
-      <form id="onsiteSearch" action="/catalog/" method="get" autocapitalize="on" autocorrect="on">
-        <input class="lfloat js-seg-bar-search__selSearchInput seg-bar-search__selSearchInput" name="q" type="text"
-          autocomplete="off" tmpplaceholder="Cari produk, tren, dan merek" placeholder="Cari produk, tren, dan merek"
-          style="font-style: italic;">
-        <!--div class="js-search-gender-select" data-gender="men"></div-->
-        <!--button class="rfloat seg-bar-search__selSearchButton" type="submit">
-          <i class="icon_loupe-dark"></i>
-          <span class="hdSearchButton"></span>
-        </button>
-        <div class="js-searchsuggest__popup searchsuggest__popup display-none"></div>
-        <div class="js-recent-search__popup recent-search__popup display-none ssg-item--hide" style="display: none;"
-        </div-->
-      </form>
-    </span>
-
-    <span class="seg-bar__utils rfloat txtCenter ptl pll">
-      <ul>
-        <li class="utils pll">
-          <i class="fa fa-user fa-2x js-seg-bar__account seg-bar__account" id="segbar_account" aria-hidden="true"></i>
-
-          <div class="account-menu__popup txtLeft  b-header-shadow js-custom-popup b-header__nonclickable" id="account_menu_popup" style="width: 200px;left: 1167px;top: 70px;display:none">
-            <div class="b-header__padding"></div>
-            <span class="js-arrow js-arrow-dark" style="left: 91.7031px;"></span>
-            <div class="account-menu__head pal pts txtUpper fontsizeM">
-              Selamat datang! </div>
-            <div class="account-menu__body phl pal fontsizeS txtUpper">
-              <ul role="menu" aria-labelledby="dLabel">
-                <% if (session != undefined && session.user != undefined) { %>
-                <li class="pbm">
-                  <a href="/account/profile" rel="follow">Profile</a>
-                </li>
-                <li class="pbm">
-                  <a href="/account/product" rel="follow">Penjualan</a>
-                </li>
-                <li class="pbm">
-                  <!--a href="/account/pembelian">Pembelian</a-->
-                  <a href="/auth/logout" rel="follow">Logout</a>
-                </li>
-                <% } else { %>
-                <li class="pbm">
-                  <a href="/auth/login" title="Masuk" >
-                    Masuk
-                  </a>
-                </li>
-                <li class="pbm">
-                  <a href="/auth/register" title="Buat Akun">
-                    Buat Akun
-                  </a>
-                </li>
-                <% } %>
-              </ul>
+<header>
+  <nav class="navbar navbar-inverse">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/image/logo-ug-text075x.png"></a>
+        </div>
+    
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+  
+          <% include navbar_category.html %>
+  
+          <form class="navbar-form navbar-left">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search">
             </div>
-          </div>
-
-
-
-        </li>
-      </ul>
-    </span>
-
-
-  </div>
-</header>
+            <button style="display: none" type="submit" class="btn btn-default">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+  
+  
+            
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <i class="fa fa-user fa-2x js-seg-bar__account seg-bar__account" id="segbar_account" aria-hidden="true"></i>
+                  <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                  <% if (session != undefined && session.user != undefined) { %>
+                      <li class="pbm">
+                        <a href="/account/profile" rel="follow">Profile</a>
+                      </li>
+                      <li class="pbm">
+                        <a href="/account/product" rel="follow">Penjualan</a>
+                      </li>
+                      <li class="pbm">
+                        <!--a href="/account/pembelian">Pembelian</a-->
+                        <a href="/auth/logout" rel="follow">Logout</a>
+                      </li>
+                      <% } else { %>
+                      <li class="pbm">
+                        <a href="/auth/login" title="Masuk" >
+                          Masuk
+                        </a>
+                      </li>
+                      <li class="pbm">
+                        <a href="/auth/register" title="Buat Akun">
+                          Buat Akun
+                        </a>
+                      </li>
+                      <% } %>
+                <!-- li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li-->
+  
+  
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+  </header>

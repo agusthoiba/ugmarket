@@ -1,4 +1,4 @@
-var router = express.Router();
+const router = express.Router();
 
 router.get('/', async (req, res, next) => {
   var obj = { error: null, data: { products: [] } }
