@@ -105,7 +105,6 @@ router.get('/edit/:id', async (req, res, next) => {
       limit: 20
     })
 
-    //return res.json(obj)
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product';
@@ -228,6 +227,19 @@ async function cleanPost(body, tipe = 'create') {
     })
   }
 
+  payload.prod_marketplaces = []
+  if (body.mp_tokopedia) {
+    payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
+  }
+
+  if (body.mp_bukalapak) {
+    payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
+  }
+  
+  if (body.mp_shopee) {
+    payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
+  }
+
   if (body.image_ori) {
     if (typeof body.image_ori == 'string') {
       body.image_ori = [body.image_ori];
@@ -256,18 +268,7 @@ async function cleanPost(body, tipe = 'create') {
     }
   }
 
-  payload.prod_marketplaces = []
-  if (body.mp_tokopedia) {
-      payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
-  }
-
-  if (body.mp_bukalapak) {
-      payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
-  }
-
-  if (body.mp_shopee) {
-      payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
-  }
+ 
 
   return new Promise((resolve, reject) => {
     return resolve(payload)
