@@ -13,7 +13,7 @@
             }
             %>%>
             <li class="<%= clsDropdown %>">
-                <a href="/p/<%= cats[i].cat_id %>-<%= cats[i].cat_slug %>" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <a href="/p/<%= cats[i].cat_slug %>" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <%= cats[i].cat_name %>
                     <% if (isDropdown) { %>
                         <span class="caret"></span>
@@ -23,7 +23,7 @@
                 <% if (catSecondLayer.length > 0) { %>
                     <ul class="dropdown-menu">
                         <% for (let j = 0; j < catSecondLayer.length; j++) { %>
-                            <li><a href="/p/<%= catSecondLayer[j].cat_id %>-<%= catSecondLayer[j].cat_slug %>"><%= catSecondLayer[j].cat_name %></a></li>
+                            <li><a href="/p/<%= catSecondLayer[j].cat_slug %>"><%= catSecondLayer[j].cat_name %></a></li>
                         <% } %>
                     </ul>
                 <% } %>

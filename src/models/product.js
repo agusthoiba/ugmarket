@@ -91,17 +91,22 @@ class Product {
           model: this.band.schema,
           as: 'band'
         }
-      ]
+      ],
+      limit: 20,
+      offset: 0
     }
 
-    if (options !== undefined && options && _.isEmpty(options)) {
+    if (options !== undefined && options && !_.isEmpty(options)) {
       if (options.sort !== undefined && options.sort) {
-        obj.order = options.sort
+        obj.order = [
+          [Object.keys(options.sort)[0], Object.values(options.sort)[0]]
+        ]
       }
-      if (options.limit !== undefined && options.limit && !isNaN(options.limit) && options.limit > 0) {
+
+      if (!isNaN(options.limit) && options.limit > 0) {
         obj.limit = options.limit
         if (options.page !== undefined && options.page && !isNaN(options.page) && options.page > 0) {
-          obj.offset = options.page - 1 * options.limit
+          obj.offset = (options.page - 1) * options.limit
         }
       }
     }
@@ -162,6 +167,22 @@ class Product {
       throw new Error(e)
     }
     return updateObj
+  }
+
+  /**
+   * Count 
+   * Be carefull in innodb storage engine count query dangerous!
+   * @param {object} filter filter
+   */
+  async count (filter) {
+    try {
+      const productAmount = await this.schema.count({
+        where: filter
+      });
+      return productAmount;
+    } catch (e) {
+      throw new Error(e)
+    };
   }
 }
 

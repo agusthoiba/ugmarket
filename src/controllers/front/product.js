@@ -1,50 +1,80 @@
 
 
 const router = express.Router()
+const URI = require("urijs");
 
-router.get('/', async (req, res, next) => {
+router.get('/:catSlug?', async (req, res, next) => {
+  let limit = 20;
   let obj = {
     error: null,
     data: {
       products: [],
       pagination: {
-        limit: 20,
+        baseUrl: req.originalUrl,
+        limit: limit,
         page: 1,
-        total_page: 10
+        totalPage: 1,
+        total: 0
       }
     }
+  }
+
+  
+
+  var url = new URI(req.originalUrl);
+  url.removeQuery("page");
+  
+  if (req.query.page) {
+    obj.data.pagination.baseUrl = url.toString();
   }
 
   var query = {
     prod_is_visible: 1
   }
 
-  var options = { sort: { created_at: 'desc' } }
+  if (req.params.catSlug) {
+    const findCat = req.app.locals.categoryList.find(cat => {
+      return cat.cat_slug == req.params.catSlug
+    });
+    query.prod_cat_id = findCat.cat_id;
+  }
 
-  let doc
-  try {
-    doc = await res.locals.productModel.find(query, options)
+  var options = { 
+    sort: { prod_created_at: 'DESC' },
+    limit: limit,
+    page: 0
+  };
 
-    if (doc.length > 0) {
-      obj.data.products = doc.map(val => {
-        const pathThumb = `${config.file_host}/product/thumbnail`
-        let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
+  let doc;
+  const prodTotal = await res.locals.productModel.count(query)
 
-        if (val.prod_thumbnails.includes(',')) {
-          let thumbArr = val.prod_thumbnails.split(',')
-          thumbnail = `${pathThumb}/${thumbArr[0]}`
-        }
+  if (prodTotal > 0) {
+    obj.data.pagination.total = prodTotal;
+    obj.data.pagination.totalPage = prodTotal < limit ? 1 : Math.floor(prodTotal / limit);
 
-        const datum = Object.assign({}, val, { thumbnail: thumbnail })
-
-        datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
-
-        return datum
-      })
+    if (prodTotal > limit) {
+      if (!isNaN(parseInt(req.query.page))) {
+        obj.data.pagination.page = parseInt(req.query.page);
+        options.page = obj.data.pagination.page;
+      }
     }
-  } catch (err) {
-    console.error(err)
-    obj.error = 'An Error occured while load your product'
+
+    doc = await res.locals.productModel.find(query, options)
+    obj.data.products = doc.map(val => {
+      const pathThumb = `${config.file_host}/product/thumbnail`
+      let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
+
+      if (val.prod_thumbnails.includes(',')) {
+        let thumbArr = val.prod_thumbnails.split(',')
+        thumbnail = `${pathThumb}/${thumbArr[0]}`
+      }
+
+      const datum = Object.assign({}, val, { thumbnail: thumbnail })
+
+      datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
+
+      return datum
+    })
   }
 
   // return res.json(obj)

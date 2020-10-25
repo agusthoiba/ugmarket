@@ -2,61 +2,59 @@
 <% include ../front/template/header.html %>
 
 <div class="container">
-<div class="row product-list">
-    <div class="col-md-2 sidebar">
-        <div class="group category">
-            <h3> Kategori </h3>
-            <ul>
-                <li>Kaos</li>
-                <li>Aksesoris</li>
-                <li>Vinil</li>
-            </ul>
+    <div class="row product-list">
+        <div class="col-md-2 sidebar">
+
+            <div class="group condition">
+                <h3> Kondisi </h3>
+                <input type="checkbox"> Baru <br />
+                <input type="checkbox"> Bekas
+            </div>
         </div>
 
-        <div class="group condition">
-            <h3> Kondisi </h3>
-            <input type="checkbox"> Baru <br />
-            <input type="checkbox"> Bekas
-        </div>
-    </div>
+        <div class="col-md-10">
 
-    <div class="col-md-10">
-        <section id="item">
-            <div class="container">
-
+            <div class="row">
+                <ul>
                 <% var products = data.products %>
                 <% for(var i in products) { %>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                        <div class="item">
-
-                            <a href="/p/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
-                                <img style="display: initial;" width="200" height="200" src="<%= products[i].thumbnail %>" class="img-responsive">
-                            </a>
-                            <div class="caption-item">
-                                <h3><%= products[i].prod_name %></h3>
-                                <p> <%= // products[i].user.user_name %></p>
-                                <h4><%= products[i].prod_price %></h4>
+                <li class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                    <div class="product-card">
+                        <div class="product-card-wrapper">
+                        <a href="/p/<%= products[i].prod_id %> /<%= products[i].prod_slug %>">
+                            <div class="product-image">
+                                <img src="<%= products[i].thumbnail %>">
                             </div>
+                            <div class="caption-item">
+                                <h4 style="font-size: 15px"><%= products[i]['band.band_name'] %></h4>
+                                <div><%= products[i].prod_price %></div>
+                            </div>
+                        </a>
                         </div>
                     </div>
+                    </li>
                 <% } %>
-            </div>
-
-        </section>
-
-        <div class="container">
-            <div class="pag">
-                <ul class="pagination">
-                    <li><a href="#">«</a></li>
-                    <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
-                    <!--<li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
-                    <li><a href="#">»</a></li>-->
                 </ul>
             </div>
+            <div class="row" style="text-align: center;">
+                    <ul class="pagination">
+                        <% if (data.pagination.page > 1) { %>
+                            <li><a href="<%= data.pagination.baseUrl %>?page=<%= data.pagination.page - 1 %>">«</a></li>
+                        <% } %>
+
+                        <% for (var j = 1; j <= data.pagination.totalPage; j++) { %>
+                            <li class="<%= data.pagination.page == j ? 'active': '' %>"><a href="<%= data.pagination.baseUrl %>?page=<%=j%>"><%= j %> <span class="sr-only">(current)</span></a></li>
+                        <% } %>
+
+                        <% if (data.pagination.page < data.pagination.totalPage) { %>
+                            <li><a href="<%= data.pagination.baseUrl %>?page=<%= data.pagination.page + 1 %>">»</a></li>
+                        <% } %>
+                    </ul>
+            </div>
+
         </div>
+
+        
     </div>
 </div>
 </div>
