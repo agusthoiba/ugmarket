@@ -2,6 +2,7 @@
 <% include ../front/template/header.html %>
 
 <div class="container">
+    <% include ../front/template/breadcumb.html %>
     <div class="row product-list">
         <div class="col-md-2 sidebar">
 
@@ -21,7 +22,7 @@
                 <li class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
                     <div class="product-card">
                         <div class="product-card-wrapper">
-                        <a href="/p/<%= products[i].prod_id %> /<%= products[i].prod_slug %>">
+                        <a href="/p/<%= products[i]['category.cat_slug'] %>/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
                             <div class="product-image">
                                 <img src="<%= products[i].thumbnail %>">
                             </div>

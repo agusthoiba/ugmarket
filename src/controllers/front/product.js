@@ -15,11 +15,12 @@ router.get('/:catSlug?', async (req, res, next) => {
         page: 1,
         totalPage: 1,
         total: 0
-      }
+      },
+      breadcumb: [
+        { path: '/p', name: 'Semua Produk'},
+      ]
     }
   }
-
-  
 
   var url = new URI(req.originalUrl);
   url.removeQuery("page");
@@ -36,6 +37,7 @@ router.get('/:catSlug?', async (req, res, next) => {
     const findCat = req.app.locals.categoryList.find(cat => {
       return cat.cat_slug == req.params.catSlug
     });
+    obj.data.breadcumb.push({ path: '', name: findCat.cat_name});
     query.prod_cat_id = findCat.cat_id;
   }
 
@@ -81,7 +83,7 @@ router.get('/:catSlug?', async (req, res, next) => {
   return res.render('front/product_list', obj)
 })
 
-router.get('/:id/:slug', async (req, res, next) => {
+router.get('/:catSlug/:id/:slug', async (req, res, next) => {
   // var userId = req.session.user.id
   const prodId = parseInt(req.params.id)
 
@@ -89,7 +91,10 @@ router.get('/:id/:slug', async (req, res, next) => {
     error: null,
     data: {
       product: null,
-      user: null
+      user: null,
+      breadcumb: [
+        { path: '/p', name: 'Semua Produk' }
+      ]
     }
   }
 
@@ -108,7 +113,15 @@ router.get('/:id/:slug', async (req, res, next) => {
         avatar: product['user.user_avatar']
       };
 
-      console.log('obj.data', obj.data)
+      obj.data.breadcumb.push({
+        path: `/p/${product['category.cat_slug']}`,
+        name: product['category.cat_name'],
+      })
+
+      obj.data.breadcumb.push({
+        path: '',
+        name: product.prod_name,
+      })
 
       const pathThumb = `${config.file_host}/product/thumbnail`
       const pathLarge = `${config.file_host}/product/large`

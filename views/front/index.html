@@ -57,7 +57,7 @@
         <% } else {
             for(var i in products) { %>
             <div class="col-md-3" id="item">
-              <a href="/p/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
+              <a href="/p/<%= products[i]['category.cat_slug'] + '/' + products[i].prod_id + '/' + products[i].prod_slug %>">
                   <img src="<%= products[i].thumbnail %>">
               </a>
               <h3><%= products[i].prod_name %></h3>
@@ -115,7 +115,7 @@
     <div class="row">
 
       <h2>Bergabung di marketplace kami</h2>
-      <a href="#" class="join-btn">Join</a>
+      <a href="/auth/register" class="join-btn">Join</a>
 
 
     </div>

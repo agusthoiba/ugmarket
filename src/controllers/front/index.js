@@ -3,7 +3,7 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   var obj = { error: null, data: { products: [] } }
   var query = { prod_is_visible: 1 }
-  var options = { sort: { prod_id: 'desc' }, limit: 20 }
+  var options = { sort: { prod_id: 'desc' }, limit: 8 }
   const doc = await res.locals.productModel.find(query, options)
   
   if (doc.length > 0) {

@@ -760,6 +760,9 @@ text-align: center;
 
 .product-list {
     margin-top: 15px;
+    border-top: 1px solid #ddd;
+    padding-top: 32px!important;
+    padding-bottom: 32px!important;
 }
 
 .product-list li{
