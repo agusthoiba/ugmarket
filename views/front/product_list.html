@@ -4,16 +4,43 @@
 <div class="container">
     <% include ../front/template/breadcumb.html %>
     <div class="row product-list">
-        <div class="col-md-2 sidebar">
+        <div class="col-md-3 sidebar">
 
             <div class="group condition">
                 <h3> Kondisi </h3>
-                <input type="checkbox"> Baru <br />
-                <input type="checkbox"> Bekas
+                <input type="checkbox" name="conidtion"> Baru <br />
+                <input type="checkbox" name="conidtion"> Bekas
+            </div>
+
+            <div class="group filter categories">
+                <h3> Kategori </h3>
+                <ul>
+                    <% 
+                        const cats = locals.categoryList;
+                        for (let i = 0; i < cats.length; i++) {
+                    %>
+                        <% if (cats[i].cat_parent_id == 0) { %>
+                            <li>
+                                <input type="checkbox" name="categories"> <span style="font-size: 15px; font-weight: bold;"> <%= cats[i].cat_name %> </span>  
+                                <% const catSecondLayer = cats.filter(function(cat) {return cat.cat_parent_id == cats[i].cat_id  } ); %>
+                                <% if (catSecondLayer.length > 0) { %>
+                                    <ul style="margin-left: 10px;">
+                                        <% for (let j = 0; j < catSecondLayer.length; j++) { %>
+                                            <li>
+                                                <input type="checkbox" name="categories" data-href="/p/<%= catSecondLayer[j].cat_slug %>">
+                                                <%= catSecondLayer[j].cat_name %>
+                                            </li>
+                                        <% } %>
+                                    </ul>
+                                <% } %>
+                            </li>
+                        <% } %>
+                    <% } %>
+                </ul>
             </div>
         </div>
 
-        <div class="col-md-10">
+        <div class="col-md-9">
 
             <div class="row">
                 <ul>

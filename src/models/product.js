@@ -89,7 +89,8 @@ class Product {
         },
         {
           model: this.band.schema,
-          as: 'band'
+          as: 'band',
+          required: true
         }
       ],
       limit: 20,
@@ -177,7 +178,14 @@ class Product {
   async count (filter) {
     try {
       const productAmount = await this.schema.count({
-        where: filter
+        where: filter,
+        include: [
+          {
+            model: this.band.schema,
+            as: 'band',
+            required: true
+          }
+        ]
       });
       return productAmount;
     } catch (e) {

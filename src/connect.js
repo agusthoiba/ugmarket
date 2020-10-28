@@ -17,7 +17,7 @@ const connect = async () => {
       idle: 10000
     },
     // disable logging; default: console.log
-   logging: false
+   logging: true
   });
 
   try {

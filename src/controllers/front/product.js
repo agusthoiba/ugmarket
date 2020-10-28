@@ -2,6 +2,7 @@
 
 const router = express.Router()
 const URI = require("urijs");
+const { Op } = require("sequelize");
 
 router.get('/:catSlug?', async (req, res, next) => {
   let limit = 20;
@@ -39,6 +40,22 @@ router.get('/:catSlug?', async (req, res, next) => {
     });
     obj.data.breadcumb.push({ path: '', name: findCat.cat_name});
     query.prod_cat_id = findCat.cat_id;
+  }
+
+  if (req.query.search && req.query.search.length > 2) {
+    query[Op.or] = [
+      {
+        '$band.band_name$': {
+          [Op.like]: `%${req.query.search}%`
+        },
+      },
+      {
+        prod_name: {
+          [Op.like]:`%${req.query.search}%`
+        }
+      }
+    ];
+    obj.data.breadcumb.push({ path: '', name: req.query.search});
   }
 
   var options = { 

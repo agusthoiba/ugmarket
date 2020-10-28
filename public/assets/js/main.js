@@ -21,8 +21,12 @@ function submitAuth(e, obj) {
 }
 
 $(document).ready(function(){
-  console.log('im here?')
+  console.log('document ready')
   $('.dropdown-toggle').dropdown();
+
+  var uri = new URI(window.location.href);
+  var uriSearch = uri.search(true);
+  $('#search-input').val(uriSearch.search);
 
   /*$('.dropdown').hover(function() {
       $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
@@ -38,4 +42,11 @@ $(document).ready(function(){
       $('#account_menu_popup').hide();
     })
   });
+
+  $('#search').submit(function(e) {
+    e.preventDefault()
+
+    var searchStr = $('#search-input').val();
+    window.location.assign('/p?search=' + searchStr);
+  })
 });
