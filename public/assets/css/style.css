@@ -721,11 +721,6 @@ DROPDOWN CART
   clear: both;
 }
 
-.dropdown-menu {
-      text-align: left;
-      margin-left: -50px;
-}
-
 /*==================================*/
 
 
@@ -1256,12 +1251,12 @@ Pagination
 
 .home-banner h1 {
   color: #ffffff;
-  font-size: 3.5em;
+  font-size: 30p;
 }
 
 .home-banner p {
   color: #ffffff;
-  font-size: 1.625em;
+  font-size: 20px;
   line-height: 1.38462em;
   font-weight: 600;
   margin: 0.75em auto;
