@@ -8,6 +8,7 @@ router.get('/:catSlug?', async (req, res, next) => {
   let limit = 20;
   let obj = {
     error: null,
+    js: ['product_list'],
     data: {
       products: [],
       pagination: {
@@ -19,12 +20,30 @@ router.get('/:catSlug?', async (req, res, next) => {
       },
       breadcumb: [
         { path: '/p', name: 'Semua Produk'},
-      ]
+      ],
+      uri: {
+        path: '',
+        params: '',
+        query: {}
+      },
+      catSlug: req.params.catSlug
     }
   }
 
   var url = new URI(req.originalUrl);
   url.removeQuery("page");
+
+  obj.data.uri.query = url.search(true)
+
+  if (obj.data.uri.query.condition != undefined) {
+    obj.data.uri.query.condition = (obj.data.uri.query.condition).split(',')
+  }
+
+  if (obj.data.uri.query.categories != undefined) {
+    obj.data.uri.query.categories = ((obj.data.uri.query.categories).split(',')).map(catId => {
+      return parseInt(catId)
+    })
+  }
   
   if (req.query.page) {
     obj.data.pagination.baseUrl = url.toString();
@@ -56,6 +75,47 @@ router.get('/:catSlug?', async (req, res, next) => {
       }
     ];
     obj.data.breadcumb.push({ path: '', name: req.query.search});
+  }
+
+  if (req.query.condition) {
+    const conditions = req.query.condition.split('')
+    if (conditions.indexOf('b') > -1 || conditions.indexOf('s') > -1) {
+      query.prod_condition = {
+        [Op.or]: req.query.condition.split(',')
+      }
+    }
+  }
+
+  let catChilds;
+  if (req.query.categories) {
+    let filterCategories = [];
+    const reqCategories = req.query.categories.split(',');
+    const filterCatParent = req.app.locals.categoryList.filter(cat => {
+      return cat.cat_parent_id === 0
+    })
+    const filterCatChild = req.app.locals.categoryList.filter(cat => {
+      return cat.cat_parent_id > 0
+    })
+
+
+    for (let i = 0; i < reqCategories.length; i++) {
+      if (!isNaN(parseInt(reqCategories[i]))) {
+        if ((_.pluck(filterCatParent, 'cat_id')).includes(parseInt(reqCategories[i]))) {
+          catChilds = req.app.locals.categoryList.filter(cat => {
+            return cat.cat_parent_id === parseInt(reqCategories[i])
+          })
+          const catChildIds = _.pluck(catChilds, 'cat_id')
+          filterCategories.push(catChildIds)
+        }
+        filterCategories.push(parseInt(reqCategories[i]));
+      }
+    }
+
+    if (filterCategories.length > 0) {
+      query.prod_cat_id = {
+        [Op.or]: filterCategories
+      }
+    }
   }
 
   var options = { 
