@@ -37,7 +37,7 @@
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.5",
     "numeral": "^2.0.6",
-    "semantic-release": "^17.1.2",
+    "semantic-release": "^19.0.3",
     "sequelize": "^6.3.5",
     "sharp": "^0.26.1",
     "slug": "^0.9.1",
