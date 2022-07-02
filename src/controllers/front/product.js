@@ -30,7 +30,8 @@ router.get('/', async (req, res, next) => {
         const pathThumb = `${config.file_host}/product/thumbnail`
         let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
 
-        if (val.prod_thumbnails.includes(',')) {
+        console.log('val', val)
+        if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
           let thumbArr = val.prod_thumbnails.split(',')
           thumbnail = `${pathThumb}/${thumbArr[0]}`
         }

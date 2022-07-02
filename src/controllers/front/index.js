@@ -18,7 +18,13 @@ router.get('/', async (req, res, next) => {
       return val
     })
   }
-  // return res.json(doc);
+
+
+  console.log('req.query.json', req.query.json);
+  if (req.query.json == '1') {
+    return res.json(doc);
+  }
+  
   return res.render('front/index', obj)
 })
 

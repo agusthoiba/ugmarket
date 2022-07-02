@@ -1,11 +1,11 @@
-<% include ../front/template/head.html %>
-<% include ../front/template/header.html %>
+<%- include ("../front/template/head.html") %>
+<%- include ("../front/template/header.html") %>
 
 
 <section>
   <div class="home-banner">
       <div class="content">
-        <h1> Merchandise Music and Action Figure Marketplace </h1>
+        <h1> Merchandise Music Marketplace </h1>
         <p>Buy, sell and trade your music merchandise with fellow music fans</p>
       </div>
   </div>
@@ -15,7 +15,7 @@
     <div class="row">
       <div class="col-md-4">
         <a href="/p">
-          <img src="/image/formen-373x290.jpg">
+          <img src="/image/Widget - Local Band.jpg">
           <div class="discount">
             <!--h2>Men</h2-->
           </div>
@@ -23,7 +23,7 @@
       </div>
 
       <div class="col-md-4">
-        <img src="/image/forwomen-373x290.jpg">
+        <img src="/image/Widget - Rock Merch.jpg">
         <div class="discount">
           <!--h2>Women</h2-->
         </div>
@@ -44,9 +44,12 @@
   Discount Product
   ========================================-->
 
-  <section id="product-new">
-    <h3>Product Baru</h3>
+  <div>
     <div class="container">
+        <h3 class="title">Product Baru</h3>
+    </div>
+
+    <div class="container home-product-container">
 
       <div class="row">
           
@@ -56,22 +59,29 @@
             No product found
         <% } else {
             for(var i in products) { %>
-            <div class="col-md-3" id="item">
-              <a href="/p/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
-                  <img src="<%= products[i].thumbnail %>">
-              </a>
-              <h3><%= products[i].prod_name %></h3>
-              <p>Rp. <%= products[i].prod_price %></p>
-          </div>
+              <div class="col-sm-3 product-list-item">
+                <a href="/p/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
+                  <div class="card">
+                    <img src="/product/thumbnail/<%= products[i].prod_thumbnails %>" class="card-img-top">
+                    <div class="card-body">
+                      <h5 class="card-title" style="font-size: 1.2rem;"><%= products[i]["band.band_name"] %></h5>
+                      <h5 class="card-subtitle" style="font-size: 1rem;"><%= products[i].prod_name %></h5>
+                      <p class="card-text">Rp. <%= products[i].prod_price %></p>
+                    </div>
+                  </div>
+                </a>
+              </div>
           <% } %>
         <% } %>
       </div>
 
-    <div class="pull-right" style="margin-top: 15px">
-        <a class="btn btn-lg btn-primary" href="/p">Lihat Semua Produk</a>
+      <div class="row">
+        <div class="btn-more">
+          <a class="btn btn-lg btn-outline-dark" href="/p">Lihat Semua Produk</a>
+        </div>
+      </div>
     </div>
   </div>
-</section>
 
 
 <!--<section id="shirt">
@@ -110,15 +120,16 @@
   </section>-->
 
 
-<section id="join">
+<!-- section id="join">
   <div class="container">
     <div class="row">
 
       <h2>Bergabung di marketplace kami</h2>
       <a href="#" class="join-btn">Join</a>
 
-
     </div>
-  </section>
+  </div>
+</section -->
 
-  <% include ../front/template/footer.html %>
+
+<%- include ("../front/template/footer.html") %>

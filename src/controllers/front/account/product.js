@@ -33,7 +33,7 @@ router.get('/', async (req, res, next) => {
         val.is_visible = val.prod_is_visible == 1
         const pathThumb = `${config.file_host}/product/thumbnail`
         val.thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-        if (val.prod_thumbnails.includes(',')) {
+        if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
           let thumbArr = val.prod_thumbnails.split(',')
           val.thumbnail = `${pathThumb}/${thumbArr[0]}`
         }
@@ -92,11 +92,13 @@ router.get('/edit/:id', async (req, res, next) => {
       }
     }
 
-    const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
+    if (product.prod_thumbnails && product.prod_thumbnails != null) {
+      const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
 
-    obj.data.item.thumbnails = thumbs.map(val => {
-      return `${config.file_host}/product/thumbnail/${val}`
-    })
+      obj.data.item.thumbnails = thumbs.map(val => {
+        return `${config.file_host}/product/thumbnail/${val}`
+      })
+    }
 
     obj.data.categories = await res.locals.categoryModel.find()
     obj.data.bands = await res.locals.bandModel.find({}, {
@@ -239,12 +241,14 @@ async function cleanPost(body, tipe = 'create') {
     var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
     var fileName = payload.prod_slug + '-' + randomName;
 
+    console.log('payload bfr upload', payload)
     try {
       const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
       payload.prod_images = oris.join(',')
 
       const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
       payload.prod_thumbnails = thumbs.join(',')
+
 
       return new Promise((resolve, reject) => {
         return resolve(payload)
@@ -255,6 +259,8 @@ async function cleanPost(body, tipe = 'create') {
       })
     }
   }
+
+  
 
   payload.prod_marketplaces = []
   if (body.mp_tokopedia) {
@@ -321,6 +327,7 @@ async function uploadImageBase(path, val, fileName) {
   try {
     img = await upload.createImageBase64(val, filePathName)
   } catch (err) {
+    console.error('err in uploadImageBase', err);
     return new Promise((resolve, reject) => {
       return reject(err)
     })
@@ -341,11 +348,14 @@ async function uploadImageBase(path, val, fileName) {
 
 async function processMultipleUpload(path, images, filename) {
   let imgs = []
+  console.log('images, filename', images, filename)
   try {
     for (let image of images) {
       const img = await uploadImageBase(path, image, filename)
+      // console.log('img upload base', img)
       imgs.push(img)
     }
+    console.log('imgss')
     return new Promise((resolve, reject) => {
       return resolve(imgs)
     })
@@ -381,7 +391,7 @@ async function processMultipleUpload(path, images, filename) {
 async function copyResize(src, name) {
   try {
     const destLarge = config.file_dir + 'product/large/' + name
-    await copyFile(src, destLarge, { replace: false })
+    await copyFile(src, destLarge)
     const imgLarge = await upload.resize(src, destLarge, 500, 1000)
 
     // const destMedium = config.file_dir + 'product/medium/'+ name

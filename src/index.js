@@ -7,12 +7,10 @@ const underscore = require('underscore')
 const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
-const expressValidator = require('express-validator')
 const morgan = require('morgan');
 
 global.config = config
 global.express = express
-global.express_validator = expressValidator
 global._ = underscore
 
 global.slug = require('slug')
@@ -42,6 +40,8 @@ numeral.register('locale', 'id', {
 numeral.locale('id')
 
 app.locals.currency = numeral
+app.locals.config = config;
+
 
 
 /* locals.meta = {
@@ -82,8 +82,6 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
-
-app.use(expressValidator())
 
 app.use(function (req, res, next) {
   var path = req.path.split('/')
