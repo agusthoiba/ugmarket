@@ -48,7 +48,10 @@ router.get('/', async (req, res, next) => {
     obj.error = 'An Error occured while load your product'
   }
 
-  // return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
+
   return res.render('front/product_list', obj)
 })
 
@@ -106,7 +109,9 @@ router.get('/:id/:slug', async (req, res, next) => {
     obj.error = 'An Error occured while load your product'
   }
 
-  //return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
 
   return res.render('front/product_detail', obj)
 })
