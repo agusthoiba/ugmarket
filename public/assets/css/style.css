@@ -29,7 +29,7 @@ dd, ol, ul {
   padding: 20px 0;
 }
 
-body {
+/* body {
   color: #000;
   font-size: 12px;
   letter-spacing: .05em;
@@ -38,7 +38,7 @@ body {
 }
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
-}
+} */
 
 input[type=email], input[type=password], input[type=text], textarea {
   -webkit-appearance: none;
@@ -807,8 +807,8 @@ text-align: center;
 }
 
 .product-list-item {
-  width:  calc(25% - 20px);
-  margin-right: 19px;
+  width:  calc(17% - 20px);
+  margin-right: 15px;
   padding-bottom: 26px;
   padding-left: 0;
   padding-top: 0;
@@ -883,47 +883,6 @@ padding: 25px;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
 }
-
-.carousel {
-    width:100%;
-
-    margin:20px auto;
-    text-align:center;
-  }
-
-.carousel img{
-width: 250px;
-}
-
-.carousel  h3{
-
-    color: #4a4a4a;
-  }
-
-.carousel a{
-  padding: 5px 10px;
-  border-radius: 2px;
-  font-size: 14px;
-  color: #4a4a4a;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  border: solid 1px #4a4a4a;
-  transition:all 0.5s;
-  -moz-transition:all 0.5s;
-  -webkit-transition:all 0.5s;
-  -o-transition:all 0.5s;
-}
-
-  .carousel div{
-    margin-right:5px;
-  }
-
-  .slick-prev:before, .slick-next:before {
-    color:black !important;
-    font-size: 90px;
-}
-
-
 
 
 
@@ -1048,7 +1007,10 @@ MEN
   background: url(../image/men.jpg)center no-repeat;
 }
 
-
+.custom-nav-container {
+  margin: 0 auto;
+  max-width: 1200px;
+}
 
 
 .footer{
@@ -1107,7 +1069,24 @@ MEN
   color:#fff;
 }
 
+.footer-social-wrap {
+  margin-bottom: 20px;
+  text-align: right;
+}
 
+.footer-social-wrap a{
+  color: #000;
+  background: #fff;
+  text-decoration: none;
+  display: inline-block;
+  margin-left: 10px;
+  padding: 2px 0;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size: 18px;
+  border-radius: 50%;
+}
 /*==================================
 Header Men Page
 ===================================*/
@@ -1376,4 +1355,44 @@ Pagination
   width: 100px;
   height: auto;
   border-radius: 50%;
+}
+
+
+/*--------------
+OWL carousel
+----------------*/
+
+/*.owl-carousel {
+  margin: 0 auto;
+}*/
+
+.owl-item a{
+  color: inherit;
+  text-decoration: none;
+}
+
+.owl-nav {
+  position: absolute;
+  width: 100%;
+  top: 24%;
+  height: 0;
+}
+
+.owl-prev {
+  color: #000;
+  font-size: 48px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 48px;
+  left: -50px;
+  position: relative
+}
+
+.owl-next {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  left: 1100px;
+  /* left: inherit; */
 }

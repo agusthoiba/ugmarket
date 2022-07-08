@@ -2,14 +2,8 @@
 <%- include ("../front/template/header.html") %>
 
 
-<section>
-  <div class="home-banner">
-      <div class="content">
-        <h1> Merchandise Music Marketplace </h1>
-        <p>Buy, sell and trade your music merchandise with fellow music fans</p>
-      </div>
-  </div>
-</section> 
+<%- include ("carousel.html") %>
+
 <section id="product">
   <div class="container">
     <div class="row">
@@ -29,7 +23,7 @@
         </div>
       </div>
       <div class="col-md-4">
-        <img src="/image/toysnfiguresbw-373x290.jpg">
+        <img src="/image/Widget - T-SHIRTS.jpeg">
         <div class="discount">
           <!--h2>Action Figure</h2-->
         </div>
@@ -44,44 +38,39 @@
   Discount Product
   ========================================-->
 
-  <div>
-    <div class="container">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
         <h3 class="title">Product Baru</h3>
-    </div>
+        <div class="owl-carousel">
 
-    <div class="container home-product-container">
-
-      <div class="row">
-          
-        <% var products = data.products %>
-
-        <% if (products != undefined && products.length == 0) { %>
+          <% var products=data.products %>
+  
+          <% if (products !=undefined && products.length==0) { %>
             No product found
-        <% } else {
-            for(var i in products) { %>
-              <div class="col-sm-3 product-list-item">
+          <% } else {
+              for(var i in products) { %>
+              <div class="" style="width: 180px;">
                 <a href="/p/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
-                  <div class="card">
-                    <img src="/product/thumbnail/<%= products[i].prod_thumbnails %>" class="card-img-top">
-                    <div class="card-body">
-                      <h5 class="card-title" style="font-size: 1.2rem;"><%= products[i]["band.band_name"] %></h5>
-                      <h5 class="card-subtitle" style="font-size: 1rem;"><%= products[i].prod_name %></h5>
-                      <p class="card-text">Rp. <%= products[i].prod_price %></p>
-                    </div>
-                  </div>
+                  <img src="/product/thumbnail/<%= products[i].prod_thumbnails %>" class="card-img-top">
+                  <h5 class="card-title" style="font-size: 1.2rem;">
+                    <%= products[i]["band.band_name"] %>
+                  </h5>
+                  <h5 class="card-subtitle" style="font-size: 1rem;">
+                    <%= products[i].prod_name %>
+                  </h5>
+                  <p class="card-text">Rp. <%= products[i].prod_price %></p>
                 </a>
               </div>
           <% } %>
         <% } %>
-      </div>
-
-      <div class="row">
-        <div class="btn-more">
-          <a class="btn btn-lg btn-outline-dark" href="/p">Lihat Semua Produk</a>
         </div>
       </div>
     </div>
   </div>
+  
+
+
 
 
 <!--<section id="shirt">

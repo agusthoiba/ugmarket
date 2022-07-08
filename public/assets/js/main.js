@@ -22,14 +22,28 @@ function submitAuth(e, obj) {
 
 $(document).ready(function(){
   console.log('im here?')
-  $('.dropdown-toggle').dropdown();
-
-  /*$('.dropdown').hover(function() {
-      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
-    }, function() {
-      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(200);
-    });
-  var s = skrollr.init({forceHeight: false});*/
+  $(".owl-carousel").owlCarousel({
+    loop: true,
+    nav: true,
+    //center: true,
+    navText:["<", ">"],
+    // items: 6,
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:2,
+            //nav:true
+        },
+        600:{
+            items:4,
+            //nav:false
+        },
+        1000:{
+            items:6,
+            //nav:true,
+        }
+    }
+  });
 
   $('#segbar_account').mouseenter(function() {
     $('#account_menu_popup').show();

@@ -1,92 +1,53 @@
-<header class="body__header header__skeleton js-floatWrapper">
-  <div class="size1of1 seg-bar">
-    <span class="seg-bar__logo">
-      <a href="/">
-        <img src="/image/logo-ug-text075x.png">
-      </a>
-    </span>
-    <span class="phl seg-bar__segments">
-      <ul>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=kaos">KAOS</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper"  style="text-decoration: none;" href="/p?kategori=wanita">AKSESORIS</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper"  style="text-decoration: none;" href="/p?kategori=action-figure">ACTION
-            FIGURE</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=cd">CD</a>
-        </li>
-        <li class="segSelect fontsizeL txtCenter prl">
-          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=others">OTHERS</a>
-        </li>
-      </ul>
-    </span>
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid custom-nav-container">
+      <a class="navbar-brand" href="/"> <img src="/image/logo-ug-text075x.png"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">KAOS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/p?kategori=aksesoris">AKSESORIS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/p?kategori=action-figures">ACTION FIGURES</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/p?kategori=vinil">VINILS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/p">OTHERS</a>
+          </li>
 
-    <span class="js-seg-bar__search seg-bar__search ptl pbl">
-      <form id="onsiteSearch" action="/catalog/" method="get" autocapitalize="on" autocorrect="on">
-        <input class="lfloat js-seg-bar-search__selSearchInput seg-bar-search__selSearchInput" name="q" type="text"
-          autocomplete="off" tmpplaceholder="Cari produk, tren, dan merek" placeholder="Cari produk, tren, dan merek"
-          style="font-style: italic;">
-        <!--div class="js-search-gender-select" data-gender="men"></div-->
-        <!--button class="rfloat seg-bar-search__selSearchButton" type="submit">
-          <i class="icon_loupe-dark"></i>
-          <span class="hdSearchButton"></span>
-        </button>
-        <div class="js-searchsuggest__popup searchsuggest__popup display-none"></div>
-        <div class="js-recent-search__popup recent-search__popup display-none ssg-item--hide" style="display: none;"
-        </div-->
-      </form>
-    </span>
-
-    <span class="seg-bar__utils rfloat txtCenter ptl pll">
-      <ul>
-        <li class="utils pll">
-          <i class="fa fa-user fa-2x js-seg-bar__account seg-bar__account" id="segbar_account" aria-hidden="true"></i>
-
-          <div class="account-menu__popup txtLeft  b-header-shadow js-custom-popup b-header__nonclickable" id="account_menu_popup" style="width: 200px;left: 1167px;top: 70px;display:none">
-            <div class="b-header__padding"></div>
-            <span class="js-arrow js-arrow-dark" style="left: 91.7031px;"></span>
-            <div class="account-menu__head pal pts txtUpper fontsizeM">
-              Selamat datang! </div>
-            <div class="account-menu__body phl pal fontsizeS txtUpper">
-              <ul role="menu" aria-labelledby="dLabel">
-                <% if (session != undefined && session.user != undefined) { %>
-                <li class="pbm">
-                  <a href="/account/profile" rel="follow">Profile</a>
-                </li>
-                <li class="pbm">
-                  <a href="/account/product" rel="follow">Penjualan</a>
-                </li>
-                <li class="pbm">
-                  <!--a href="/account/pembelian">Pembelian</a-->
-                  <a href="/auth/logout" rel="follow">Logout</a>
-                </li>
+        </ul>
+        <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <!-- button class="btn btn-outline-success" type="submit">Search</button -->
+        </form>
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-bs-toggle="dropdown"
+              aria-expanded="false"><i class="fas fa-user fa-2x"></i></a>
+            <ul class="dropdown-menu" aria-labelledby="dropdown10">
+              <% if (session !=undefined && session.user !=undefined) { %>
+                <li><a class="dropdown-item" href="/account/profile" rel="follow">Profile</a></li>
+                <li><a class="dropdown-item" href="/account/product" rel="follow">Penjualan</a></li>
+                <!-- li><a href="/account/pembelian">Pembelian</a></li-->
+                <li><a class="dropdown-item" href="/auth/logout" rel="follow">Logout</a></li>
                 <% } else { %>
-                <li class="pbm">
-                  <a href="/auth/login" title="Masuk" >
-                    Masuk
-                  </a>
-                </li>
-                <li class="pbm">
-                  <a href="/auth/register" title="Buat Akun">
-                    Buat Akun
-                  </a>
-                </li>
-                <% } %>
-              </ul>
-            </div>
-          </div>
-
-
-
-        </li>
-      </ul>
-    </span>
-
-
-  </div>
+                  <li><a class="dropdown-item" href="/auth/login" title="Masuk">Masuk</a></li>
+                  <li><a class="dropdown-item" href="/auth/register" title="Buat Akun">Buat Akun</a></li>
+                  <% } %>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 </header>
+<main>
