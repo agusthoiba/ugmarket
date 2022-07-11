@@ -25,9 +25,7 @@ $(document).ready(function(){
   $(".owl-carousel").owlCarousel({
     loop: true,
     nav: true,
-    //center: true,
     navText:['<i class="fas fa-less-than fa-lg"></i>', '<i class="fas fa-greater-than fa-lg"></i>'],
-    // items: 6,
     responsiveClass:true,
     responsive:{
         0:{

@@ -70,7 +70,37 @@
       </div>
     </div>
   </div>
+ 
+  <!--==========================================
+  Popular bands
+  ========================================-->
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="title">Popular Bands</h3>
+        <div class="owl-carousel">
+
+          <% const bands = data.bands %>
   
+          <% if (bands != undefined && bands.length==0) { %>
+            No bands found
+          <% } else {
+              for(var i in bands) { 
+                %>
+              <div class="logo-item" >
+                <div class="band-img" >
+                  <a href="/p/<%= bands[i].band_id %>/<%= bands[i].band_slug %>">
+                    <img src="/bands/<%= bands[i].band_slug %>-logo.png" class="img-responsive">
+                  </a>
+                </div>
+              </div>
+          <% } %>
+        <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!--<section id="shirt">
   <div class="container">

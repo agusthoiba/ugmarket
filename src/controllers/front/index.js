@@ -1,7 +1,7 @@
 var router = express.Router();
 
 router.get('/', async (req, res, next) => {
-  var obj = { error: null, data: { products: [] } }
+  var obj = { error: null, data: { products: [], bands: [] } }
   var query = { prod_is_visible: 1 }
   var options = { sort: { prod_id: 'desc' }, limit: 20 }
   const doc = await res.locals.productModel.find(query, options)
@@ -20,9 +20,15 @@ router.get('/', async (req, res, next) => {
   }
 
 
-  console.log('req.query.json', req.query.json);
+  const optionsFindBands = { sort: [['band_total_sold', 'DESC']] , limit: 20 }
+  const findBands = await res.locals.bandModel.find({}, optionsFindBands);
+
+  if (findBands.length > 0) {
+    obj.data.bands = findBands;
+  }
+
   if (req.query.json == '1') {
-    return res.json(doc);
+    return res.json(obj);
   }
   
   return res.render('front/index', obj)

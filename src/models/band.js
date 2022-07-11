@@ -26,22 +26,29 @@ class Band {
     this.schema.sync();
   }
 
-  find(query, options) {
-    const page = options ? options.page : 1;
-    const limit = options ? options.limit : 20;
-    const order = options ? options.order : [['band_name', 'ASC']];
-    return new Promise((resolve, reject) => {
-      this.schema.findAndCountAll({
+  async find(query, options) {
+    const opts = {
+      page: 1,
+      limit: 20,
+      order: {band_name: 'ASC'}
+
+    }
+    
+    if (options) {
+      if (options.page) { opts.page =  options.page };
+      if (options.limit) { opts.limit =  options.limit };
+      if (options.sort) { opts.order = options.sort };
+    }
+
+    const result = await this.schema.findAll({
         where: query,
-        order: order,
-        offset: (page - 1) * limit,
-        limit: limit
-      }).then(result => {
-        resolve(result);
-      }, (err) => {
-        reject(err);
-      });
+        raw: true,
+        order: opts.order,
+        offset: (opts.page - 1) * opts.limit,
+        limit: opts.limit
     });
+
+    return result;
   }
 
   findOne(query) {

@@ -1421,3 +1421,23 @@ OWL carousel
   left: 1130px;
   /* left: inherit; */
 }
+
+
+.logo-item {
+  opacity: 1;
+  height: 100%;
+}
+
+.band-img {
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.band-img:hover {
+  opacity: .6;
+}
