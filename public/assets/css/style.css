@@ -108,6 +108,25 @@ a:-webkit-any-link {
   padding: 8px 30px 8px 30px;
 }
 
+.btn-see-more {
+  padding: 8px;
+  display: block;
+  color: #262626;
+  border: 1px solid #262626;
+  background-color: #fff;
+  font-size: 12px;
+  text-transform: uppercase;
+  width: 25%;
+  margin: 16px auto;
+  text-decoration: none;
+  text-align: center;
+}
+
+.btn-see-more:hover {
+  color: #262626;
+  background-color:#eaeaea;
+}
+
 .title-wrapper {
   margin-left: 10px;
   margin-right: 10px;
