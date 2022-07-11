@@ -810,7 +810,7 @@ text-align: center;
 
 
 .product-list {
-    margin-top: 15px;
+    margin-top: 50px;
 }
 
 .card {
@@ -1355,27 +1355,19 @@ Pagination
   border-top: 1px solid #ddd;
 }
 
-.c-bl-breadcrumb {
-  padding: 24px 0 26px;
+.breadcrumb {
+  margin-top: 80px;
+  text-transform: uppercase;
 }
 
-.c-bl-breadcrumb__list {
-  margin-left: 0;
-  font-size: 12px;
-  list-style: none;
+.breadcrumb-item a {
+  text-decoration: none;
+  color:#292929;
 }
 
-.c-bl-breadcrumb__item {
-  float: left;
-  max-width: 350px;
-  padding-left: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.c-bl-breadcrumb__item .c-icon, .elysium .c-bl-breadcrumb__item a {
-  color: #999;
+.breadcrumb-item a:hover {
+  text-decoration: underline;
+  color:#c9c9c9;
 }
 
 .c-icon {

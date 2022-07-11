@@ -6,6 +6,9 @@ router.get('/', async (req, res, next) => {
   let obj = {
     error: null,
     data: {
+      breadcrumb: [
+        {link: '', text: req.query.kategori}
+      ],
       products: [],
       pagination: {
         limit: 20,
@@ -62,6 +65,10 @@ router.get('/:id/:slug', async (req, res, next) => {
   let obj = {
     error: null,
     data: {
+      breadcrumb: [
+        {link: '', text: ''},
+        {link: '', text: ''}
+      ],
       product: null,
       user: null
     }
@@ -71,6 +78,11 @@ router.get('/:id/:slug', async (req, res, next) => {
     const product = await res.locals.productModel.findOne({prod_id: prodId})
 
     if (product) {
+      obj.data.breadcrumb[0].link = `/p?kategori=${product['category.cat_slug']}`;
+      obj.data.breadcrumb[0].text = product['category.cat_name'];
+
+      obj.data.breadcrumb[1].text = product.prod_name;
+
       obj.data.product = Object.assign({}, product, {
         images: [],
         thumbnails: [],
