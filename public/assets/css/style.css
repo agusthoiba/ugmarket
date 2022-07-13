@@ -451,7 +451,7 @@ NAVIGATION
   padding: 10px 40px;
 }
 
-nav > ul{
+/* nav > ul{
   float: right;
   list-style: none;
   position: relative;
@@ -464,8 +464,6 @@ nav > ul{
 nav > ul > li{
   display: inline-block;
   margin-left: 25px;
-
-
 }
 
 nav > ul > li a{
@@ -478,11 +476,8 @@ nav > ul > li a{
 }
 
 nav > ul > li a:hover{
-color: #f25f5c;
-
-
-
-}
+  color: #f25f5c;
+} */
 
 .bottom-nav {
   /* width: 80%; */
@@ -810,7 +805,7 @@ text-align: center;
 
 
 .product-list {
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 .card {
@@ -1202,13 +1197,29 @@ item
   color: #292929;
 }
 
-.caption-item{
+.caption-item {
+  text-align: center;
   padding: 10px;
+  color:#2b2b2b;
 }
 
-.item{
-  border: 1px solid #dddddd;
+.item {
+  /* border: 1px solid #dddddd; */
   margin-bottom:20px;
+}
+
+.item img{
+  display: initial; 
+  width: 220px;
+  height: 220px
+}
+
+.item a {
+  text-decoration: none;
+}
+
+.item img:hover{
+  opacity: .6;
 }
 
 .btn-default{
@@ -1234,11 +1245,22 @@ Pagination
    text-align: center;
 }
 
-.pagination>li>a, .pagination>li>span {
+.pagination {
+  justify-content: right;
+  margin-bottom: 10px;
+  --bs-pagination-active-bg:  #000;
+  --bs-pagination-color: #000;
+  --bs-pagination-active-border-color: #dee2e6;
+  --bs-pagination-hover-color: #000;
+  
+}
+
+
+
+/*.pagination>li>a, .pagination>li>span {
   border-radius: 50% !important;
   margin: 0 5px;
-
-}
+} */
 
 .catalog{
   padding: 10px;
