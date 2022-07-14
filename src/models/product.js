@@ -76,6 +76,15 @@ class Product {
     this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
   }
 
+  async count(query) {
+    let obj = {
+      where: query
+    }
+    const countProd =  await this.schema.count(obj);
+
+    return countProd;
+  }
+
   async find (query, options) {
     let obj = {
       where: query,
@@ -84,6 +93,7 @@ class Product {
         {
           model: this.category.schema,
           as: 'category'
+         
         },
         {
           model: this.band.schema,
@@ -92,17 +102,18 @@ class Product {
       ]
     }
 
-    if (options !== undefined && options && _.isEmpty(options)) {
-      if (options.sort !== undefined && options.sort) {
+    if (!_.isEmpty(options)) {
+      if (options.sort) {
         obj.order = options.sort
       }
-      if (options.limit !== undefined && options.limit && !isNaN(options.limit) && options.limit > 0) {
+      if (options.limit && !isNaN(options.limit) && options.limit > 0) {
         obj.limit = options.limit
-        if (options.page !== undefined && options.page && !isNaN(options.page) && options.page > 0) {
-          obj.offset = options.page - 1 * options.limit
+        if (options.page && !isNaN(options.page) && options.page > 0) {
+          obj.offset = (options.page - 1) * options.limit
         }
       }
     }
+
 
     let products;
     try {

@@ -53,7 +53,7 @@
               let imgPath  = products[i].prod_thumbnails ? '/product/thumbnail/'+products[i].prod_thumbnails: '/image/no-image-180x180';
                 %>
               <div class="product-list-item-carousel">
-                <a href="/p/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
+                <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
                   <img src="<%= imgPath %>" class="card-img-top">
                   <h5 class="product-list-item-carousel-title">
                     <%= products[i]["band.band_name"] %>

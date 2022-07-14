@@ -1,6 +1,7 @@
 
 
 const router = express.Router()
+const { Op } = require("sequelize");
 
 router.get('/', async (req, res, next) => {
   let obj = {
@@ -12,28 +13,94 @@ router.get('/', async (req, res, next) => {
       products: [],
       pagination: {
         limit: 20,
-        page: 1,
-        total_page: 10
+        page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+        total_page: 1,
+        total: 0,
+        list: []
       }
     }
   }
 
-  var query = {
+  const maxLinkPagination = 5 // maximal number of link pagination
+
+  let query = {
     prod_is_visible: 1
   }
 
-  var options = { sort: { created_at: 'desc' } }
+  
+  if (req.query.kategori) {
+    const catSlug = (req.query.kategori).trim();
+    const catMod = await res.locals.categoryModel.findOne({
+      cat_slug: catSlug
+    });
+    if (catMod != null) {
+      const catChild = await res.locals.categoryModel.find({
+        cat_parent_id: catMod.cat_id
+      });
 
-  let doc
+      let catIds = [catMod.cat_id];
+      if (catChild != null) {
+        catIds.push(_.pluck(catChild, 'cat_id'));
+      }
+
+      query = Object.assign(query, { 
+        prod_cat_id: {
+          [Op.in]: catIds
+        }
+      });
+    }
+  }
+
+  obj.data.pagination.total =  await res.locals.productModel.count(query);
+
+  var options = { 
+    sort: [['prod_id', 'DESC' ]],
+    page: obj.data.pagination.page,
+    limit: obj.data.pagination.limit
+  }
+
+  let doc;
   try {
     doc = await res.locals.productModel.find(query, options)
+
+    if (obj.data.pagination.total <= obj.data.pagination.limit) {
+      obj.data.pagination.total_page =  1;
+      obj.data.pagination.list.push({
+        link: `#`,
+        no: 1,
+        active: true
+      });
+    } else {
+      obj.data.pagination.total_page =  Math.floor(obj.data.pagination.total / obj.data.pagination.limit);
+
+      const total = obj.data.pagination.total;
+      const totalPage = obj.data.pagination.total_page;
+      const pageList  = [];
+      
+      const urlParams = new URLSearchParams(req.query);
+
+      let countLinkPage = maxLinkPagination;
+      if (totalPage < maxLinkPagination) {
+        countLinkPage = totalPage;
+      }
+
+      for (let i = 1; i <= totalPage; i++) {
+        urlParams.set('page', i);
+        pageList.push({
+          link: `/products?${urlParams}`,
+          no: i,
+          active: obj.data.pagination.page === i
+        })
+      }
+
+      obj.data.pagination.list = pageList;
+    }
 
     if (doc.length > 0) {
       obj.data.products = doc.map(val => {
         const pathThumb = `${config.file_host}/product/thumbnail`
         let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
 
-        console.log('val', val)
         if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
           let thumbArr = val.prod_thumbnails.split(',')
           thumbnail = `${pathThumb}/${thumbArr[0]}`
@@ -78,7 +145,7 @@ router.get('/:id/:slug', async (req, res, next) => {
     const product = await res.locals.productModel.findOne({prod_id: prodId})
 
     if (product) {
-      obj.data.breadcrumb[0].link = `/p?kategori=${product['category.cat_slug']}`;
+      obj.data.breadcrumb[0].link = `/products?kategori=${product['category.cat_slug']}`;
       obj.data.breadcrumb[0].text = product['category.cat_name'];
 
       obj.data.breadcrumb[1].text = product.prod_name;
@@ -93,8 +160,6 @@ router.get('/:id/:slug', async (req, res, next) => {
         name: product['user.user_name'],
         avatar: product['user.user_avatar']
       };
-
-      console.log('obj.data', obj.data)
 
       const pathThumb = `${config.file_host}/product/thumbnail`
       const pathLarge = `${config.file_host}/product/large`
