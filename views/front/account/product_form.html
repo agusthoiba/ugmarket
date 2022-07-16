@@ -10,7 +10,7 @@
 <form method="POST" action="<%= action %>" id="add_product">
 
 
-  <div class="alert alert-danger" role="alert">
+  <div class="alert alert-danger" role="alert" style="display: none;">
     A simple danger alert—check it out!
   </div>
 
@@ -36,9 +36,9 @@
     <label for="band">Band</label>
     <select class="form-control" id="band" name="band" required>
       <option value="">-- Pilih Band --</option>
-      <% for(var i in data.bands.rows) { %>
-      <option value="<%= data.bands.rows[i].band_id %>" <%= data.item.band == data.bands.rows[i].band_id ? 'selected' : '' %> >
-          <%= data.bands.rows[i].band_name %>
+      <% for(var band_row of data.bands) { %>
+      <option value="<%= band_row.band_id %>" <%= data.item.band == band_row.band_id ? 'selected' : '' %> >
+          <%= band_row.band_name %>
       </option>
       <% } %>
     </select>

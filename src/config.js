@@ -7,6 +7,9 @@ const config = {
     host: env.APP_HOST,
     port: env.APP_PORT,
     db: {
+        mysql: {
+            url: env.DB_MYSQL_URL
+        },
         "host": env.DB_HOST,
         "port": env.DB_PORT,
         "name": env.DB_NAME, 

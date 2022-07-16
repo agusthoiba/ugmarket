@@ -102,20 +102,23 @@ router.get('/edit/:id', async (req, res, next) => {
 
     obj.data.categories = await res.locals.categoryModel.find()
     obj.data.bands = await res.locals.bandModel.find({}, {
-      order: [['band_name', 'ASC']],
       page: 1,
       limit: 20
     })
 
-    //return res.json(obj)
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+    return res.render('front/account/product_form', obj);
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product';
-    return res.json(obj);
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+    return res.render('front/account/product_form', obj);
   }
 
-  //return res.json(obj)
-  return res.render('front/account/product_form', obj);
 })
 
 router.post('/update/:id', async function (req, res, next) {
@@ -154,7 +157,9 @@ router.get('/add', async (req, res, next) => {
     item: itemData()
   }
   
-  // return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
   return res.render('front/account/product_form', obj);
 })
 

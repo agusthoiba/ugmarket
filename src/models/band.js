@@ -30,8 +30,7 @@ class Band {
     const opts = {
       page: 1,
       limit: 20,
-      order: {band_name: 'ASC'}
-
+      order: [['band_name', 'ASC']]
     }
     
     if (options) {
