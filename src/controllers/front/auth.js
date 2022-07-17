@@ -1,6 +1,9 @@
 const router = express.Router();
 const crypto = require('crypto');
 const moment = require('moment');
+
+const { validate, ValidationError, Joi } = require('express-validation')
+
 const { getFbAccessToken, graphApiGet } = require('../../helpers/facebookApi');
 
 router.get('/login', function (req, res, next) {
@@ -143,8 +146,15 @@ router.post('/login', async function (req, res, next) {
   const findUser = await res.locals.userModel.findOne(query)
 
   if (!findUser) {
-    obj.error = 'Username and password is totally wrong. Please try again!';
-    return res.json(obj);
+    obj.error = 'Username and password is totally wrong. \n Please try again!';
+    obj.data = {
+      urlActive: req.path,
+      isUrlActive: req.path === '/login',
+      action: '/auth/login'
+    }
+
+    return res.render('front/auth', obj);
+    // return res.json(obj);
   }
 
   const userData = {

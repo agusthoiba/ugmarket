@@ -1,21 +1,15 @@
-<% include ../front/template/head.html %>
-<% include ../front/template/header.html %>
+<%- include ("../front/template/head.html") %>
+<%- include ("../front/template/header.html") %>
 
 
-<section>
-  <div class="home-banner">
-      <div class="content">
-        <h1> Merchandise Music and Action Figure Marketplace </h1>
-        <p>Buy, sell and trade your music merchandise with fellow music fans</p>
-      </div>
-  </div>
-</section> 
+<%- include ("carousel.html") %>
+
 <section id="product">
   <div class="container">
     <div class="row">
       <div class="col-md-4">
         <a href="/p">
-          <img src="/image/formen-373x290.jpg">
+          <img src="/image/Widget - Local Band.jpg" class="img-responsive">
           <div class="discount">
             <!--h2>Men</h2-->
           </div>
@@ -23,13 +17,13 @@
       </div>
 
       <div class="col-md-4">
-        <img src="/image/forwomen-373x290.jpg">
+        <img src="/image/Widget - Rock Merch.jpg" class="img-responsive">
         <div class="discount">
           <!--h2>Women</h2-->
         </div>
       </div>
       <div class="col-md-4">
-        <img src="/image/toysnfiguresbw-373x290.jpg">
+        <img src="/image/Widget - T-SHIRTS.jpeg" class="img-responsive">
         <div class="discount">
           <!--h2>Action Figure</h2-->
         </div>
@@ -41,38 +35,77 @@
 
 
 <!--==========================================
-  Discount Product
+  New Products
   ========================================-->
 
-  <section id="product-new">
-    <h3>Product Baru</h3>
-    <div class="container">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="title">Product Baru</h3>
+        <div class="owl-carousel">
 
-      <div class="row">
-          
-        <% var products = data.products %>
-
-        <% if (products != undefined && products.length == 0) { %>
+          <% var products=data.products %>
+  
+          <% if (products !=undefined && products.length==0) { %>
             No product found
-        <% } else {
-            for(var i in products) { %>
-            <div class="col-md-3" id="item">
-              <a href="/p/<%= products[i].prod_id + '/' + products[i].prod_slug %>">
-                  <img src="<%= products[i].thumbnail %>">
-              </a>
-              <h3><%= products[i].prod_name %></h3>
-              <p>Rp. <%= products[i].prod_price %></p>
-          </div>
+          <% } else {
+              for(var i in products) { 
+              let imgPath  = products[i].prod_thumbnails ? '/product/thumbnail/'+products[i].prod_thumbnails: '/image/no-image-180x180';
+                %>
+              <div class="product-list-item-carousel">
+                <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
+                  <img src="<%= imgPath %>" class="card-img-top">
+                  <h5 class="product-list-item-carousel-title">
+                    <%= products[i]["band.band_name"] %>
+                  </h5>
+                  <h5 class="product-list-item-carousel-subtitle">
+                    <%= products[i].prod_name %>
+                  </h5>
+                  <p class="product-list-item-carousel-text">Rp. <%= products[i].prod_price %></p>
+                </a>
+              </div>
           <% } %>
         <% } %>
+        </div>
       </div>
-
-    <div class="pull-right" style="margin-top: 15px">
-        <a class="btn btn-lg btn-primary" href="/p">Lihat Semua Produk</a>
     </div>
   </div>
-</section>
+ 
+  <!--==========================================
+  Popular bands
+  ========================================-->
 
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="title">Popular Bands</h3>
+        <div class="owl-carousel">
+
+          <% const bands = data.bands %>
+  
+          <% if (bands != undefined && bands.length==0) { %>
+            No bands found
+          <% } else {
+              for(var i in bands) { 
+                %>
+              <div class="logo-item" >
+                <div class="band-img" >
+                  <a href="/p/<%= bands[i].band_id %>/<%= bands[i].band_slug %>">
+                    <img src="/bands/<%= bands[i].band_slug %>-logo.png" class="img-responsive">
+                  </a>
+                </div>
+              </div>
+          <% } %>
+        <% } %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <a class="btn-see-more" href="/bands"> See More Bands > </a>
+      </div>
+    </div>
+  </div>
 
 <!--<section id="shirt">
   <div class="container">
@@ -110,15 +143,16 @@
   </section>-->
 
 
-<section id="join">
+<!-- section id="join">
   <div class="container">
     <div class="row">
 
       <h2>Bergabung di marketplace kami</h2>
-      <a href="#" class="join-btn">Join</a>
-
+      <a href="/auth/register" class="join-btn">Join</a>
 
     </div>
-  </section>
+  </div>
+</section -->
 
-  <% include ../front/template/footer.html %>
+
+<%- include ("../front/template/footer.html") %>

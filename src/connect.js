@@ -4,12 +4,8 @@ const Sequelize = require('sequelize');
 
 
 const connect = async () => {
-  console.log(`Connecting Mysql to ${config.db.host}:${config.db.port}...`)
-  const sequelize = new Sequelize(config.db.name, config.db.username, config.db.password, {
-    host: config.db.host,
-    port: config.db.port,
-    dialect: 'mysql',
-
+  console.log(`Connecting Mysql ...`)
+  const sequelize = new Sequelize(config.db.mysql.url, {
     pool: {
       max: 100,
       min: 0,
@@ -17,7 +13,7 @@ const connect = async () => {
       idle: 10000
     },
     // disable logging; default: console.log
-   logging: false
+    // logging: false
   });
 
   try {

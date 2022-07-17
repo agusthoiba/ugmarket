@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <% for(var i in data.breadcrumb) { %>
+                        <% const link =  data.breadcrumb[i].link %>
+                        <% let activeLink = 'active' %>
+                        <% if (link == '') { 
+                            activeLink =  '' 
+                        } %>
+                        <li class="breadcrumb-item <%= activeLink %>"><a href="<%= link %>"><%= data.breadcrumb[i].text %></a></li>
+                    <% } %>
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+</div>
+
