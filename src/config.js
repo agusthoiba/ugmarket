@@ -9,12 +9,7 @@ const config = {
     db: {
         mysql: {
             url: env.DB_MYSQL_URL
-        },
-        "host": env.DB_HOST,
-        "port": env.DB_PORT,
-        "name": env.DB_NAME, 
-        "username": env.DB_USERNAME, 
-        "password": env.DB_PASSWORD
+        }
     },
     file_host: env.FILE_HOST,
     file_dir:  env.FILE_DIR,
