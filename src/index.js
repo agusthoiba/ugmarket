@@ -138,7 +138,7 @@ app.use('/account/profile', require('./controllers/front/account/profile'))
 
 const server = http.createServer(app)
 
-server.listen(config.port, () => {
+server.listen(process.env.PORT, () => {
   var host = config.host
   var port = server.address().port
 
