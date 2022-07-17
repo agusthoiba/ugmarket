@@ -21,7 +21,6 @@ function submitAuth(e, obj) {
 }
 
 $(document).ready(function(){
-  console.log('im here?')
   $(".owl-carousel").owlCarousel({
     loop: true,
     nav: true,
@@ -50,4 +49,11 @@ $(document).ready(function(){
       $('#account_menu_popup').hide();
     })
   });
+
+  $('#search').submit(function(e) {
+    e.preventDefault()
+
+    var searchStr = $('#search-input').val();
+    window.location.assign('/p?search=' + searchStr);
+  })
 });

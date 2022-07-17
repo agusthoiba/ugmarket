@@ -9,6 +9,8 @@ const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const morgan = require('morgan');
 
+const CategoryModel = require('./models/category');
+
 global.config = config
 global.express = express
 global._ = underscore
@@ -104,6 +106,11 @@ const { connectDb, modelMid } = require('./middleware')
 const connect = require('./connect')
 const connMysql = async() => {
   app.locals.db = await connect()
+  const catModel = new CategoryModel({
+    db: app.locals.db
+  });
+  app.locals.categoryList = await catModel.find();
+   // console.log(app.locals.categoryList)
 }
 
 connMysql()

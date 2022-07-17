@@ -1,4 +1,3 @@
-
 const config = require('../config');
 const { Band, Category, Product, User } = require('../models')
 

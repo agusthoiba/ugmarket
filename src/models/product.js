@@ -97,9 +97,12 @@ class Product {
         },
         {
           model: this.band.schema,
-          as: 'band'
+          as: 'band',
+          required: true
         }
-      ]
+      ],
+      limit: 20,
+      offset: 0
     }
 
     if (!_.isEmpty(options)) {
@@ -113,7 +116,6 @@ class Product {
         }
       }
     }
-
 
     let products;
     try {
@@ -171,6 +173,29 @@ class Product {
       throw new Error(e)
     }
     return updateObj
+  }
+
+  /**
+   * Count 
+   * Be carefull in innodb storage engine count query dangerous!
+   * @param {object} filter filter
+   */
+  async count (filter) {
+    try {
+      const productAmount = await this.schema.count({
+        where: filter,
+        include: [
+          {
+            model: this.band.schema,
+            as: 'band',
+            required: true
+          }
+        ]
+      });
+      return productAmount;
+    } catch (e) {
+      throw new Error(e)
+    };
   }
 }
 
