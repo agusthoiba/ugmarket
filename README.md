@@ -3,7 +3,8 @@ Lapak Undergroundsync Marketplace
 
 
 ## System Requirement
-nodejs 10 https://nodejs.org/dist/latest-v10.x/
+nodejs 16 https://nodejs.org/dist/latest-v16.x/
+
 mysql 8 https://dev.mysql.com/downloads/mysql/
 
 ## Installation

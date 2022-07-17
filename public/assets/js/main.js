@@ -21,19 +21,26 @@ function submitAuth(e, obj) {
 }
 
 $(document).ready(function(){
-  console.log('document ready')
-  $('.dropdown-toggle').dropdown();
-
-  var uri = new URI(window.location.href);
-  var uriSearch = uri.search(true);
-  $('#search-input').val(uriSearch.search);
-
-  /*$('.dropdown').hover(function() {
-      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(200);
-    }, function() {
-      $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(200);
-    });
-  var s = skrollr.init({forceHeight: false});*/
+  $(".owl-carousel").owlCarousel({
+    loop: true,
+    nav: true,
+    navText:['<i class="fas fa-less-than fa-lg"></i>', '<i class="fas fa-greater-than fa-lg"></i>'],
+    responsiveClass:true,
+    responsive:{
+        0:{
+            items:2,
+            //nav:true
+        },
+        600:{
+            items:4,
+            //nav:false
+        },
+        1000:{
+            items:6,
+            //nav:true,
+        }
+    }
+  });
 
   $('#segbar_account').mouseenter(function() {
     $('#account_menu_popup').show();

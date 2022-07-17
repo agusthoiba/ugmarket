@@ -4,29 +4,190 @@ const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
 
-router.get('/:catSlug?', async (req, res, next) => {
-  let limit = 20;
+router.get('/', async (req, res, next) => {
+  let pageLimit = 20;
+
   let obj = {
     error: null,
     js: ['product_list'],
     data: {
+      breadcrumb: [
+        {link: '#', text: 'products'}
+      ],
       products: [],
       pagination: {
-        baseUrl: req.originalUrl,
-        limit: limit,
-        page: 1,
-        totalPage: 1,
-        total: 0
+        limit: pageLimit,
+        page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+        total_page: 1,
+        total: 0,
+        list: []
       },
-      breadcumb: [
-        { path: '/p', name: 'Semua Produk'},
-      ],
       uri: {
         path: '',
         params: '',
         query: {}
-      },
-      catSlug: req.params.catSlug
+      }
+    }
+    // catSlug: req.params.catSlug
+  }
+
+  const maxLinkPagination = 5 // maximal number of link pagination
+
+  let query = {
+    prod_is_visible: 1
+  }
+
+  _filtering(req, obj, query)
+
+  var options = { 
+    sort: [['prod_id', 'DESC']],
+    page: obj.data.pagination.page,
+    limit: obj.data.pagination.limit
+  }
+
+  try {
+    const prodTotal = await res.locals.productModel.count(query);
+
+    obj.data.pagination.total = prodTotal;
+    obj.data.pagination = _pagination(obj.data.pagination);
+
+    if (prodTotal > 0) {
+      const doc = await res.locals.productModel.find(query, options);
+
+      console.log('doc --', doc)
+
+      obj.data.products = doc.map(val => {
+        const pathThumb = `${config.file_host}/product/thumbnail`
+        let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
+
+        if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
+          let thumbArr = val.prod_thumbnails.split(',')
+          thumbnail = `${pathThumb}/${thumbArr[0]}`
+        }
+
+        const datum = Object.assign({}, val, { thumbnail: thumbnail })
+
+        datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
+
+        return datum
+      })
+    }
+
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+
+    return res.render('front/product_list', obj)
+  } catch (err) {
+    console.error(err)
+    obj.error = 'An Error occured while load your product'
+
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+
+    return res.render('front/product_list', obj)
+  }
+})
+
+router.get('/:id/:slug', async (req, res, next) => {
+  const prodId = parseInt(req.params.id)
+
+  let obj = {
+    error: null,
+    data: {
+      breadcrumb: [
+        {link: '', text: ''},
+        {link: '', text: ''}
+      ],
+      product: null,
+      user: null,
+      breadcumb: [
+        { path: '/p', name: 'Semua Produk' }
+      ]
+    }
+  }
+
+  try {
+    const product = await res.locals.productModel.findOne({prod_id: prodId})
+
+    if (product) {
+      obj.data.breadcrumb[0].link = `/products?kategori=${product['category.cat_slug']}`;
+      obj.data.breadcrumb[0].text = product['category.cat_name'];
+
+      obj.data.breadcrumb[1].text = product.prod_name;
+
+      obj.data.product = Object.assign({}, product, {
+        images: [],
+        thumbnails: [],
+        sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
+      })
+
+      obj.data.user = {
+        name: product['user.user_name'],
+        avatar: product['user.user_avatar']
+      };
+
+      const pathThumb = `${config.file_host}/product/thumbnail`
+      const pathLarge = `${config.file_host}/product/large`
+
+      const imageThumbs = req.app.locals.strToArr(product.prod_thumbnails)
+      const images = req.app.locals.strToArr(product.prod_images)
+
+      if (imageThumbs.length > 0) {
+        for (let i in imageThumbs) {
+          obj.data.product.thumbnails.push(`${pathThumb}/${imageThumbs[i]}`)
+        }
+      }
+
+      if (images.length > 0) {
+        for (let j in images) {
+          obj.data.product.images.push(`${pathLarge}/${images[j]}`)
+        }
+      }
+
+      obj.data.product.prod_price = req.app.locals.currency(obj.data.product.prod_price).format('$0,0')
+    }
+  } catch (err) {
+    console.error(err)
+    obj.error = 'An Error occured while load your product'
+  }
+
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
+
+  return res.render('front/product_detail', obj)
+})
+
+module.exports = router
+
+function _filtering(req, obj, query) {
+  if (req.query.kategori) {
+    obj.data.breadcrumb = [{
+      link: '#', text: req.query.kategori
+    }]
+    const catSlug = (req.query.kategori).trim();
+    const findCat = req.app.locals.categoryList.find(cat => {
+      return cat.cat_slug == catSlug
+    });
+
+    if (findCat != null) {
+      const catChild = req.app.locals.categoryList.find(cat => {
+        return cat.cat_parent_id == findCat.cat_id
+      });
+
+      let catIds = [findCat.cat_id];
+
+      if (catChild != null) {
+        catIds.push(_.pluck(catChild, 'cat_id'));
+      }
+
+      query = Object.assign(query, { 
+        prod_cat_id: {
+          [Op.in]: catIds
+        }
+      });
     }
   }
 
@@ -49,18 +210,6 @@ router.get('/:catSlug?', async (req, res, next) => {
     obj.data.pagination.baseUrl = url.toString();
   }
 
-  var query = {
-    prod_is_visible: 1
-  }
-
-  if (req.params.catSlug) {
-    const findCat = req.app.locals.categoryList.find(cat => {
-      return cat.cat_slug == req.params.catSlug
-    });
-    obj.data.breadcumb.push({ path: '', name: findCat.cat_name});
-    query.prod_cat_id = findCat.cat_id;
-  }
-
   if (req.query.search && req.query.search.length > 2) {
     query[Op.or] = [
       {
@@ -74,7 +223,7 @@ router.get('/:catSlug?', async (req, res, next) => {
         }
       }
     ];
-    obj.data.breadcumb.push({ path: '', name: req.query.search});
+    obj.data.breadcrumb.push({ path: '', name: req.query.search});
   }
 
   if (req.query.condition) {
@@ -117,117 +266,42 @@ router.get('/:catSlug?', async (req, res, next) => {
       }
     }
   }
+}
 
-  var options = { 
-    sort: { prod_created_at: 'DESC' },
-    limit: limit,
-    page: 0
-  };
+function _pagination(objPagination, req) {
+  const total = objPagination.total;
 
-  let doc;
-  const prodTotal = await res.locals.productModel.count(query)
+  if (total <= objPagination.limit) {
+    objPagination.total_page =  1;
+    objPagination.list.push({
+      link: `#`,
+      no: 1,
+      active: true
+    });
+  } else {
+    objPagination.total_page =  Math.floor(objPagination.total / objPagination.limit);
+    
+    const totalPage = objPagination.total_page;
+    const pageList  = [];
+    
+    const urlParams = new URLSearchParams(req.query);
 
-  if (prodTotal > 0) {
-    obj.data.pagination.total = prodTotal;
-    obj.data.pagination.totalPage = prodTotal < limit ? 1 : Math.floor(prodTotal / limit);
-
-    if (prodTotal > limit) {
-      if (!isNaN(parseInt(req.query.page))) {
-        obj.data.pagination.page = parseInt(req.query.page);
-        options.page = obj.data.pagination.page;
-      }
+    let countLinkPage = maxLinkPagination;
+    if (totalPage < maxLinkPagination) {
+      countLinkPage = totalPage;
     }
 
-    doc = await res.locals.productModel.find(query, options)
-    obj.data.products = doc.map(val => {
-      const pathThumb = `${config.file_host}/product/thumbnail`
-      let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-
-      if (val.prod_thumbnails.includes(',')) {
-        let thumbArr = val.prod_thumbnails.split(',')
-        thumbnail = `${pathThumb}/${thumbArr[0]}`
-      }
-
-      const datum = Object.assign({}, val, { thumbnail: thumbnail })
-
-      datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
-
-      return datum
-    })
-  }
-
-  // return res.json(obj)
-  return res.render('front/product_list', obj)
-})
-
-router.get('/:catSlug/:id/:slug', async (req, res, next) => {
-  // var userId = req.session.user.id
-  const prodId = parseInt(req.params.id)
-
-  let obj = {
-    error: null,
-    data: {
-      product: null,
-      user: null,
-      breadcumb: [
-        { path: '/p', name: 'Semua Produk' }
-      ]
+    for (let i = 1; i <= totalPage; i++) {
+      urlParams.set('page', i);
+      pageList.push({
+        link: `/products?${urlParams}`,
+        no: i,
+        active: objPagination.page === i
+      })
     }
+
+    objPagination.list = pageList;
   }
 
-  try {
-    const product = await res.locals.productModel.findOne({prod_id: prodId})
-
-    if (product) {
-      obj.data.product = Object.assign({}, product, {
-        images: [],
-        thumbnails: [],
-        sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
-      })
-
-      obj.data.user = {
-        name: product['user.user_name'],
-        avatar: product['user.user_avatar']
-      };
-
-      obj.data.breadcumb.push({
-        path: `/p/${product['category.cat_slug']}`,
-        name: product['category.cat_name'],
-      })
-
-      obj.data.breadcumb.push({
-        path: '',
-        name: product.prod_name,
-      })
-
-      const pathThumb = `${config.file_host}/product/thumbnail`
-      const pathLarge = `${config.file_host}/product/large`
-
-      const imageThumbs = req.app.locals.strToArr(product.prod_thumbnails)
-      const images = req.app.locals.strToArr(product.prod_images)
-
-      if (imageThumbs.length > 0) {
-        for (let i in imageThumbs) {
-          obj.data.product.thumbnails.push(`${pathThumb}/${imageThumbs[i]}`)
-        }
-      }
-
-      if (images.length > 0) {
-        for (let j in images) {
-          obj.data.product.images.push(`${pathLarge}/${images[j]}`)
-        }
-      }
-
-      obj.data.product.prod_price = req.app.locals.currency(obj.data.product.prod_price).format('$0,0')
-    }
-  } catch (err) {
-    console.error(err)
-    obj.error = 'An Error occured while load your product'
-  }
-
-  //return res.json(obj)
-
-  return res.render('front/product_detail', obj)
-})
-
-module.exports = router
+  return objPagination;
+}

@@ -1,4 +1,4 @@
-<% include dashboard_header.html %>
+<%- include ("dashboard_header.html") %>
 <div class="product-form">
 
 <h3> Jual Product </h3>
@@ -8,6 +8,13 @@
 </p>
 
 <form method="POST" action="<%= action %>" id="add_product">
+
+
+  <div class="alert alert-danger" role="alert" style="display: none;">
+    A simple danger alert—check it out!
+  </div>
+
+  
   <div class="form-group">
     <label for="name">Nama Barang</label>
     <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" required>
@@ -37,10 +44,10 @@
   <div class="form-group">
     <label for="band">Band / Artis</label>
     <select class="form-control" id="band" name="band" required>
-      <option value="">-- Pilih Band/Artis --</option>
-      <% for(var i in data.bands.rows) { %>
-      <option value="<%= data.bands.rows[i].band_id %>" <%= data.item.band == data.bands.rows[i].band_id ? 'selected' : '' %> >
-          <%= data.bands.rows[i].band_name %>
+      <option value="">-- Pilih Band --</option>
+      <% for(var band_row of data.bands) { %>
+      <option value="<%= band_row.band_id %>" <%= data.item.band == band_row.band_id ? 'selected' : '' %> >
+          <%= band_row.band_name %>
       </option>
       <% } %>
     </select>
@@ -115,4 +122,4 @@
 
 </div>
 
-<% include dashboard_footer.html %>
+<%- include ("dashboard_footer.html") %>

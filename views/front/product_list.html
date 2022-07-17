@@ -1,96 +1,70 @@
-<% include ../front/template/head.html %>
-<% include ../front/template/header.html %>
+<%- include ("../front/template/head.html") %>
+<%- include ("../front/template/header.html") %>
+<%- include ("../front/template/breadcrumb.html") %>
 
 <div class="container">
-    <% include ../front/template/breadcumb.html %>
     <div class="row product-list">
-        <div class="col-md-3 filter sidebar">
+        <div class="col-lg-3 sidebar">
+            <div class="group category">
+                <h3> Kategori </h3>
+                <ul>
+                    <li>Kaos</li>
+                    <li>Aksesoris</li>
+                    <li>Vinil</li>
+                </ul>
+            </div>
 
             <div class="group condition">
                 <h3> Kondisi </h3>
-                <ul>
-                    <li><input type="checkbox" name="condition" value="b" <%= data.uri.query.condition != undefined && data.uri.query.condition.includes('b') ? 'checked="checked"' : '' %> > Baru </li>
-                    <li><input type="checkbox" name="condition" value="s" <%= data.uri.query.condition != undefined && data.uri.query.condition.includes('s') ? 'checked="checked"' : '' %> > Bekas </li>
-                </ul>
-            </div>
-
-            <div class="group categories">
-                <h3> Kategori </h3>
-                <ul>
-                    <% 
-                        const cats = locals.categoryList;
-                        for (let i = 0; i < cats.length; i++) {
-                    %>
-                        <% if (cats[i].cat_parent_id == 0) { %>
-                            <li>
-                                <input type="checkbox" name="categories" value="<%= cats[i].cat_id %>" <%= data.uri.query.categories != undefined && data.uri.query.categories.includes(cats[i].cat_id) ? 'checked="checked"' : '' %>> 
-                                <span style="font-size: 15px; font-weight: bold;"> <%= cats[i].cat_name %> </span>  
-                                <% const catSecondLayer = cats.filter(function(cat) {return cat.cat_parent_id == cats[i].cat_id  } ); %>
-                                <% if (catSecondLayer.length > 0) { %>
-                                    <ul style="margin-left: 10px;">
-                                        <% for (let j = 0; j < catSecondLayer.length; j++) { %>
-                                            <li>
-                                                <% 
-                                                let checkChildCheck = '';
-                                                if (data.uri.query.categories != undefined && data.uri.query.categories.includes(catSecondLayer[j].cat_parent_id)) { 
-                                                    checkChildCheck = 'checked="checked"'
-                                                }
-
-                                                if (data.catSlug == catSecondLayer[j].cat_slug) {
-                                                   checkChildCheck = 'checked="checked"'
-                                                } 
-                                                %>
-                                                <input type="checkbox" name="categories" value="<%= catSecondLayer[j].cat_id %>" <%= checkChildCheck %>>
-                                                <%= catSecondLayer[j].cat_name %>
-                                            </li>
-                                        <% } %>
-                                    </ul>
-                                <% } %>
-                            </li>
-                        <% } %>
-                    <% } %>
-                </ul>
+                <input type="checkbox"> Baru <br />
+                <input type="checkbox"> Bekas
             </div>
         </div>
 
-        <div class="col-md-9">
-
+        <div class="col-lg-9">
             <div class="row">
-                <ul>
                 <% var products = data.products %>
                 <% for(var i in products) { %>
-                <li class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                    <div class="product-card">
-                        <div class="product-card-wrapper">
-                        <a href="/p/<%= products[i]['category.cat_slug'] %>/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
-                            <div class="product-image">
-                                <img src="<%= products[i].thumbnail %>">
-                            </div>
-                            <div class="caption-item">
-                                <h4 style="font-size: 15px"><%= products[i]['band.band_name'] %></h4>
-                                <div><%= products[i].prod_price %></div>
-                            </div>
-                        </a>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                        <div class="item">
+                            <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
+                                <img src="<%= products[i].thumbnail %>" class="img-responsive">
+                                    
+                                <div class="caption-item">        
+                                    <h5><%= products[i]['band.band_name'] %></h5>
+                                    <p><%= products[i].prod_name %></p>
+                                    <div><%= products[i].prod_price %></div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                     </li>
                 <% } %>
-                </ul>
-            </div>
-            <div class="row" style="text-align: center;">
-                    <ul class="pagination">
-                        <% if (data.pagination.page > 1) { %>
-                            <li><a href="<%= data.pagination.baseUrl %>?page=<%= data.pagination.page - 1 %>">«</a></li>
+                </div>                    
+            <div class="row">
+                <div class="col-lg-12">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                        <!--li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li -->
+                        <% if (data.pagination.total > 0) { %>
+                            <% for (pagerow of data.pagination.list) { %> 
+                                <li class="page-item <%= pagerow.active ? 'active' : '' %>"   <%= pagerow.active ? 'aria-current="page"' : '' %> >
+                                    <a class="page-link" href="<%= pagerow.link %>"><%= pagerow.no %></a>
+                                </li>
+                            <% } %>
                         <% } %>
-
-                        <% for (var j = 1; j <= data.pagination.totalPage; j++) { %>
-                            <li class="<%= data.pagination.page == j ? 'active': '' %>"><a href="<%= data.pagination.baseUrl %>?page=<%=j%>"><%= j %> <span class="sr-only">(current)</span></a></li>
-                        <% } %>
-
-                        <% if (data.pagination.page < data.pagination.totalPage) { %>
-                            <li><a href="<%= data.pagination.baseUrl %>?page=<%= data.pagination.page + 1 %>">»</a></li>
-                        <% } %>
-                    </ul>
+                        <!--li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li -->
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
         </div>
@@ -98,5 +72,5 @@
         
     </div>
 </div>
-</div>
-<% include ../front/template/footer.html %>
+
+<%- include ("../front/template/footer.html") %>

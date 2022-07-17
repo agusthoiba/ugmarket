@@ -29,7 +29,8 @@ Upload.prototype.createImageBase64 = function(base64Str, fileName) {
 
         return fs.writeFile(filePath, new Buffer.from(base64Arr[1], "base64"), err => {
             if (err) {
-                return reject(err);
+              console.error('utils upload err', err)
+              return reject(err);
             }
 
             var fileUrl = config.file_host + fileName + '.' + ext;

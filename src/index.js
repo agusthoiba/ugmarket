@@ -7,14 +7,12 @@ const underscore = require('underscore')
 const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
-const expressValidator = require('express-validator')
 const morgan = require('morgan');
 
 const CategoryModel = require('./models/category');
 
 global.config = config
 global.express = express
-global.express_validator = expressValidator
 global._ = underscore
 
 global.slug = require('slug')
@@ -44,6 +42,8 @@ numeral.register('locale', 'id', {
 numeral.locale('id')
 
 app.locals.currency = numeral
+app.locals.config = config;
+
 
 
 /* locals.meta = {
@@ -85,8 +85,6 @@ app.use(function (req, res, next) {
 app.use(bodyParser.json({ limit: '50mb' }))
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 
-app.use(expressValidator())
-
 app.use(function (req, res, next) {
   var path = req.path.split('/')
 
@@ -119,7 +117,7 @@ connMysql()
 app.use(modelMid)
 
 app.use('/', require('./controllers/front/index'))
-app.use('/p', require('./controllers/front/product'))
+app.use('/products', require('./controllers/front/product'))
 app.use('/auth', require('./controllers/front/auth'))
 app.use('/account/product', require('./controllers/front/account/product'))
 app.use('/account/profile', require('./controllers/front/account/profile'))

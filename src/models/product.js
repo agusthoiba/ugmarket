@@ -61,8 +61,6 @@ class Product {
       prod_condition: { type: Sequelize.ENUM('b', 's', ''), defaultValue: '' },
       prod_stock: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
 
-      prod_marketplaces:  { type: Sequelize.JSON },
-
       prod_created_at: { type: Sequelize.DATE },
       prod_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
     }, {
@@ -78,6 +76,15 @@ class Product {
     this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
   }
 
+  async count(query) {
+    let obj = {
+      where: query
+    }
+    const countProd =  await this.schema.count(obj);
+
+    return countProd;
+  }
+
   async find (query, options) {
     let obj = {
       where: query,
@@ -86,6 +93,7 @@ class Product {
         {
           model: this.category.schema,
           as: 'category'
+         
         },
         {
           model: this.band.schema,
@@ -97,16 +105,13 @@ class Product {
       offset: 0
     }
 
-    if (options !== undefined && options && !_.isEmpty(options)) {
-      if (options.sort !== undefined && options.sort) {
-        obj.order = [
-          [Object.keys(options.sort)[0], Object.values(options.sort)[0]]
-        ]
+    if (!_.isEmpty(options)) {
+      if (options.sort) {
+        obj.order = options.sort
       }
-
-      if (!isNaN(options.limit) && options.limit > 0) {
+      if (options.limit && !isNaN(options.limit) && options.limit > 0) {
         obj.limit = options.limit
-        if (options.page !== undefined && options.page && !isNaN(options.page) && options.page > 0) {
+        if (options.page && !isNaN(options.page) && options.page > 0) {
           obj.offset = (options.page - 1) * options.limit
         }
       }
