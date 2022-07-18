@@ -5,13 +5,13 @@ const env = process.env;
 const config = {
     protocol: env.APP_PROTOCOL,
     host: env.APP_HOST,
-    port: env.APP_PORT,
+    port: process.env.PORT,
     db: {
         mysql: {
             url: env.DB_MYSQL_URL
         }
     },
-    file_host: env.FILE_HOST,
+    file_host: `${env.APP_PROTOCOL}://${env.APP_HOST}:${process.env.PORT}`,
     file_dir:  env.FILE_DIR,
     facebook: {
         appOauthUrl: env.FB_APP_OAUTH_URL,
