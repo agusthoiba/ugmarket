@@ -31,7 +31,7 @@ router.get('/', async (req, res, next) => {
   if (doc.length > 0) {
       obj.data.products = doc.map(val => {
         val.is_visible = val.prod_is_visible == 1
-        const pathThumb = `${config.file_host}/product/thumbnail`
+        const pathThumb = `/product/thumbnail`
         val.thumbnail = `${pathThumb}/${val.prod_thumbnails}`
         if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
           let thumbArr = val.prod_thumbnails.split(',')
