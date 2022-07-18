@@ -138,8 +138,10 @@ router.post('/update/:id', async function (req, res, next) {
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while update your product';
-    res.json(obj);
-    return res.render('/error', obj);
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+    return res.render('front/account/product_form', obj);
   }
 })
 

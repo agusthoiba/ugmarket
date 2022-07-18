@@ -1,7 +1,5 @@
 /node_modules/*
 /public/artist/*
-/public/band/*
-/public/product/*
 /data/*
 /design-assets/*
 .env
