@@ -1,4 +1,3 @@
-
 var router = express.Router()
 
 var Product = require('../../../models/product')
@@ -11,7 +10,7 @@ var crypto = require('crypto');
 const promisify = require('util').promisify
 const copyFile = promisify(fs.copyFile)
 const moment = require('moment')
-const upload = require('../../../helpers/upload')
+const Upload = require('../../../helpers/uploadCloudinary');
 
 router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)
@@ -31,17 +30,17 @@ router.get('/', async (req, res, next) => {
   if (doc.length > 0) {
       obj.data.products = doc.map(val => {
         val.is_visible = val.prod_is_visible == 1
-        const pathThumb = `/product/thumbnail`
-        val.thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-        if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
-          let thumbArr = val.prod_thumbnails.split(',')
-          val.thumbnail = `${pathThumb}/${thumbArr[0]}`
-        }
+        const imgs = val.prod_images.split(',');
+        val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {width: 100, height: 100, crop: "thumb"});
+
         return val
       })
     }
 
-  // return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
+
   return res.render('front/account/product_list', obj)
 })
 
@@ -92,12 +91,12 @@ router.get('/edit/:id', async (req, res, next) => {
       }
     }
 
-    if (product.prod_thumbnails && product.prod_thumbnails != null) {
-      const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
+    if (product.prod_images && product.prod_images != null) {
+      const thumbs = req.app.locals.strToArr(product.prod_images, ',')
 
       obj.data.item.thumbnails = thumbs.map(val => {
-        return `${config.file_host}/product/thumbnail/${val}`
-      })
+        return req.app.locals.cloudinary.url(val, {width: 100, height: 100, crop: "thumb"});
+      });
     }
 
     obj.data.categories = await res.locals.categoryModel.find()
@@ -109,6 +108,7 @@ router.get('/edit/:id', async (req, res, next) => {
     if (req.query.json == '1') {
       return res.json(obj);
     }
+
     return res.render('front/account/product_form', obj);
   } catch (err) {
     console.error(err)
@@ -170,7 +170,10 @@ router.post('/create', async (req, res, next) => {
 
   req.body.user_id = req.session.user.id;
 
-  const payload = await cleanPost(req.body)
+  const payload = await cleanPost(req.body);
+
+  console.log('payload', payload)
+
   await res.locals.productModel.create(payload)
   return res.redirect('/account/product');
 })
@@ -245,32 +248,23 @@ async function cleanPost(body, tipe = 'create') {
   if (body.mp_bukalapak) {
     payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
   }
-  
-  if (body.mp_shopee) {
-    payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
-  }
 
   if (body.image_ori) {
     if (typeof body.image_ori == 'string') {
-      body.image_ori = [body.image_ori];
-      body.image_thumbnail = [body.image_thumbnail];
+      body.images = [body.image_ori];
     }
 
     var current_date = (new Date()).valueOf().toString();
     var random = Math.random().toString();
     var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
-    var fileName = payload.prod_slug + '-' + randomName;
+    var fileName = payload.prod_slug;
 
-    console.log('payload bfr upload', payload)
+    const upload = new Upload();
     try {
-      const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
+      const oris = await upload.processMultipleUpload(body.images, 'products', fileName);
       payload.prod_images = oris.join(',')
 
-      const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
-      payload.prod_thumbnails = thumbs.join(',')
-
-
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         return resolve(payload)
       })
     } catch (err) {
@@ -287,10 +281,6 @@ async function cleanPost(body, tipe = 'create') {
 
   if (body.mp_bukalapak) {
       payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
-  }
-
-  if (body.mp_shopee) {
-      payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
   }
 
   return new Promise((resolve, reject) => {

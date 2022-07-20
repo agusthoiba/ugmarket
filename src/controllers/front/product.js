@@ -57,12 +57,11 @@ router.get('/', async (req, res, next) => {
       console.log('doc --', doc)
 
       obj.data.products = doc.map(val => {
-        const pathThumb = `${config.file_host}/product/thumbnail`
-        let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-
-        if (val.prod_thumbnails && val.prod_thumbnails != null && val.prod_thumbnails.includes(',')) {
-          let thumbArr = val.prod_thumbnails.split(',')
-          thumbnail = `${pathThumb}/${thumbArr[0]}`
+        
+        let thumbnail = '/image/no-image-180x180.png'
+        if (val.prod_images != null) {
+          let thumbArr = val.prod_images.split(',');
+          thumbnail = req.app.locals.cloudinary.url(thumbArr[0],{width: 220, height: 220, crop: 'thumb'});
         }
 
         const datum = Object.assign({}, val, { thumbnail: thumbnail })
@@ -128,21 +127,12 @@ router.get('/:id/:slug', async (req, res, next) => {
         avatar: product['user.user_avatar']
       };
 
-      const pathThumb = `${config.file_host}/product/thumbnail`
-      const pathLarge = `${config.file_host}/product/large`
-
-      const imageThumbs = req.app.locals.strToArr(product.prod_thumbnails)
-      const images = req.app.locals.strToArr(product.prod_images)
-
-      if (imageThumbs.length > 0) {
-        for (let i in imageThumbs) {
-          obj.data.product.thumbnails.push(`${pathThumb}/${imageThumbs[i]}`)
-        }
-      }
+      const images = req.app.locals.strToArr(product.prod_images, ',');
 
       if (images.length > 0) {
-        for (let j in images) {
-          obj.data.product.images.push(`${pathLarge}/${images[j]}`)
+        for (let img of images) {
+          obj.data.product.thumbnails.push(req.app.locals.cloudinary.url(img, {width: 100, height: 100, crop: 'thumb'}));
+          obj.data.product.images.push(req.app.locals.cloudinary.url(img, {width: 475}))
         }
       }
 

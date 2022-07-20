@@ -50,7 +50,7 @@
             No product found
           <% } else {
               for(var i in products) { 
-              let imgPath  = products[i].prod_thumbnails ? '/product/thumbnail/'+products[i].prod_thumbnails: '/image/no-image-180x180';
+              let imgPath  = products[i].thumbnail ? products[i].thumbnail: '/image/no-image-180x180';
                 %>
               <div class="product-list-item-carousel">
                 <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">

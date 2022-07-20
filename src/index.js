@@ -8,6 +8,7 @@ const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const morgan = require('morgan');
+const cloudinary = require('cloudinary').v2;
 
 const CategoryModel = require('./models/category');
 
@@ -44,6 +45,12 @@ numeral.locale('id')
 app.locals.currency = numeral
 app.locals.config = config;
 
+cloudinary.config({
+  secure: true
+});
+
+app.locals.cloudinary = cloudinary;
+//app.locals.clo
 
 
 /* locals.meta = {
@@ -70,6 +77,15 @@ app.use(function (err, req, res, next) {
   if (!err) { return next() }
 
   console.error(err)
+  /* if (err.type == 'redirect') {
+    res.redirect('/error')
+  } */
+
+  const errResp = {
+    code: err.code,
+    message: 'An error occured'
+  }
+  return res.status(err.statusCode).json(errResp)
   return next()
 })
 
@@ -110,6 +126,7 @@ const connMysql = async() => {
     db: app.locals.db
   });
   app.locals.categoryList = await catModel.find();
+
    // console.log(app.locals.categoryList)
 }
 
