@@ -9,11 +9,10 @@ router.get('/', async (req, res, next) => {
   if (doc.length > 0) {
     obj.data.products = doc.map(val => {
       val.is_visible = val.prod_is_visible === 1
-      const pathThumb = `${config.file_host}/product/thumbnail`
-      val.thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-      if (val.prod_thumbnails.includes(',')) {
-        let thumbArr = val.prod_thumbnails.split(',')
-        val.thumbnail = `${pathThumb}/${thumbArr[0]}`
+
+      if (val.prod_images) {
+        const images = val.prod_images.split(',');
+        val.thumbnail = req.app.locals.cloudinary.url(images[0], {width: 200, height: 200, crop: 'thumb'});
       }
       return val
     })

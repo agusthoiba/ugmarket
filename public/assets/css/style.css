@@ -1277,6 +1277,7 @@ Pagination
 .account {
   padding: 20px;
   min-height: 500px;
+  margin-top: 70px;
 }
 
 .account .sidebar {
