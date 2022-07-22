@@ -154,10 +154,10 @@ module.exports = router
 
 function _filtering(req, obj, query) {
   if (req.query.kategori) {
+    const catSlug = (req.query.kategori).trim()
     obj.data.breadcrumb = [{
-      link: '#', text: req.query.kategori
+      link: '#', text: req.params.kategori
     }]
-    const catSlug = (req.query.kategori).trim();
     const findCat = req.app.locals.categoryList.find(cat => {
       return cat.cat_slug == catSlug
     });
@@ -179,6 +179,10 @@ function _filtering(req, obj, query) {
         }
       });
     }
+  }
+
+  if (req.query['lokal-band'] && ['1', '0'].includes(req.query['lokal-band'])) {
+    query['$band.band_is_local$'] = req.query['lokal-band'] == '1'
   }
 
   var url = new URI(req.originalUrl);
