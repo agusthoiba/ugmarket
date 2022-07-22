@@ -131,17 +131,17 @@ router.post('/update/:id', async function (req, res, next) {
   var obj = { error: null, data: null };
 
   try {
-    const payload = await cleanPost(req.body, 'update')
+    const payload = await cleanPost(req.body, res, 'update')
     const docUpd = await res.locals.productModel.update(query, payload)
 
     return res.redirect('/account/product');
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while update your product';
-    if (req.query.json == '1') {
-      return res.json(obj);
-    }
-    return res.render('front/account/product_form', obj);
+    //if (req.query.json == '1') {
+    return res.json(obj);
+    // }
+    // return res.render('front/account/product_form', obj);
   }
 })
 
@@ -165,12 +165,12 @@ router.get('/add', async (req, res, next) => {
   return res.render('front/account/product_form', obj);
 })
 
-router.post('/create', async (req, res, next) => {
+router.post('/create', async (req, res) => {
   var obj = { error: null, data: null };
 
   req.body.user_id = req.session.user.id;
 
-  const payload = await cleanPost(req.body);
+  const payload = await cleanPost(req.body, res);
 
   console.log('payload', payload)
 
@@ -217,10 +217,18 @@ function itemData() {
     return errVal;
 }*/
 
-async function cleanPost(body, tipe = 'create') {
+async function cleanPost(body, res, tipe = 'create') {
+  const findBand = await res.locals.bandModel.findOne({
+    band_id: body.band
+  });
+
+  console.log('findBand --', findBand)
+
+  const prodSlug = `${findBand.band_slug}-${body.name.trim().toLowerCase()}`
+
   var payload = {
     prod_name: body.name.trim(),
-    prod_slug: slug(body.name.trim().toLowerCase()),
+    prod_slug: slug(prodSlug),
     prod_cat_id: body.category,
     prod_desc: body.description.trim(),
     prod_price: parseInt(body.price),
