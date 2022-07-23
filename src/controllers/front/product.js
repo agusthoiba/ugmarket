@@ -155,12 +155,14 @@ module.exports = router
 function _filtering(req, obj, query) {
   if (req.query.kategori) {
     const catSlug = (req.query.kategori).trim()
-    obj.data.breadcrumb = [{
-      link: '#', text: req.params.kategori
-    }]
     const findCat = req.app.locals.categoryList.find(cat => {
       return cat.cat_slug == catSlug
     });
+
+    
+    obj.data.breadcrumb = [{
+      link: '#', text: findCat.cat_name
+    }]
 
     if (findCat != null) {
       const catChild = req.app.locals.categoryList.find(cat => {

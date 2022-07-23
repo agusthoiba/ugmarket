@@ -23,21 +23,20 @@ function submitAuth(e, obj) {
 $(document).ready(function(){
   $(".owl-carousel").owlCarousel({
     loop: true,
-    nav: true,
     navText:['<i class="fas fa-less-than fa-lg"></i>', '<i class="fas fa-greater-than fa-lg"></i>'],
     responsiveClass:true,
     responsive:{
         0:{
             items:2,
-            //nav:true
+            nav:false
         },
         600:{
             items:4,
-            //nav:false
+            nav:false
         },
         1000:{
             items:6,
-            //nav:true,
+            nav:true,
         }
     }
   });

@@ -1488,12 +1488,10 @@ OWL carousel
 }
 
 .owl-next {
-  /*position: relative;*/
+  position: relative;
   width: 50px;
   height: 50px;
-  /* left: inherit; */
-  right: -50px;
-  left: inherit;
+  left: 1130px;
 }
 
 .owl-item img{
