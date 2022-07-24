@@ -148,6 +148,18 @@ a:-webkit-any-link {
   border-bottom: 1px solid #a6a6a6;
 }
 
+.products-sort-wrapper {
+  text-align: right;
+}
+
+.products-sort-wrapper span{
+  margin-right: 10px;
+}
+
+.products-sort-wrapper select {
+  width: 90px;
+}
+
 .seg-bar{
   /*line-height: 60px;
   white-space: nowrap;*/
@@ -772,11 +784,20 @@ DROPDOWN CART
 /*==================================*/
 
 
-
+h1.page-title {
+  font-size: 22px;
+  color: #212121;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  margin-bottom: 30px;
+  text-align: center;
+}
 
 
 /*======================================
-DISCOUNT PRODUCT
+PRODUCT
 ======================================*/
 
 
@@ -807,6 +828,9 @@ text-align: center;
     margin-top: 20px;
 }
 
+.product-list-search {
+  margin-top: 20px;
+}
 .card {
   border-style: hidden
 }
@@ -1217,6 +1241,7 @@ item
 .item {
   /* border: 1px solid #dddddd; */
   margin-bottom:20px;
+  text-align: center;
 }
 
 .item img{

@@ -14,6 +14,7 @@ router.get('/', async (req, res, next) => {
       breadcrumb: [
         {link: '#', text: 'products'}
       ],
+      pageTitle: 'Product',
       products: [],
       pagination: {
         limit: pageLimit,
@@ -164,6 +165,8 @@ function _filtering(req, obj, query) {
       link: '#', text: findCat.cat_name
     }]
 
+    obj.data.pageTitle = findCat.cat_name;
+
     if (findCat != null) {
       const catChild = req.app.locals.categoryList.find(cat => {
         return cat.cat_parent_id == findCat.cat_id
@@ -185,6 +188,7 @@ function _filtering(req, obj, query) {
 
   if (req.query['lokal-band'] && ['1', '0'].includes(req.query['lokal-band'])) {
     query['$band.band_is_local$'] = req.query['lokal-band'] == '1'
+    obj.data.pageTitle = 'Local Band'
   }
 
   var url = new URI(req.originalUrl);

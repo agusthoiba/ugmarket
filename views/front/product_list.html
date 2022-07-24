@@ -3,6 +3,31 @@
 <%- include ("../front/template/breadcrumb.html") %>
 
 <div class="container">
+    <h1 class="page-title">
+        <%= data.pageTitle %>
+    </h1>
+
+    <div class="row product-list-toolbox">
+        <div class="col-lg-3 col-6">
+            <span class="simple-label"> 
+                <i class="fas fa-sliders-h"></i> 
+                FILTERS
+            </span> 
+        </div>
+        <div class="col-lg-9 col-6 ml-auto ">
+            <div class="products-sort-wrapper">
+                <span> <%= data.pagination.total %> Produk </span>
+                <select name="sort" class="sort-by">
+                    <option value="">Urutkan </option>
+                    <option value="popularitas">Popularitas</option>
+                    <option value="produk-baru">Produk Baru</option>
+                    <option value="harga-terendah">Harga Terendah</option>
+                    <option value="harga-tertinggi">Harga Tertinggi</option>
+                </select>
+            </div>
+        </div>
+    </div>    
+
     <div class="row product-list">
         <div class="col-lg-3 sidebar">
             <div class="group category">
