@@ -8,18 +8,17 @@
     </h1>
 
     <div class="row product-list-toolbox">
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-3 col-4">
             <span class="simple-label"> 
                 <i class="fas fa-sliders-h"></i> 
                 FILTERS
             </span> 
         </div>
-        <div class="col-lg-9 col-6 ml-auto ">
+        <div class="col-lg-9 col-8">
             <div class="products-sort-wrapper">
                 <span> <%= data.pagination.total %> Produk </span>
                 <select name="sort" class="sort-by">
-                    <option value="">Urutkan </option>
-                    <option value="popularitas">Popularitas</option>
+                    <option value="popularitas" selected>Popularitas</option>
                     <option value="produk-baru">Produk Baru</option>
                     <option value="harga-terendah">Harga Terendah</option>
                     <option value="harga-tertinggi">Harga Tertinggi</option>
@@ -31,18 +30,52 @@
     <div class="row product-list">
         <div class="col-lg-3 sidebar">
             <div class="group category">
-                <h3> Kategori </h3>
-                <ul>
-                    <li>Kaos</li>
-                    <li>Aksesoris</li>
-                    <li>Vinil</li>
-                </ul>
+                <button class="group-title">
+                    <span class="group-title-text">
+                        Kategori
+                    </span>
+                    <svg width="15" height="15" class="group-title-icon" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Kaos
+                    </label>
+                </div>
+     
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Aksesoris
+                    </label>
+                </div>
+                
             </div>
 
             <div class="group condition">
-                <h3> Kondisi </h3>
-                <input type="checkbox"> Baru <br />
-                <input type="checkbox"> Bekas
+                <button class="group-title">
+                    <span class="group-title-text">
+                        Kondisi
+                    </span>
+                    <svg width="15" height="15" class="group-title-icon" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Baru
+                    </label>
+                </div>
+     
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Bekas
+                    </label>
+                </div>
             </div>
         </div>
 
