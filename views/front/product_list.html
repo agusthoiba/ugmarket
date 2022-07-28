@@ -29,54 +29,7 @@
 
     <div class="row product-list">
         <div class="col-lg-3 sidebar">
-            <div class="group category">
-                <button class="group-title">
-                    <span class="group-title-text">
-                        Kategori
-                    </span>
-                    <svg width="15" height="15" class="group-title-icon" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
-                    </svg>
-                </button>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                    <label class="form-check-label" for="flexCheckChecked">
-                        Kaos
-                    </label>
-                </div>
-     
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-                    <label class="form-check-label" for="flexCheckChecked">
-                        Aksesoris
-                    </label>
-                </div>
-                
-            </div>
-
-            <div class="group condition">
-                <button class="group-title">
-                    <span class="group-title-text">
-                        Kondisi
-                    </span>
-                    <svg width="15" height="15" class="group-title-icon" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
-                    </svg>
-                </button>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-                    <label class="form-check-label" for="flexCheckChecked">
-                        Baru
-                    </label>
-                </div>
-     
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                    <label class="form-check-label" for="flexCheckChecked">
-                        Bekas
-                    </label>
-                </div>
-            </div>
+            <%- include ("product_list_sidebar.html") %>
         </div>
 
         <div class="col-lg-9">

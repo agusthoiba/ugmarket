@@ -15,6 +15,7 @@ router.get('/', async (req, res, next) => {
         {link: '#', text: 'products'}
       ],
       pageTitle: 'Product',
+      categories: req.app.locals.categories,
       products: [],
       pagination: {
         limit: pageLimit,
@@ -55,7 +56,6 @@ router.get('/', async (req, res, next) => {
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
-      console.log('doc --', doc)
 
       obj.data.products = doc.map(val => {
         

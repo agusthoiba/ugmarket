@@ -753,10 +753,12 @@ DROPDOWN CART
   font-family: 'Lato',sans-serif;
 }
 
-.price{
+/* .price{
   color: #f25f5c;
   font-family: 'Lato',sans-serif;
-}
+} */
+
+
 
 .shopping .shopping-items{
   padding-top: 10px;
@@ -849,6 +851,17 @@ text-align: center;
 .product-list-search {
   margin-top: 20px;
 }
+
+.filter-input input[type="text"] {
+  padding: 9px 15px;
+  width: 90px;
+  margin-right: 8px;
+}
+
+.filter-input input[type="text"]:focus {
+  border: 1px solid #04a4bc;
+}
+
 .card {
   border-style: hidden
 }
@@ -937,6 +950,23 @@ text-align: center;
   display: inline-block;
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
+}
+
+.group-wrapper {
+  margin-left: 10px;
+  margin-top: 7px
+}
+
+.group-wrapper-header {
+  margin-top: 12px
+}
+
+.group-wrapper-body {
+  margin-top: 7px
+}
+
+.group-wrapper .form-check {
+  margin-bottom: 5px
 }
 
 .product-list .sidebar  li {
