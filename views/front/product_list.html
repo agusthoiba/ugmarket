@@ -17,11 +17,14 @@
         <div class="col-lg-9 col-8">
             <div class="products-sort-wrapper">
                 <span> <%= data.pagination.total %> Produk </span>
-                <select name="sort" class="sort-by">
-                    <option value="popularitas" selected>Popularitas</option>
-                    <option value="produk-baru">Produk Baru</option>
-                    <option value="harga-terendah">Harga Terendah</option>
-                    <option value="harga-tertinggi">Harga Tertinggi</option>
+                <select name="sort" class="sort-by" id="sort-select">
+                    <% _.each(data.sort, (val => { %>
+                        <option value="<%= val.slug %>" 
+                            <%= data.uri.query?.sort == val.slug ? 'selected': ''%> >
+                            <%= val.label %>
+                        </option>
+                    <% })) %>
+
                 </select>
             </div>
         </div>

@@ -3,6 +3,7 @@
 const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
+const { PRODUCT_SORT } = require('../../constant');
 
 router.get('/', async (req, res, next) => {
   let pageLimit = 20;
@@ -28,11 +29,14 @@ router.get('/', async (req, res, next) => {
         path: '',
         params: '',
         query: {}
-      }
+      },
+      sort: PRODUCT_SORT
     }
-    // catSlug: req.params.catSlug
   }
 
+  var url = new URI(req.originalUrl);
+
+  obj.data.uri.query = url.query();
   const maxLinkPagination = 5 // maximal number of link pagination
 
   let query = {
@@ -42,9 +46,13 @@ router.get('/', async (req, res, next) => {
   _filtering(req, obj, query)
 
   var options = { 
-    sort: [['prod_id', 'DESC']],
+    sort: [['prod_total_sold', 'DESC']],
     page: obj.data.pagination.page,
     limit: obj.data.pagination.limit
+  }
+
+  if (req.query.sort) {
+    options.sort = _sorting(req.query.sort);
   }
 
   try {
@@ -268,6 +276,31 @@ function _filtering(req, obj, query) {
   }
 }
 
+function _sorting(sortParamText) {
+  const sortParam = (sortParamText).trim();
+  const prodSortSlugs = _.pluck(PRODUCT_SORT, 'slug');
+
+  let sortResult = [];
+
+  if (prodSortSlugs.includes(sortParam)) {
+    switch (sortParam) {
+      case PRODUCT_SORT.PRICE_HIGH.slug:
+        sortResult = [['prod_price', 'DESC']];
+        break;
+      case PRODUCT_SORT.PRICE_LOW.slug:
+        sortResult = [['prod_price', 'ASC']];
+        break;
+      case PRODUCT_SORT.NEW_PRODUCT.slug:
+        sortResult = [['prod_id', 'DESC']];
+        break;
+      default:
+        sortResult = [['prod_total_sold', 'DESC']];
+    }
+  }
+
+
+  return sortResult;
+}
 function _pagination(objPagination, req) {
   const total = objPagination.total;
 

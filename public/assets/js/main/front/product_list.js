@@ -1,7 +1,18 @@
 $(function () {
     console.log('product list js load')
 
-    $('input[type=checkbox]').on('click', function () {
+    var url = new URI(window.location.href);;
+    $( "#sort-select" ).change(function() {
+        $("#sort-select option:selected" ).each(function() {
+            var sortVal = $( this ).val();
+
+            console.log('sortVal', sortVal)
+            url.setSearch('sort', sortVal);
+            window.location.href = url.toString();
+        });
+    })
+
+    /*$('input[type=checkbox]').on('click', function () {
         var that = $( "input:checked" );
         var n = that.length;
         
@@ -45,6 +56,6 @@ $(function () {
     
             window.location.assign(uri.toString());
         });
-    });
+    }); */
 });
 
