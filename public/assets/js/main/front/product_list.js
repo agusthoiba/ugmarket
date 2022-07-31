@@ -12,12 +12,10 @@ $(function () {
         });
     })
 
-    /*$('input[type=checkbox]').on('click', function () {
+    $('input[type=checkbox]').on('click', function () {
         var that = $( "input:checked" );
         var n = that.length;
         
-        console.log('length', n)
-        console.log(that.attr('name'), that.val())
     
         var filter = {
             condition: [],
@@ -25,7 +23,6 @@ $(function () {
         };
     
         that.each(function() {
-            console.log('val', $(this).attr('name'),  $(this).val())
             if ($(this)[0].checked) {
                 if ($( this ).attr('name') == 'condition') {
                     filter.condition.push($( this ).val())
@@ -33,8 +30,6 @@ $(function () {
     
                 if ($( this ).attr('name') == 'categories') {
                     filter.categories.push($( this ).val())
-                    var liChild = $( this ).find( "li" );
-                    console.log('liChild', liChild)
                 }
             }
             console.log('filter', filter.condition.join(','),  filter.categories.join(','))
@@ -54,8 +49,7 @@ $(function () {
 
             console.log('uri', uri.toString())
     
-            window.location.assign(uri.toString());
+            window.location.href = uri.toString();
         });
-    }); */
+    });
 });
-

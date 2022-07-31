@@ -17,7 +17,9 @@
             <div class="group-wrapper-body">
                 <% for(catChild of cat.childs) { %>
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="<%= catChild.cat_slug %>" 
+                            id="cat-<%= catChild.cat_id %>" <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> >
                         <label class="form-check-label" for="flexCheckChecked">
                             <%= catChild.cat_name %>
                         </label>
@@ -39,9 +41,9 @@
     </button>
 
     <div class="filter-input">																			                            																																																																																																					
-        <input type="text" placeholder="min" class="range-min" data-type="min" value="0">
+        <input type="text" placeholder="min" class="range-min" data-type="min" name="price" value="0">
         <span>-</span>
-        <input type="text" placeholder="max" class="range-max" data-type="max" value="500000" style="margin-left: 8px;">
+        <input type="text" placeholder="max" class="range-max" data-type="max" name="price" value="500000" style="margin-left: 8px;">
     </div>
 </div>
 

@@ -209,9 +209,15 @@ function _filtering(req, obj, query) {
   }
 
   if (obj.data.uri.query.categories != undefined) {
-    obj.data.uri.query.categories = ((obj.data.uri.query.categories).split(',')).map(catId => {
-      return parseInt(catId)
-    })
+    const catSlugParams = ((obj.data.uri.query.categories).trim()).split(',');
+
+    let catIds = [];
+    for(cat of req.app.locals.categoryList) {
+      if (catSlugParams.includes(cat.cat_slug)) {
+        catIds.push(cat.cat_id);
+      }
+    }
+    query.prod_cat_id = catIds;
   }
   
   if (req.query.page) {
@@ -301,6 +307,7 @@ function _sorting(sortParamText) {
 
   return sortResult;
 }
+
 function _pagination(objPagination, req) {
   const total = objPagination.total;
 
