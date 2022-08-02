@@ -49,7 +49,18 @@ $(function () {
 
             console.log('uri', uri.toString())
     
-            window.location.href = uri.toString();
+            window.location.assign(uri.toString());
         });
     });
+
+    $('#filter_hide').click(function() {
+        console.log('aku clik hide')
+        $('#sidebar').css('display', 'none');
+        $(this).css('display', 'none');
+    })
+
+    $('#filter_view').click(function() {
+        $('#sidebar').css('display', 'block');
+        $('#filter_hide').css('display', 'block');
+    })
 });

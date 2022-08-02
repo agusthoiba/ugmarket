@@ -9,9 +9,12 @@
 
     <div class="row product-list-toolbox">
         <div class="col-lg-3 col-4">
-            <span class="simple-label"> 
+            <span class="simple-label" id="filter_view"> 
                 <i class="fas fa-sliders-h"></i> 
                 FILTERS
+            </span> 
+            <span class="simple-label" id="filter_hide"> 
+                <i class="fas fa-times"></i>
             </span> 
         </div>
         <div class="col-lg-9 col-8">
@@ -31,7 +34,7 @@
     </div>    
 
     <div class="row product-list">
-        <div class="col-lg-3 sidebar">
+        <div class="col-lg-3 sidebar" id="sidebar">
             <%- include ("product_list_sidebar.html") %>
         </div>
 

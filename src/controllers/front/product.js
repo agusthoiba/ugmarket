@@ -169,6 +169,7 @@ function _filtering(req, obj, query) {
     });
 
     
+    console.log('findCat', findCat)
     obj.data.breadcrumb = [{
       link: '#', text: findCat.cat_name
     }]
@@ -176,14 +177,14 @@ function _filtering(req, obj, query) {
     obj.data.pageTitle = findCat.cat_name;
 
     if (findCat != null) {
-      const catChild = req.app.locals.categoryList.find(cat => {
+      const catChild = req.app.locals.categoryList.filter(cat => {
         return cat.cat_parent_id == findCat.cat_id
       });
 
       let catIds = [findCat.cat_id];
 
       if (catChild != null) {
-        catIds.push(_.pluck(catChild, 'cat_id'));
+        catIds = catIds.concat(_.pluck(catChild, 'cat_id'));
       }
 
       query = Object.assign(query, { 

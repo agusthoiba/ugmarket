@@ -158,6 +158,11 @@ a:-webkit-any-link {
 
 .simple-label {
   font-size: 20px;
+  cursor: pointer;
+}
+
+#filter_hide {
+  float: right;
 }
 
 .products-sort-wrapper {
