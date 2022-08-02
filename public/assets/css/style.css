@@ -163,6 +163,7 @@ a:-webkit-any-link {
 
 #filter_hide {
   float: right;
+  cursor: pointer;
 }
 
 .products-sort-wrapper {
@@ -952,9 +953,10 @@ text-align: center;
 
 .group-title-icon {
   vertical-align: middle;
-  display: inline-block;
+  float: right;
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
+  
 }
 
 .group-wrapper {
@@ -1401,9 +1403,9 @@ Pagination
   background-color:#e7e7e7;
 }
 
-.product-form {
+/*.product-form {
 
-}
+}*/
 
 .product-form .image-upload li{
   cursor: pointer;

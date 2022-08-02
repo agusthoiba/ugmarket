@@ -63,4 +63,53 @@ $(function () {
         $('#sidebar').css('display', 'block');
         $('#filter_hide').css('display', 'block');
     })
+
+    $('.category .group-title-icon').click(function() {
+        var that = $(this);
+
+        if ($('.category .group-wrapper').css('display') == 'none') {
+            $('.category .group-wrapper').css('display', 'block');
+            that.html('<path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>');
+        } else {
+            $('.category .group-wrapper').css('display', 'none');
+            that.html('<path d="M8 7V3H7v4H3v1h4v4h1V8h4V7H8z" fill="currentColor" fill-rule="evenodd"></path>');
+        }
+
+    });
+
+    $('.price .group-title-icon').click(function() {
+        var that = $(this);
+
+        if ($('.price .group-wrapper').css('display') == 'none') {
+            $('.price .group-wrapper').css('display', 'block');
+            that.html('<path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>');
+        } else {
+            $('.price .group-wrapper').css('display', 'none');
+            that.html('<path d="M8 7V3H7v4H3v1h4v4h1V8h4V7H8z" fill="currentColor" fill-rule="evenodd"></path>');
+        }
+    });
+
+    $('.size .group-title-icon').click(function() {
+        var that = $(this);
+
+        if ($('.size .group-wrapper').css('display') == 'none') {
+            $('.size .group-wrapper').css('display', 'block');
+            that.html('<path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>');
+        } else {
+            $('.size .group-wrapper').css('display', 'none');
+            that.html('<path d="M8 7V3H7v4H3v1h4v4h1V8h4V7H8z" fill="currentColor" fill-rule="evenodd"></path>');
+        }
+    });
+
+    $('.condition .group-title-icon').click(function() {
+        var that = $(this);
+
+        if ($('.condition .group-wrapper').css('display') == 'none') {
+            $('.condition .group-wrapper').css('display', 'block');
+            that.html('<path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>');
+        } else {
+            $('.condition .group-wrapper').css('display', 'none');
+            that.html('<path d="M8 7V3H7v4H3v1h4v4h1V8h4V7H8z" fill="currentColor" fill-rule="evenodd"></path>');
+        }
+    });
 });

@@ -40,7 +40,7 @@
         </svg>
     </button>
 
-    <div class="filter-input">																			                            																																																																																																					
+    <div class="group-wrapper filter-input">																			                            																																																																																																					
         <input type="text" placeholder="min" class="range-min" data-type="min" name="price" value="0">
         <span>-</span>
         <input type="text" placeholder="max" class="range-max" data-type="max" name="price" value="500000" style="margin-left: 8px;">
@@ -56,29 +56,31 @@
             <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
         </svg>
     </button>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-        <label class="form-check-label" for="inlineCheckbox1">XS</label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
-        <label class="form-check-label" for="inlineCheckbox2">S</label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
-        <label class="form-check-label" for="inlineCheckbox3">M </label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option4">
-        <label class="form-check-label" for="inlineCheckbox3">L </label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option5">
-        <label class="form-check-label" for="inlineCheckbox3">XL </label>
-    </div>
-    <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option6">
-        <label class="form-check-label" for="inlineCheckbox3"> XXL </label>
+    <div class="group-wrapper">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+            <label class="form-check-label" for="inlineCheckbox1">XS</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+            <label class="form-check-label" for="inlineCheckbox2">S</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3">
+            <label class="form-check-label" for="inlineCheckbox3">M </label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option4">
+            <label class="form-check-label" for="inlineCheckbox3">L </label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option5">
+            <label class="form-check-label" for="inlineCheckbox3">XL </label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option6">
+            <label class="form-check-label" for="inlineCheckbox3"> XXL </label>
+        </div>
     </div>
 </div>
 
@@ -91,23 +93,25 @@
             <path d="M3 7h9v1H3z" fill="currentColor" fill-rule="evenodd"></path>
         </svg>
     </button>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" 
-            name="condition" value="b" id="flexCheckChecked"
-            <%= data.uri.query.condition?.includes('b') ? 'checked' : '' %> 
-            >
-        <label class="form-check-label" for="flexCheckChecked">
-            Baru
-        </label>
-    </div>
+    <div class="group-wrapper">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+                name="condition" value="b" id="flexCheckChecked"
+                <%= data.uri.query.condition?.includes('b') ? 'checked' : '' %> 
+                >
+            <label class="form-check-label" for="flexCheckChecked">
+                Baru
+            </label>
+        </div>
 
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" 
-            name="condition" value="s" id="flexCheckChecked"  
-            <%= data.uri.query.condition?.includes('s') ? 'checked' : '' %> 
-            >
-        <label class="form-check-label" for="flexCheckChecked">
-            Bekas
-        </label>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+                name="condition" value="s" id="flexCheckChecked"  
+                <%= data.uri.query.condition?.includes('s') ? 'checked' : '' %> 
+                >
+            <label class="form-check-label" for="flexCheckChecked">
+                Bekas
+            </label>
+        </div>
     </div>
 </div>
