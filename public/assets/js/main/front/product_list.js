@@ -53,6 +53,41 @@ $(function () {
         });
     });
 
+    $('input[name=price]').on('change', function () {
+        var that = $('input[name=price]');
+        console.log(that)
+
+        $('#alert-price').hide();
+
+        var uri = new URI(window.location.href);
+        var priceMin = $('#price-min').val();
+        var priceMax = $('#price-max').val();
+
+        that.each(function() {
+            if ($(this).val() != '') {
+                var re = /[0-9]/g;
+                if (re.exec($(this).val()) == null) {
+                    $(this).val('')
+                }
+            }
+        });
+
+        if (priceMin != '' && priceMax != '') {
+            if (parseInt(priceMin) > parseInt(priceMax)) {
+                $('#alert-price').text('Nilai min harus lebih kecil dari maks').show();
+            }
+        }
+
+        uri.setQuery({
+            price_min: priceMin,
+            price_max: priceMax
+        });
+    
+        console.log('uri price', uri.toString())
+    
+        window.location.assign(uri.toString());
+    });
+
     $('#filter_hide').click(function() {
         console.log('aku clik hide')
         $('#sidebar').css('display', 'none');

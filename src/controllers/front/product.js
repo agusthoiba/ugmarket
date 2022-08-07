@@ -64,9 +64,7 @@ router.get('/', async (req, res, next) => {
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
-
       obj.data.products = doc.map(val => {
-        
         let thumbnail = '/image/no-image-180x180.png'
         if (val.prod_images != null) {
           let thumbArr = val.prod_images.split(',');
@@ -169,7 +167,6 @@ function _filtering(req, obj, query) {
     });
 
     
-    console.log('findCat', findCat)
     obj.data.breadcrumb = [{
       link: '#', text: findCat.cat_name
     }]
@@ -279,6 +276,31 @@ function _filtering(req, obj, query) {
       query.prod_cat_id = {
         [Op.or]: filterCategories
       }
+    }
+  }
+
+  if (req.query.price_min) {
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min)
+    }
+
+    if (req.query.price_max) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.lte]: parseInt(req.query.price_max)
+      })
+    }
+  }
+
+
+  if (req.query.price_max) {
+    query.prod_price = {
+      [Op.lte]: parseInt(req.query.price_max)
+    }
+
+    if (req.query.price_min) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.gte]: parseInt(req.query.price_min)
+      })
     }
   }
 }

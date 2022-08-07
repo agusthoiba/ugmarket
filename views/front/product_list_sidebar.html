@@ -40,11 +40,13 @@
         </svg>
     </button>
 
-    <div class="group-wrapper filter-input">																			                            																																																																																																					
-        <input type="text" placeholder="min" class="range-min" data-type="min" name="price" value="0">
+    <div class="group-wrapper filter-input">
+        <input type="text" placeholder="min" class="range-min" data-type="min" name="price" id="price-min" value="<%= data.uri.query.price_min %>" >
         <span>-</span>
-        <input type="text" placeholder="max" class="range-max" data-type="max" name="price" value="500000" style="margin-left: 8px;">
+        <input type="text" placeholder="max" class="range-max" data-type="max" name="price" id="price-max" value="<%= data.uri.query.price_max %>" style="margin-left: 8px;">
+        <div class="invalid-feedback" id="alert-price" style="font-size:12px"></div>
     </div>
+
 </div>
 
 <div class="group size">
