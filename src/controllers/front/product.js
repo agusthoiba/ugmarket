@@ -3,6 +3,7 @@
 const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
+const { PRODUCT_SORT } = require('../../constant');
 
 router.get('/', async (req, res, next) => {
   let pageLimit = 20;
@@ -14,6 +15,8 @@ router.get('/', async (req, res, next) => {
       breadcrumb: [
         {link: '#', text: 'products'}
       ],
+      pageTitle: 'Product',
+      categories: req.app.locals.categories,
       products: [],
       pagination: {
         limit: pageLimit,
@@ -26,11 +29,14 @@ router.get('/', async (req, res, next) => {
         path: '',
         params: '',
         query: {}
-      }
+      },
+      sort: PRODUCT_SORT
     }
-    // catSlug: req.params.catSlug
   }
 
+  var url = new URI(req.originalUrl);
+
+  obj.data.uri.query = url.query();
   const maxLinkPagination = 5 // maximal number of link pagination
 
   let query = {
@@ -40,9 +46,13 @@ router.get('/', async (req, res, next) => {
   _filtering(req, obj, query)
 
   var options = { 
-    sort: [['prod_id', 'DESC']],
+    sort: [['prod_total_sold', 'DESC']],
     page: obj.data.pagination.page,
     limit: obj.data.pagination.limit
+  }
+
+  if (req.query.sort) {
+    options.sort = _sorting(req.query.sort);
   }
 
   try {
@@ -54,10 +64,7 @@ router.get('/', async (req, res, next) => {
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
-      console.log('doc --', doc)
-
       obj.data.products = doc.map(val => {
-        
         let thumbnail = '/image/no-image-180x180.png'
         if (val.prod_images != null) {
           let thumbArr = val.prod_images.split(',');
@@ -155,22 +162,26 @@ module.exports = router
 function _filtering(req, obj, query) {
   if (req.query.kategori) {
     const catSlug = (req.query.kategori).trim()
-    obj.data.breadcrumb = [{
-      link: '#', text: req.params.kategori
-    }]
     const findCat = req.app.locals.categoryList.find(cat => {
       return cat.cat_slug == catSlug
     });
 
+    
+    obj.data.breadcrumb = [{
+      link: '#', text: findCat.cat_name
+    }]
+
+    obj.data.pageTitle = findCat.cat_name;
+
     if (findCat != null) {
-      const catChild = req.app.locals.categoryList.find(cat => {
+      const catChild = req.app.locals.categoryList.filter(cat => {
         return cat.cat_parent_id == findCat.cat_id
       });
 
       let catIds = [findCat.cat_id];
 
       if (catChild != null) {
-        catIds.push(_.pluck(catChild, 'cat_id'));
+        catIds = catIds.concat(_.pluck(catChild, 'cat_id'));
       }
 
       query = Object.assign(query, { 
@@ -183,6 +194,7 @@ function _filtering(req, obj, query) {
 
   if (req.query['lokal-band'] && ['1', '0'].includes(req.query['lokal-band'])) {
     query['$band.band_is_local$'] = req.query['lokal-band'] == '1'
+    obj.data.pageTitle = 'Local Band'
   }
 
   var url = new URI(req.originalUrl);
@@ -195,9 +207,15 @@ function _filtering(req, obj, query) {
   }
 
   if (obj.data.uri.query.categories != undefined) {
-    obj.data.uri.query.categories = ((obj.data.uri.query.categories).split(',')).map(catId => {
-      return parseInt(catId)
-    })
+    const catSlugParams = ((obj.data.uri.query.categories).trim()).split(',');
+
+    let catIds = [];
+    for(cat of req.app.locals.categoryList) {
+      if (catSlugParams.includes(cat.cat_slug)) {
+        catIds.push(cat.cat_id);
+      }
+    }
+    query.prod_cat_id = catIds;
   }
   
   if (req.query.page) {
@@ -260,6 +278,57 @@ function _filtering(req, obj, query) {
       }
     }
   }
+
+  if (req.query.price_min) {
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min)
+    }
+
+    if (req.query.price_max) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.lte]: parseInt(req.query.price_max)
+      })
+    }
+  }
+
+
+  if (req.query.price_max) {
+    query.prod_price = {
+      [Op.lte]: parseInt(req.query.price_max)
+    }
+
+    if (req.query.price_min) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.gte]: parseInt(req.query.price_min)
+      })
+    }
+  }
+}
+
+function _sorting(sortParamText) {
+  const sortParam = (sortParamText).trim();
+  const prodSortSlugs = _.pluck(PRODUCT_SORT, 'slug');
+
+  let sortResult = [];
+
+  if (prodSortSlugs.includes(sortParam)) {
+    switch (sortParam) {
+      case PRODUCT_SORT.PRICE_HIGH.slug:
+        sortResult = [['prod_price', 'DESC']];
+        break;
+      case PRODUCT_SORT.PRICE_LOW.slug:
+        sortResult = [['prod_price', 'ASC']];
+        break;
+      case PRODUCT_SORT.NEW_PRODUCT.slug:
+        sortResult = [['prod_id', 'DESC']];
+        break;
+      default:
+        sortResult = [['prod_total_sold', 'DESC']];
+    }
+  }
+
+
+  return sortResult;
 }
 
 function _pagination(objPagination, req) {

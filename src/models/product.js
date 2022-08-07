@@ -61,6 +61,7 @@ class Product {
       prod_condition: { type: Sequelize.ENUM('b', 's', ''), defaultValue: '' },
       prod_stock: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
 
+      prod_total_sold: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       prod_created_at: { type: Sequelize.DATE },
       prod_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
     }, {

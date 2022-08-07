@@ -3,22 +3,40 @@
 <%- include ("../front/template/breadcrumb.html") %>
 
 <div class="container">
-    <div class="row product-list">
-        <div class="col-lg-3 sidebar">
-            <div class="group category">
-                <h3> Kategori </h3>
-                <ul>
-                    <li>Kaos</li>
-                    <li>Aksesoris</li>
-                    <li>Vinil</li>
-                </ul>
-            </div>
+    <h1 class="page-title">
+        <%= data.pageTitle %>
+    </h1>
 
-            <div class="group condition">
-                <h3> Kondisi </h3>
-                <input type="checkbox"> Baru <br />
-                <input type="checkbox"> Bekas
+    <div class="row product-list-toolbox">
+        <div class="col-lg-3 col-4">
+            <span class="simple-label" id="filter_view"> 
+                <i class="fas fa-sliders-h"></i> 
+                FILTERS
+            </span> 
+            <span  id="filter_hide"> 
+                TUTUP
+                <i class="fas fa-times"></i>
+            </span> 
+        </div>
+        <div class="col-lg-9 col-8">
+            <div class="products-sort-wrapper">
+                <span> <%= data.pagination.total %> Produk </span>
+                <select name="sort" class="sort-by" id="sort-select">
+                    <% _.each(data.sort, (val => { %>
+                        <option value="<%= val.slug %>" 
+                            <%= data.uri.query?.sort == val.slug ? 'selected': ''%> >
+                            <%= val.label %>
+                        </option>
+                    <% })) %>
+
+                </select>
             </div>
+        </div>
+    </div>    
+
+    <div class="row product-list">
+        <div class="col-lg-3 sidebar" id="sidebar">
+            <%- include ("product_list_sidebar.html") %>
         </div>
 
         <div class="col-lg-9">

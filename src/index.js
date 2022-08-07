@@ -125,9 +125,26 @@ const connMysql = async() => {
   const catModel = new CategoryModel({
     db: app.locals.db
   });
-  app.locals.categoryList = await catModel.find();
 
-   // console.log(app.locals.categoryList)
+  const findCats = await catModel.find();
+
+  app.locals.categoryList = findCats;
+
+  const categoriesNested = findCats.filter(cat => {
+    return cat.cat_parent_id === 0
+  });
+
+  for (let i = 0; i < categoriesNested.length; i++) {
+    const catChilds = findCats.filter(cat => {
+      return cat.cat_parent_id === categoriesNested[i].cat_id
+    })
+
+    categoriesNested[i] = Object.assign(categoriesNested[i], {
+      childs: catChilds
+    })
+  }
+
+  app.locals.categories = categoriesNested;
 }
 
 connMysql()

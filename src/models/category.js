@@ -37,7 +37,8 @@ class Category {
     return new Promise((resolve, reject) => {
       this.schema.findAll({
         where: query,
-        sort: {cat_parent_rank: 'as'}
+        sort: {cat_parent_rank: 'as'},
+        raw: true
       }).then(result => {
         resolve(result)
       }, (err) => {
