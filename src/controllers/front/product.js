@@ -30,7 +30,8 @@ router.get('/', async (req, res, next) => {
         params: '',
         query: {}
       },
-      sort: PRODUCT_SORT
+      sort: PRODUCT_SORT,
+      sizes: req.app.locals.sizes
     }
   }
 
@@ -126,12 +127,12 @@ router.get('/:id/:slug', async (req, res, next) => {
       obj.data.product = Object.assign({}, product, {
         images: [],
         thumbnails: [],
-        sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
+        sizes: req.app.locals.strToArr(product.prod_sizes, ',')
       })
 
       obj.data.user = {
         name: product['user.user_name'],
-        avatar: product['user.user_avatar']
+        avatar: product['user.user_avatar'] != null ? `/user/thumbnail/${product['user.user_avatar']}` : '/image/logo-ugmarket.jpg'
       };
 
       const images = req.app.locals.strToArr(product.prod_images, ',');

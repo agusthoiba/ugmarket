@@ -1497,16 +1497,31 @@ Pagination
   border-bottom: 1px solid #e5e5e5;
 }
 
+.product-detail-desc {
+  min-height: 100px;
+  margin-top: 15px;
+  padding-bottom: 15px;
+  /* border-bottom: 1px solid #e5e5e5; */
+}
+
 .product-detail-price {
-  font-size: 32px;
+  font-size: 15px;
   line-height: 1.2;
   margin-top: 20px;
-  color: #d71149;
+  color: #232323;
+  font-weight: lighter;
 }
 
 .product-detail-size {
   margin-bottom: 30px;
-  border-bottom: 1px solid #e5e5e5;
+  /* border-bottom: 1px solid #e5e5e5; */
+}
+
+.product-detail-size button {
+  margin-right: 8px;
+}
+.product-detail-size button:hover {
+  border: 1px solid #1e1e1e;
 }
 
 .detail-size {
@@ -1523,6 +1538,10 @@ Pagination
 
 .product-detail-pelapak {
   border-top: 1px solid #ddd;
+}
+
+.btn-form-wrapper {
+  margin-top: 20px;
 }
 
 .breadcrumb {

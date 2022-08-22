@@ -120,6 +120,7 @@ const { connectDb, modelMid } = require('./middleware')
  * @param {Object} app - app
  */
 const connect = require('./connect')
+const { SIZES } = require('./constant')
 const connMysql = async() => {
   app.locals.db = await connect()
   const catModel = new CategoryModel({
@@ -145,6 +146,8 @@ const connMysql = async() => {
   }
 
   app.locals.categories = categoriesNested;
+
+  app.locals.sizes = SIZES;
 }
 
 connMysql()

@@ -1,5 +1,7 @@
 var router = express.Router()
 
+const URI = require("urijs");
+
 var Product = require('../../../models/product')
 var Category = require('../../../models/category')
 var Band = require('../../../models/band')
@@ -11,6 +13,7 @@ const promisify = require('util').promisify
 const copyFile = promisify(fs.copyFile)
 const moment = require('moment')
 const Upload = require('../../../helpers/uploadCloudinary');
+const { SIZES } = require('../../../constant');
 
 router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)
@@ -49,10 +52,12 @@ router.get('/edit/:id', async (req, res, next) => {
   const prodId = parseInt(req.params.id)
 
   var obj = {
-    error: null, data: {
+    error: null, 
+    data: {
       item: {},
       categories: [],
       bands: [],
+      sizes: SIZES
     },
     action: `/account/product/update/${prodId}`,
     js: ['account_product']
@@ -71,13 +76,10 @@ router.get('/edit/:id', async (req, res, next) => {
       price: product.prod_price,
       weight: product.prod_weight,
       desc: product.prod_desc,
-      marketplaces: {
-        tokopedia: '',
-        bukalapak: '',
-        shopee: ''
-      },
+      marketplace_tokopedia: product.prod_marketplace_tokopedia_path == null ? '' : `https://www.tokopedia.com${product.prod_marketplace_tokopedia_path}`,
+      marketplace_bukalapak: product.prod_marketplace_bukalapak_path == null ? '' : `https://www.bukalapak.com${product.prod_marketplace_bukalapak_path}`,
       is_visible: product.prod_is_visible == 1,
-      sizes: req.app.locals.strToArr(product.prod_sizes_available, ','),
+      sizes: req.app.locals.strToArr(product.prod_sizes, ','),
       condition: product.prod_condition,
       stock: product.prod_stock,
       created_at: product.prod_created_at
@@ -156,6 +158,7 @@ router.get('/add', async (req, res, next) => {
   obj.data = {
     categories: await res.locals.categoryModel.find(),
     bands:  await res.locals.bandModel.find(),
+    sizes: SIZES,
     item: itemData()
   }
   
@@ -238,7 +241,7 @@ async function cleanPost(body, res, tipe = 'create') {
     prod_band_id: body.band,
 
     prod_is_visible: body.is_visible == 'publish' ? 1 : 0,
-    prod_sizes_available: ''
+    prod_sizes: body.sizes ? body.sizes.join() : ''
   }
 
   if (tipe == 'create') {
@@ -248,13 +251,14 @@ async function cleanPost(body, res, tipe = 'create') {
     })
   }
 
-  payload.prod_marketplaces = []
-  if (body.mp_tokopedia) {
-    payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
+  if (body.marketplace_tokopedia) {
+    const uriTokped = new URI((body.marketplace_tokopedia).trim());
+    payload.prod_marketplace_tokopedia_path = uriTokped.path();
   }
 
-  if (body.mp_bukalapak) {
-    payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
+  if (body.marketplace_bukalapak) {
+    const uriBukalapak = new URI((body.marketplace_bukalapak).trim());
+    payload.prod_marketplace_bukalapak_path = uriBukalapak.path();
   }
 
   if (body.image_ori) {
@@ -280,15 +284,6 @@ async function cleanPost(body, res, tipe = 'create') {
         return reject(err)
       })
     }
-  }
-
-  payload.prod_marketplaces = []
-  if (body.mp_tokopedia) {
-      payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
-  }
-
-  if (body.mp_bukalapak) {
-      payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
   }
 
   return new Promise((resolve, reject) => {
