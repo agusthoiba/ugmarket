@@ -109,9 +109,7 @@ router.get('/:id/:slug', async (req, res, next) => {
       ],
       product: null,
       user: null,
-      breadcumb: [
-        { path: '/p', name: 'Semua Produk' }
-      ]
+      sizes: req.app.locals.sizes
     }
   }
 
