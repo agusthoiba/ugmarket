@@ -53,17 +53,20 @@
       <div class="row">
         <div class="col">
           <div class="product-detail-size">
-            <h4>Marketplaces</h4>
+            <h5>Marketplaces</h5>
             <div class="row" style="margin-right:0; margin-left: 0;">
               <ul>
-                <% 
-                  var mps = data.product.prod_marketplaces;
-                  if (mps && mps.length > 0) {
-                    for(var i=0 ; i < mps.length; i++) {
-                 %>
+
                   <li style="margin-bottom: 10px;">
-                    <a target="_blank" href="<%= mps[i].url %>"><img width="auto" height="25" src="/marketplace/<%= mps[i].name %>.png"></a></li>
-                <% }} %>
+                    <a target="_blank" href="https://tokopedia.com<%= data.product.prod_marketplace_tokopedia_path  %>">
+                      <img width="auto" height="25" src="/marketplace/tokopedia.png">
+                    </a>
+                  </li>
+                  <li style="margin-bottom: 10px;">
+                    <a target="_blank" href="https://bukalapak.com<%= data.product.prod_marketplace_bukalapak_path  %>">
+                      <img width="auto" height="25" src="/marketplace/bukalapak.png">
+                    </a>
+                  </li>
               </ul>
             </div>
           </div>
