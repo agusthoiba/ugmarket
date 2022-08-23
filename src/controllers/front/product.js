@@ -302,6 +302,10 @@ function _filtering(req, obj, query) {
       })
     }
   }
+
+  if (req.query.band) {
+    query['$band.band_slug$'] = req.query.band.trim();
+  }
 }
 
 function _sorting(sortParamText) {
