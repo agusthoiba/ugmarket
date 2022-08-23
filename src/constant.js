@@ -16,5 +16,6 @@ module.exports = {
             slug: 'produk-baru',
             label: 'Produk Baru',
         }
-    }
+    },
+    SIZES: ['xs','s', 'm', 'l', 'xl', 'xxl', '3xl', '4xl']
 }

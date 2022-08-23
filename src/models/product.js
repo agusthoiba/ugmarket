@@ -49,7 +49,7 @@ class Product {
       },
       prod_images: { type: Sequelize.TEXT },
       prod_thumbnails: { type: Sequelize.TEXT },
-      prod_sizes_available: { type: Sequelize.STRING },
+      prod_sizes: { type: Sequelize.TEXT },
       prod_price: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       prod_weight: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       prod_desc: { type: Sequelize.TEXT, allowNull: false },
@@ -62,6 +62,10 @@ class Product {
       prod_stock: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
 
       prod_total_sold: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
+
+      prod_marketplace_tokopedia_path: { type: Sequelize.TEXT},
+      prod_marketplace_bukalapak_path: { type: Sequelize.TEXT},
+
       prod_created_at: { type: Sequelize.DATE },
       prod_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
     }, {

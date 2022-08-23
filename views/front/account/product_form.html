@@ -1,120 +1,140 @@
 <%- include ("dashboard_header.html") %>
 <div class="product-form">
 
-<h3> Jual Product </h3>
-<p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-  been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-  galley of type and scrambled it to make a type specimen book.
-</p>
+  <h3> Jual Product </h3>
+  <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
+    been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
+    galley of type and scrambled it to make a type specimen book.
+  </p>
 
-<form method="POST" action="<%= action %>" id="add_product">
+  <form method="POST" action="<%= action %>" id="add_product">
 
+    <div class="alert alert-danger" role="alert" style="display: none;">
+      A simple danger alert—check it out!
+    </div>
 
-  <div class="alert alert-danger" role="alert" style="display: none;">
-    A simple danger alert—check it out!
-  </div>
+    <div class="mb-3">
+      <label for="name" class="form-label">Nama Barang</label>
+      <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" required>
+    </div>
 
-  
-  <div class="form-group">
-    <label for="name">Nama Barang</label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" required>
-  </div>
-
-  <div class="form-group">
-    <label for="category">Kategori</label>
-    <select class="form-control" id="category" name="category" required>
-      <option value="">-- Pilih Kategori --</option>
-      <% for(var i in data.categories) { %>
-        <% const cats = data.categories; %>
-        
-          <% if (cats[i].cat_parent_id == 0) { %>
-            <optgroup label="<%= cats[i].cat_name %>">   
-              <% const catSecondLayer = cats.filter(function(cat) {return cat.cat_parent_id == cats[i].cat_id  } ); %>
-              <% if (catSecondLayer.length > 0) { %>
-                <% for (let j = 0; j < catSecondLayer.length; j++) { %>
-                  <option value="<%= catSecondLayer[j].cat_id %>" <%= catSecondLayer[j].cat_id == data.item.category ? 'selected': '' %> > <%= catSecondLayer[j].cat_name %> </option>
+    <div class="mb-3">
+      <label for="category" class="form-label">Kategori</label>
+      <select class="form-control" id="category" name="category" required>
+        <option value="">-- Pilih Kategori --</option>
+        <% for(var i in data.categories) { %>
+          <% const cats = data.categories; %>
+          
+            <% if (cats[i].cat_parent_id == 0) { %>
+              <optgroup label="<%= cats[i].cat_name %>">   
+                <% const catSecondLayer = cats.filter(function(cat) {return cat.cat_parent_id == cats[i].cat_id  } ); %>
+                <% if (catSecondLayer.length > 0) { %>
+                  <% for (let j = 0; j < catSecondLayer.length; j++) { %>
+                    <option value="<%= catSecondLayer[j].cat_id %>" <%= catSecondLayer[j].cat_id == data.item.category ? 'selected': '' %> > <%= catSecondLayer[j].cat_name %> </option>
+                  <% } %>
                 <% } %>
-              <% } %>
-            </optgroup>
-        <% } %>
-      <% } %>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="band">Band / Artis</label>
-    <select class="form-control" id="band" name="band" required>
-      <option value="">-- Pilih Band --</option>
-      <% for(var band_row of data.bands) { %>
-      <option value="<%= band_row.band_id %>" <%= data.item.band == band_row.band_id ? 'selected' : '' %> >
-          <%= band_row.band_name %>
-      </option>
-      <% } %>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label for="description">Deskripsi Produk</label>
-    <textarea class="form-control" rows="3" id="description" name="description"><%= data.item.desc %></textarea>
-  </div>
-
-  <div class="form-group">
-    <label for="name">Harga Satuan</label>
-    <div class="input-group">
-      <div class="input-group-addon">Rp.</div>
-      <input type="text" class="form-control" name="price" id="price"  value="<%= data.item.price %>" placeholder="Harga">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="name">Upload Gambar Produk</label>
-    <ul class="image-upload list-inline">
-        <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, $(this))">
-
-        <li id="thumb_image_0" class="pickfile-container"  onclick="browseFile(event, $(this))" >
-          <% if (data.item.thumbnails.length > 0) { %>
-            <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.item.thumbnails[0] %>">
+              </optgroup>
           <% } %>
-        </li>
-    </ul>
-  </div>
-
-  <div class="form-group">
-    <label for="name">MarketPlaces</label>
-
-    
-    <div class="input-group">
-      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/tokopedia.png"></div>
-      <input type="url" class="form-control marketplace" id="mp-tokopedia" name="mp_tokopedia"  value="<%= data.item.marketplaces.tokopedia %>" placeholder="<Tokopedia link>">
-      
-    </div>
-    
-    <div class="input-group">
-      <div class="input-group-addon"><img width="auto" height="25" src="/marketplace/bukalapak.png"></div>
-      <input type="url" class="form-control marketplace" id="mp-bukalapak" name="mp_bukalapak"  value="<%= data.item.marketplaces.bukalapak %>" placeholder="<Bukalapak link>">
+        <% } %>
+      </select>
     </div>
 
-  </div>
+    <div class="mb-3">
+      <label for="band"  class="form-label">Band / Artis</label>
+      <select class="form-control" id="band" name="band" required>
+        <option value="">-- Pilih Band --</option>
+        <% for(var band_row of data.bands) { %>
+        <option value="<%= band_row.band_id %>" <%= data.item.band == band_row.band_id ? 'selected' : '' %> >
+            <%= band_row.band_name %>
+        </option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Deskripsi Produk</label>
+      <textarea class="form-control" rows="3" id="description" name="description"><%= data.item.desc %></textarea>
+    </div>
+
+    <label for="name"  class="form-label">Harga Satuan</label>
+    <div class="input-group mb-3">
+      <span class="input-group-text">Rp.</span>
+      <input type="number" class="form-control" name="price" id="price"  aria-label="Amount (to the nearest price)" value="<%= data.item.price %>">
+      <!--span class="input-group-text">.00</span -->
+    </div>
+
+    <div class="mb-3">
+      <label for="name"  class="form-label">Upload Gambar Produk</label>
+      <ul class="image-upload list-inline">
+          <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, $(this))">
+
+          <li id="thumb_image_0" class="pickfile-container"  onclick="browseFile(event, $(this))" >
+            <% if (data.item.thumbnails.length > 0) { %>
+              <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.item.thumbnails[0] %>">
+            <% } %>
+          </li>
+      </ul>
+    </div>
+
+  <div class="mb-3">
+    <label for="name"  class="form-label">MarketPlaces</label>
+    
+    <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">
+        <img width="auto" height="25" src="/marketplace/tokopedia.png">
+      </label>
+      <input type="text" class="form-control" name="marketplace_tokopedia" id="marketplaces-tokopedia" placeholder="tokopedia link" value="<%= data.item.marketplace_tokopedia %>">
+      <div class="invalid-feedback" id="marketplaces-tokopedia-validation"></div>
+    </div>
+    
+    <div class="mb-3">
+      <label for="exampleFormControlInput2" class="form-label">
+        <img width="auto" height="25" src="/marketplace/bukalapak.png">
+      </label>
+      <input type="text" class="form-control" name="marketplace_bukalapak" id="marketplaces-bukalapak" placeholder="bukalapak link" value="<%= data.item.marketplace_bukalapak %>">
+      <div class="invalid-feedback" id="marketplaces-bukalapak-validation"></div>
+    </div>
   </div>
 
-  <div class="form-group">
-    <label for="condition">Kondisi</label>
-    <select class="form-control" id="condition" name="condition">
-      <option value="b" <%= data.item.condition == 'b' ? 'selected' : '' %> > Baru </option>
-      <option value="s" <%= data.item.condition == 's' ? 'selected' : '' %> > Bekas </option>
-    </select>
+  <div class="mb-3">
+    <label for="condition" class="form-label">Kondisi</label>
+    <div class="mb-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="condition" id="inlineRadio1" value="b" <%= data.item.condition == 'b' ? 'checked' : '' %>>
+        <label class="form-check-label" for="inlineRadio1">Baru</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="condition" id="inlineRadio2" value="s" <%= data.item.condition == 's' ? 'checked' : '' %> >
+        <label class="form-check-label" for="inlineRadio2">Bekas</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="condition" class="form-label">Ukuran</label>
+    <div class="mb-3">
+      <% for (let size of data.sizes) { %>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckSize_<%= size %>" value="<%= size %>" <%= data.item.sizes.includes(size) ? 'checked' : '' %>>
+        <label class="form-check-label" for="inlineCheckSize_<%= size %>"><%= size.toUpperCase() %></label>
+      </div>
+      <% } %>
+    </div>
   </div>
 
   <div class="form-group">
     <label for="stock">Stock</label>
-    <input type="text" class="form-control" id="stock" name="stock" value="<%= data.item.stock %>">
+    <input type="number" class="form-control" id="stock" name="stock" value="<%= data.item.stock %>">
   </div>
 
   <input type="hidden" name="is_visible" value="">
-  <div class="btn btn-primary submit-prod" onclick="submitProd(event, $(this))" data-type="save">Simpan</div>
-  <div class="btn btn-success submit-prod" onclick="submitProd(event, $(this))" data-type="publish">Simpan dan publish</div>
-  <button style="display: none" type="submit">submit</button>
-  <a class="btn btn-default submit-prod" onclick="window.history.back();">Batal</a>
+
+  <div class="mb-3 btn-form-wrapper">
+    <div class="btn btn-primary submit-prod" onclick="submitProd(event, $(this))" data-type="save">Simpan</div>
+    <div class="btn btn-success submit-prod" onclick="submitProd(event, $(this))" data-type="publish">Simpan dan publish</div>
+    <button style="display: none" type="submit">submit</button>
+    <a class="btn btn-default submit-prod" onclick="window.history.back();">Batal</a>
+  </div>
 </form>
 
 </div>

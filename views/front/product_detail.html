@@ -19,7 +19,8 @@
       <div class="row">
         <div class="col">
           <div class="product-detail-name">
-            <h1><%= data.product.prod_name %></h1>
+            <h3><%= data.product['band.band_name'] %></h3>
+            <h5><%= data.product.prod_name %></h5>
             <div class="product-detail-price">
               <%= data.product.prod_price %>
             </div>
@@ -30,8 +31,29 @@
  
       <div class="row">
         <div class="col">
+          <div class="product-detail-desc">
+            <%- data.product.prod_desc.replace(/\n/g, '<br>') %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
           <div class="product-detail-size">
-            <h3>Marketplaces</h3>
+            <h5>SIZE</h5>
+            <% for (let size of data.sizes) { %>
+              <button type="button" class="btn btn-light" <%= data.product.sizes.includes(size) ? '' : 'disabled' %>>
+                <%= size.toUpperCase() %>
+              </button>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="product-detail-size">
+            <h4>Marketplaces</h4>
             <div class="row" style="margin-right:0; margin-left: 0;">
               <ul>
                 <% 
@@ -39,7 +61,8 @@
                   if (mps && mps.length > 0) {
                     for(var i=0 ; i < mps.length; i++) {
                  %>
-                  <li style="margin-bottom: 10px;"><a target="_blank" href="<%= mps[i].url %>"><img width="auto" height="25" src="/marketplace/<%= mps[i].name %>.png"></a></li>
+                  <li style="margin-bottom: 10px;">
+                    <a target="_blank" href="<%= mps[i].url %>"><img width="auto" height="25" src="/marketplace/<%= mps[i].name %>.png"></a></li>
                 <% }} %>
               </ul>
             </div>
@@ -48,14 +71,7 @@
       </div>
 
 
-      <div class="row">
-        <div class="col">
-          <div class="product-detail-desc">
-            <h3>Detail</h3>
-            <p><%= data.product.prod_desc %></p>
-          </div>
-        </div>
-      </div>
+      
 
       <div class="row">
         <div class="col">
@@ -63,7 +79,7 @@
             <h3>Informasi Pelapak</h3>
             <div class="row">
               <div class="col-md-3">
-                <img src="/user/thumbnail/<%= data.user.avatar %>" class="avatar-image" >
+                <img src="<%= data.user.avatar %>" class="avatar-image" >
               </div>
               <div class="col-md-9">
                 <h4><%= data.user.name %></h4>
