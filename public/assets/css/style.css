@@ -1208,9 +1208,17 @@ MEN
   font-size: 0.8125em;
     line-height: 1.8em;
 }
+
 .footer-list1 ul li a{
   color: #fff;
+  text-decoration: none;
 }
+
+.footer-list1 ul li a:hover{
+  text-decoration: none;
+  opacity: 0.5;
+}
+
 .footer_bottom{
   background-color:#3c3c3c;
   padding:1em 0 0.5em;
