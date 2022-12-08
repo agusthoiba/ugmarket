@@ -155,6 +155,7 @@ app.use(modelMid)
 
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
+app.use('/contact', require('./controllers/front/contact'))
 app.use('/products', require('./controllers/front/product'))
 app.use('/auth', require('./controllers/front/auth'))
 app.use('/account/product', require('./controllers/front/account/product'))
