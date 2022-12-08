@@ -1,5 +1,5 @@
 const config = require('../config');
-const { Band, Category, Product, User } = require('../models')
+const { Band, Category, Product, User, Contact } = require('../models')
 
 const modelMiddleware = (req, res, next) => {
     req.app.locals.config = config;
@@ -25,6 +25,10 @@ const modelMiddleware = (req, res, next) => {
     // req.locals.merchantModel = new Merchant({
     //    db: req.app.locals.db
     // });
+
+    res.locals.contactModel = new Contact({
+       db: req.app.locals.db
+    });
 
     return next();
 }

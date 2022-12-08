@@ -43,6 +43,7 @@
     "sequelize": "^6.3.5",
     "sharp": "^0.30.7",
     "slug": "^0.9.1",
+    "svg-captcha": "^1.4.0",
     "underscore": "^1.8.3",
     "urijs": "^1.19.2"
   },
@@ -50,6 +51,7 @@
     "chai": "^4.1.2",
     "ejs-lint": "1.2.2",
     "eslint": "6.5.1",
+    "sequelize-cli": "^6.5.2",
     "sinon": "^6.3.4"
   }
 }
