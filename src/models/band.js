@@ -91,6 +91,15 @@ class Band {
       });
     });
   }
+
+  async count(query) {
+    let obj = {
+      where: query
+    }
+    const countBand =  await this.schema.count(obj);
+
+    return countBand;
+  }
 }
 
 module.exports = Band;
