@@ -7,6 +7,16 @@
         <%= data.pageTitle %>
     </h1>
 
+    <% var products = data.products %>
+
+    <% if (data.uri.query?.band ) { %>
+    <div class="row">
+        <div class="band-image">
+            <img class="img-responsive" src="/bands/<%= products[0]['band.band_slug'] %>-image.jpeg">
+        </div>
+    </div>
+    <% } %>
+
     <div class="row product-list-toolbox">
         <div class="col-lg-3 col-4">
             <span class="simple-label" id="filter_view"> 
@@ -41,7 +51,7 @@
 
         <div class="col-lg-9">
             <div class="row">
-                <% var products = data.products %>
+                
                 <% for(var i in products) { %>
                     <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
                         <div class="item">

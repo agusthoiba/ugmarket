@@ -1720,6 +1720,15 @@ OWL carousel
 
 }
 
+
+.band-image {
+  margin-bottom: 20px;
+}
+
+.band-image img{
+  width: 100%;
+}
+
 .skrim__link {
   display: block;
   position: absolute;
