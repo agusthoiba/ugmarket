@@ -40,6 +40,10 @@ router.get('/', async (req, res, next) => {
   obj.data.uri.query = url.query();
   const maxLinkPagination = 5 // maximal number of link pagination
 
+
+
+
+
   let query = {
     prod_is_visible: 1
   }
@@ -62,8 +66,13 @@ router.get('/', async (req, res, next) => {
     obj.data.pagination.total = prodTotal;
     obj.data.pagination = _pagination(obj.data.pagination);
 
+
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
+
+      if (obj.data.uri.query?.band) {
+        obj.data.pageTitle = `${doc[0]['band.band_name']} - Official Merchandise`
+      }
 
       obj.data.products = doc.map(val => {
         let thumbnail = '/image/no-image-180x180.png'
