@@ -5,7 +5,7 @@ const env = process.env;
 const config = {
     protocol: env.APP_PROTOCOL,
     host: env.APP_HOST,
-    port: process.env.PORT,
+    port: env.PORT,
     db: {
         mysql: {
             url: env.DB_MYSQL_URL
