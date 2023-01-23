@@ -178,12 +178,13 @@ app.use('/account/profile', require('./controllers/front/account/profile'))
 
 const server = http.createServer(app)
 
-server.listen(config.port, () => {
+const port = config.port || 4000;
+
+server.listen(port, () => {
   var host = config.host
-  var port = server.address().port
 
   console.log('Ugmarket listening http://%s:%s', host, port)
-})
+});
 
 const closeConnDb = async () => {
   await app.locals.db.close()
