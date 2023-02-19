@@ -1,0 +1,90 @@
+<div class="size1of1 seg-bar">
+    <span class="seg-bar__logo">
+      <a href="/">
+        <img src="/image/logo-ug-text075x.png">
+      </a>
+    </span>
+    <span class="phl seg-bar__segments">
+      <ul>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=kaos">KAOS</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper"  style="text-decoration: none;" href="/p?kategori=wanita">AKSESORIS</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper"  style="text-decoration: none;" href="/p?kategori=action-figure">ACTION
+            FIGURE</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=cd">CD</a>
+        </li>
+        <li class="segSelect fontsizeL txtCenter prl">
+          <a class="a-white b-header__clickable b-header__segment-text txtUpper" style="text-decoration: none;" href="/p?kategori=others">OTHERS</a>
+        </li>
+      </ul>
+    </span>
+
+    <span class="js-seg-bar__search seg-bar__search ptl pbl">
+      <form id="onsiteSearch" action="/catalog/" method="get" autocapitalize="on" autocorrect="on">
+        <input class="lfloat js-seg-bar-search__selSearchInput seg-bar-search__selSearchInput" name="q" type="text"
+          autocomplete="off" tmpplaceholder="Cari produk, tren, dan merek" placeholder="Cari produk, tren, dan merek"
+          style="font-style: italic;">
+        <!--div class="js-search-gender-select" data-gender="men"></div-->
+        <!--button class="rfloat seg-bar-search__selSearchButton" type="submit">
+          <i class="icon_loupe-dark"></i>
+          <span class="hdSearchButton"></span>
+        </button>
+        <div class="js-searchsuggest__popup searchsuggest__popup display-none"></div>
+        <div class="js-recent-search__popup recent-search__popup display-none ssg-item--hide" style="display: none;"
+        </div-->
+      </form>
+    </span>
+
+    <span class="seg-bar__utils">
+      <ul>
+        <li class="utils pll">
+          <i class="fa fa-user fa-2x js-seg-bar__account seg-bar__account" id="segbar_account" style="vertical-align: top;" aria-hidden="true"></i>
+
+          <div class="account-menu__popup txtLeft  b-header-shadow js-custom-popup b-header__nonclickable" id="account_menu_popup" style="width: 200px;left:  calc(100% - 447px); top: 70px;display:none">
+            <div class="b-header__padding"></div>
+            <span class="js-arrow js-arrow-dark" style="left: 91.7031px;"></span>
+            <div class="account-menu__head pal pts txtUpper fontsizeM">
+              Selamat datang! </div>
+            <div class="account-menu__body phl pal fontsizeS txtUpper">
+              <ul role="menu" aria-labelledby="dLabel">
+                <% if (session != undefined && session.user != undefined) { %>
+                <li class="pbm">
+                  <a href="/account/profile" rel="follow">Profile</a>
+                </li>
+                <li class="pbm">
+                  <a href="/account/product" rel="follow">Penjualan</a>
+                </li>
+                <li class="pbm">
+                  <!--a href="/account/pembelian">Pembelian</a-->
+                  <a href="/auth/logout" rel="follow">Logout</a>
+                </li>
+                <% } else { %>
+                <li class="pbm">
+                  <a href="/auth/login" title="Masuk" >
+                    Masuk
+                  </a>
+                </li>
+                <li class="pbm">
+                  <a href="/auth/register" title="Buat Akun">
+                    Buat Akun
+                  </a>
+                </li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
+
+
+
+        </li>
+      </ul>
+    </span>
+
+
+  </div>

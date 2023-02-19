@@ -30,6 +30,9 @@ build:
 push:
 	docker push $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(COMMIT_ID)
 
+run:
+	./script/do_deploy.sh
+
 # Make will get confused if there are files and folders with the names of
 # recipes, unless we mark them as 'PHONY'.
 .PHONY: test build push

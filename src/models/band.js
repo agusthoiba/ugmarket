@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const moment = require('moment');
 
 class Band {
   constructor(args) {
@@ -11,6 +12,8 @@ class Band {
       band_image: { type: Sequelize.STRING, allowNull: true },
       band_logo: { type: Sequelize.STRING, allowNull: true },
       band_icon: { type: Sequelize.STRING, allowNull: true },
+
+      band_enabled: { type: Sequelize.TINYINT, allowNull: false, default: 0},
 
       band_total_product: { type: Sequelize.INTEGER(11).UNSIGNED, defaultValue: 0 },
 
@@ -63,8 +66,13 @@ class Band {
   }
 
   create(payload) {
+    const payloads = Object.assign(payload, {
+      band_created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+      band_updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+    });
+
     return new Promise((resolve, reject) => {
-      this.schema.create(payload).then(result => {
+      this.schema.create(payloads).then(result => {
         resolve(result);
       }, (err) => {
         reject(err);

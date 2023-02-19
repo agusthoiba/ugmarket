@@ -353,7 +353,7 @@ function _pagination(objPagination, req) {
     objPagination.total_page =  Math.floor(objPagination.total / objPagination.limit);
     
     const totalPage = objPagination.total_page;
-    const pageList  = [];
+    
     
     const urlParams = new URLSearchParams(req.query);
 
@@ -362,6 +362,7 @@ function _pagination(objPagination, req) {
       countLinkPage = totalPage;
     }
 
+    const pageList  = [];
     for (let i = 1; i <= totalPage; i++) {
       urlParams.set('page', i);
       pageList.push({
