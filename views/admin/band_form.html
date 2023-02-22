@@ -25,7 +25,7 @@
       <option value="">-- Pilih Genre --</option>
       <% for(var i in data.genres) { %>
         <% const gens = data.genres; %>
-        <option value="<%= gens[i].genre_slug %>"><%= gens[i].genre_name %></option>
+        <option value="<%= gens[i].genre_slug %>" <%= data.band.band_genre ==  gens[i].genre_slug ? "selected": "" %> %> ><%= gens[i].genre_name %></option>
       <% } %>
     </select> 
 
@@ -45,9 +45,9 @@
       <input id="upload_image_logo"  type="file" name="logo" accept="image/png" style="display:none" onchange="uploadImage(this.files, 'logo', 300, 100, 2)">
           
       <li id="thumb_image_logo_0" style="width:150px;height:50px" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this), 'logo')" >
-        <% if (typeof data.band.band_logo != 'undefined') { %>
-              <img class="preview" width="150" height="50" src="/user/thumbnail/<%= data.band.band_logo %>">
-        <% }%>
+        <% if (data.band.logo != '') { %>
+              <img class="preview" width="150" height="50" src="<%= data.band.logo %>">
+        <% } %>
       </li>
     </ul>
   </div>
@@ -58,8 +58,8 @@
       <input id="upload_image_thumbnail"  type="file" name="thumbnail" accept="image/jpeg" style="display:none" onchange="uploadImage(this.files, 'thumbnail', 300, 300, 3)">
           
           <li id="thumb_image_thumbnail_0" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this), 'thumbnail')" >
-              <% if (typeof data.band.band_thumbnail != 'undefined') { %>
-                <img class="preview" width="100" height="100" src="/user/thumbnail/<%= data.band.band_logo %>">
+              <% if (data.band.thumbnail != '') { %>
+                <img class="preview" width="100" height="100" src="<%= data.band.thumbnail %>">
               <% }%>
             </li>
     </ul>
@@ -71,8 +71,8 @@
       <input id="upload_image_banner"  type="file" name="banner" accept="image/jpeg" style="display:none" onchange="uploadImage(this.files, 'banner', 1500, 375, 5)">
           
       <li id="thumb_image_banner_0" style="width:300px;height:75px" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this), 'banner')" >
-        <% if (typeof data.band.band_image != 'undefined') { %>
-          <img class="preview" width="300" height="75" src="/user/thumbnail/<%= data.band.band_image %>">
+        <% if (data.band.banner != '') { %>
+          <img class="preview" width="300" height="75" src="<%= data.band.banner %>">
         <% }%>
       </li>
     </ul>

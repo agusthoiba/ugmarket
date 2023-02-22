@@ -23,8 +23,8 @@ router.get('/', async function (req, res, next) {
 			const currentPage = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
 			
 			const bandList = bands.map(val => {
-				val.logo = req.app.locals.cloudinary.url(`${val.band_slug}-logo.png`, {height: 50});
-				val.thumbnail = req.app.locals.cloudinary.url(`${val.band_slug}-thumbnail.jpg`, {width: 100, height: 100});
+				val.logo = req.app.locals.cloudinary.url(`bands/${val.band_slug}-logo.png`, {height: 50});
+				val.thumbnail = req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 100, height: 100});
 				return val;
 			});
 			
@@ -51,8 +51,9 @@ router.get('/add', async function (req, res, next) {
 				band_name: '',
 				band_slug: '',
 				band_thumbnail: '',
-				band_logo: '',
-				band_image: '',
+				logo: '',
+				thumbnail: '',
+				banner: '',
 				band_genre: '',
 				band_desc: '',
 				band_is_local: false,
@@ -63,6 +64,36 @@ router.get('/add', async function (req, res, next) {
 		action: '/admin/band'
 		//js: ['account_product']
 	};
+
+	// return res.json(obj);
+	return res.render('admin/band_form', obj);
+});
+
+router.get('/edit/:id', async function (req, res, next) {
+	const bandId = parseInt(req.params.id, 10);
+
+	var obj = { 
+		error: null, 
+		data: {
+			band: {},
+			genres: await res.locals.genreModel.find(),
+		},
+		action: `/admin/band/update/${bandId}`
+		//js: ['account_product']
+	};
+
+	let query = {
+		band_id: bandId
+	};
+
+	const band = await res.locals.bandModel.findOne(query);
+
+	obj.data.band = Object.assign({}, band, {
+		logo: req.app.locals.cloudinary.url(`bands/${band.band_slug}-logo.png`, {height: 50}),
+		thumbnail: req.app.locals.cloudinary.url(`bands/${band.band_slug}-thumbnail.jpg`, {width: 100, height: 100}),
+		banner: req.app.locals.cloudinary.url(`bands/${band.band_slug}-banner.jpg`, {width: 300, height: 75})
+	})
+
 
 	// return res.json(obj);
 	return res.render('admin/band_form', obj);
@@ -80,21 +111,23 @@ router.post('/', async function (req, res, next) {
 	return res.redirect('/admin/band');
 });
 
-/* router.post('/update', async function (req, res, next) {
+router.post('/update/:id', async function (req, res, next) {
 	var obj = { error: null, data: null};
-	var userId = req.session.user.id
-	const payload = await cleanPost(req.body, userId);
-	res.locals.userModel.update({user_id: userId}, payload).then(doc => {
-		return res.redirect('/account/product');
-	}, err => {
+	var bandId = parseInt(req.params.id, 10);
+
+	const { payload, images } = await cleanPost(req.body);
+
+	try {
+		await res.locals.bandModel.update({band_id: bandId}, payload);
+		return res.redirect('/admin/band');
+	} catch (err) {
 		console.error(err);
-		obj.error = 'An Error occured while load profile';
-		return res.render('front/account/profile', obj);
-	});
-}); */
+		obj.error = `An error occured while update band ${payload.name}`;
+		return res.render('admin/band_form', obj);
+	}
+});
 
 module.exports = router;
-
 
 async function cleanPost(body) {
 	let payload = {
@@ -117,9 +150,17 @@ async function cleanPost(body) {
 	try {
 		const upload = new Upload();
 		const prefix = 'bands';
-		images.logo = await upload.uploadToCloud(body.image_ori_logo, prefix, `${payload.band_slug}-logo`);
-		images.thumbnail = await upload.uploadToCloud(body.image_ori_thumbnail, prefix, `${payload.band_slug}-thumbnail`);
-		images.banner = await upload.uploadToCloud(body.image_ori_banner, prefix, `${payload.band_slug}-banner`);
+
+		if (body.logo != '' && body.image_ori_logo) {
+			images.logo = await upload.uploadToCloud(body.image_ori_logo, prefix, `${payload.band_slug}-logo`);
+		}
+		if (body.thumbnail != '' && body.image_ori_thumbnail) {
+			images.thumbnail = await upload.uploadToCloud(body.image_ori_thumbnail, prefix, `${payload.band_slug}-thumbnail`);
+		}
+		if (body.image_banner != '' && body.image_ori_banner) {
+			images.banner = await upload.uploadToCloud(body.image_ori_banner, prefix, `${payload.band_slug}-banner`);
+		}
+
 		return {
 			payload, images
 		}
