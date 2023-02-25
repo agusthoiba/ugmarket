@@ -9,10 +9,10 @@
 
     <% var products = data.products %>
 
-    <% if (data.uri.query?.band &&  data.pagination.total > 0 ) { %>
+    <% if (data.pageBanner != '') { %>
     <div class="row">
         <div class="band-image">
-            <img class="img-responsive" src="/bands/<%= products[0]['band.band_slug'] %>-image.jpeg">
+            <img class="img-responsive" src="<%= data.pageBanner %>">
         </div>
     </div>
     <% } %>

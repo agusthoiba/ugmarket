@@ -16,6 +16,7 @@ router.get('/', async (req, res, next) => {
         {link: '#', text: 'products'}
       ],
       pageTitle: 'Product',
+      pageBanner: '',
       categories: req.app.locals.categories,
       products: [],
       pagination: {
@@ -42,6 +43,7 @@ router.get('/', async (req, res, next) => {
 
   if (req.query.band) {
     obj.data.pageTitle = `${(req.query.band).trim().replace('-', ' ')} - Official Merchandise`
+    obj.data.pageBanner =  req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
   }
 
   let query = {
