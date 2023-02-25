@@ -1,6 +1,11 @@
 function uploadImage(files, label, widthResult, heightResult, ratioDiv) {
     console.log('files', files);
     console.log('label', label)
+
+    let imageOriLabel = `image_ori_${label}`;
+    console.log('imageOriLabel --', imageOriLabel)
+
+    document.forms["band"][imageOriLabel].innerHTML = '';
   
     if (files.length === 0) {
       console.log(files);
@@ -60,8 +65,9 @@ function uploadImage(files, label, widthResult, heightResult, ratioDiv) {
               $(thumbId).removeClass("pickfile-container")
               $(thumbId).find('.ori').css({ display: 'none' });
               $(thumbId).append('<img class="preview">');
-              $(thumbId).append('<textarea style="display: none" name="image_ori_'+label+'">' + img.src + '</textarea>');
-  
+
+              document.forms["band"][imageOriLabel].innerHTML = img.src
+
               var dataURL = canvas.toDataURL(file.type);
               var imgPrev = $(thumbId).find('.preview')[0];
               imgPrev.style['vertical-align'] = 'baseline';

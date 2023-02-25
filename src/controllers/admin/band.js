@@ -11,20 +11,32 @@ router.get('/', async function (req, res, next) {
 	};
 
 	let query = {};
+	const pageLimit = 10;
+	let option = {
+		limit: pageLimit,
+		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+	};
 
 	try {
 		const bandCount = await res.locals.bandModel.count(query);
 
+
 		if (bandCount > 0) {
-			const bands = await res.locals.bandModel.find(query);
+			const bands = await res.locals.bandModel.find(query, option);
 
-			const pageLimit = 10;
-
-			const currentPage = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+			const currentPage = option.page;
 			
 			const bandList = bands.map(val => {
-				val.logo = req.app.locals.cloudinary.url(`bands/${val.band_slug}-logo.png`, {height: 50});
-				val.thumbnail = req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 100, height: 100});
+				val.logo = req.app.locals.cloudinary.image(`bands/${val.band_slug}-logo.png`, {
+					transformation: [
+						{width: 75}
+					]
+				});
+				val.thumbnail = req.app.locals.cloudinary.image(`bands/${val.band_slug}-thumbnail.jpg`, {
+					transformation: [
+						{width: 100, height: 100}
+					]
+				});
 				return val;
 			});
 			
@@ -35,7 +47,7 @@ router.get('/', async function (req, res, next) {
 		// return res.json(obj);
 		return res.render('admin/band_list', obj);
 	} catch (err) {
-        // return res.json(obj);
+    	// return res.json(obj);
 	
 		obj.error = 'An Error occured while load band list';
 		console.error(err);
@@ -89,7 +101,7 @@ router.get('/edit/:id', async function (req, res, next) {
 	const band = await res.locals.bandModel.findOne(query);
 
 	obj.data.band = Object.assign({}, band, {
-		logo: req.app.locals.cloudinary.url(`bands/${band.band_slug}-logo.png`, {height: 50}),
+		logo: req.app.locals.cloudinary.url(`bands/${band.band_slug}-logo.png`, {width: 150, height: 50}),
 		thumbnail: req.app.locals.cloudinary.url(`bands/${band.band_slug}-thumbnail.jpg`, {width: 100, height: 100}),
 		banner: req.app.locals.cloudinary.url(`bands/${band.band_slug}-banner.jpg`, {width: 300, height: 75})
 	})
@@ -115,7 +127,7 @@ router.post('/update/:id', async function (req, res, next) {
 	var obj = { error: null, data: null};
 	var bandId = parseInt(req.params.id, 10);
 
-	const { payload, images } = await cleanPost(req.body);
+	const { payload, _ } = await cleanPost(req.body);
 
 	try {
 		await res.locals.bandModel.update({band_id: bandId}, payload);

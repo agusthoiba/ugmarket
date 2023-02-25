@@ -50,8 +50,8 @@
                     <td><%= bands[i].band_id %></td>
                     <td><a href="/admin/band/edit/<%= bands[i].band_id %>"><%= bands[i].band_name %></a></td>
                     <td><%= bands[i].band_slug %></td>
-                    <td><img width="100" height="auto" src="<%= bands[i].logo %>"> </td>
-                    <td><img width="100" height="100" src="<%= bands[i].thumbnail %>"> </td>
+                    <td><%- bands[i].logo %></td>
+                    <td><%- bands[i].thumbnail %> </td>
                     <td><%= bands[i].band_total_product %></td>
                     <td>
                         <% if (bands[i].band_enabled == 1)  { %>

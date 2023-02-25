@@ -43,13 +43,15 @@ class Band {
       if (options.sort) { opts.order = options.sort };
     }
 
-    const result = await this.schema.findAll({
-        where: query,
-        raw: true,
-        order: opts.order,
-        offset: (opts.page - 1) * opts.limit,
-        limit: opts.limit
-    });
+    const optsAll = {
+      where: query,
+      raw: true,
+      order: opts.order,
+      offset: (opts.page - 1) * opts.limit,
+      limit: opts.limit
+    };
+
+    const result = await this.schema.findAll(optsAll);
 
     return result;
   }

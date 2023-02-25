@@ -30,7 +30,7 @@ class Genre {
     return new Promise((resolve, reject) => {
       this.schema.findAll({
         where: query,
-        // sort: {cat_parent_rank: 'as'},
+        order: ['genre_name'],
         raw: true
       }).then(result => {
         resolve(result)
