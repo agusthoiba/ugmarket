@@ -1,12 +1,17 @@
 const config = require('../config');
-const { Band, Category, Product, User, Contact } = require('../models')
+const { Band, Genre, Category, Product, User, Contact } = require('../models')
 
 const modelMiddleware = (req, res, next) => {
     req.app.locals.config = config;
 
+    res.locals.genreModel = new Genre({
+        db: req.app.locals.db
+    });
+
     res.locals.bandModel = new Band({
         db: req.app.locals.db
     });
+
     res.locals.categoryModel = new Category({
         db: req.app.locals.db
     });

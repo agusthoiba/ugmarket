@@ -40,14 +40,24 @@ class Upload {
     });
   }
 
-  async uploadToCloud(localPathFile) {
-    console.log('uploadToCloud', localPathFile)
+  async uploadToCloud(localPathFileOrBase64, prefix = '', public_id = '') {
+     // console.log('uploadToCloud', localPathFileOrBase64)
 
     try {
-      const resultUpload = await cloudinary.v2.uploader.upload(localPathFile);
+      let options = {
+        folder: prefix,
+      }
+
+      if (public_id != '') {
+        Object.assign(options, {
+          public_id: public_id
+        })
+      }
+
+      const resultUpload = await cloudinary.v2.uploader.upload(localPathFileOrBase64, options);
       console.log('resultUpload', resultUpload)
 
-      return `${resultUpload.public_id}.${resultUpload.format}`;
+      return resultUpload.secure_url
 
     } catch (err) {
       console.log(err);
@@ -61,16 +71,15 @@ class Upload {
     try {
       let imgs = [];
       for (let imgBase64 of imagesBase64) {
-        const imgLocalPath = await this.uploadToLocal(imgBase64, path, filename);
+        const publicId = `${path}/${filename}`
 
-
-        const img = await this.uploadToCloud(imgLocalPath)
+        const img = await this.uploadToCloud(imgBase64, publicId)
         imgs.push(img)
       }
       return imgs;
 
     } catch (err) {
-      console.log('inerro proc', err);
+      console.log('error processMultipleUpload', err);
 
       throw new UploadCloudinaryError(err.message, err.code)
     }

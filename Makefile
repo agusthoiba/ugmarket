@@ -22,12 +22,16 @@ test:
 build:
 	docker build \
 		--build-arg=SERVICE_NAME=$(IMAGE_NAME) \
+		--platform linux/amd64 \
 		-t=$(IMAGE_NAMESPACE)/$(IMAGE_NAME) .
 	docker tag $(IMAGE_NAMESPACE)/$(IMAGE_NAME) $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(COMMIT_ID)
 
 # Pushes to the configured registry.
 push:
-	docker push $(IMAGE_NAMESPACE)/$(IMAGE_NAME)
+	docker push $(IMAGE_NAMESPACE)/$(IMAGE_NAME):$(COMMIT_ID)
+
+run:
+	./script/do_deploy.sh
 
 # Make will get confused if there are files and folders with the names of
 # recipes, unless we mark them as 'PHONY'.

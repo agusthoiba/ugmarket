@@ -16,6 +16,7 @@ router.get('/', async (req, res, next) => {
         {link: '#', text: 'products'}
       ],
       pageTitle: 'Product',
+      pageBanner: '',
       categories: req.app.locals.categories,
       products: [],
       pagination: {
@@ -42,6 +43,7 @@ router.get('/', async (req, res, next) => {
 
   if (req.query.band) {
     obj.data.pageTitle = `${(req.query.band).trim().replace('-', ' ')} - Official Merchandise`
+    obj.data.pageBanner =  req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
   }
 
   let query = {
@@ -353,7 +355,7 @@ function _pagination(objPagination, req) {
     objPagination.total_page =  Math.floor(objPagination.total / objPagination.limit);
     
     const totalPage = objPagination.total_page;
-    const pageList  = [];
+    
     
     const urlParams = new URLSearchParams(req.query);
 
@@ -362,6 +364,7 @@ function _pagination(objPagination, req) {
       countLinkPage = totalPage;
     }
 
+    const pageList  = [];
     for (let i = 1; i <= totalPage; i++) {
       urlParams.set('page', i);
       pageList.push({

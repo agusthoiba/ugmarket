@@ -77,8 +77,7 @@ router.get('/', async (req, res, next) => {
         const datum = Object.assign({}, 
           val,
           { 
-            thumbnailUrl: `${obj.data.imageBaseUrl}/bands/${val.band_slug}-thumbnail.jpg`,
-            thumbnail: `/bands/${val.band_slug}-thumbnail.jpg`
+            thumbnail: req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 245, height: 245})
           }
         )
 

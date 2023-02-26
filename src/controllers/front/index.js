@@ -23,7 +23,10 @@ router.get('/', async (req, res, next) => {
   const findBands = await res.locals.bandModel.find({}, optionsFindBands);
 
   if (findBands.length > 0) {
-    obj.data.bands = findBands;
+    obj.data.bands = findBands.map(band => {
+      band.band_logo = req.app.locals.cloudinary.url(`bands/${band.band_slug}-logo.png`, {})
+      return band
+    });
   }
 
   if (req.query.json == '1') {
