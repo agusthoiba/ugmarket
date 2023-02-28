@@ -50,6 +50,20 @@ router.get('/', async (req, res, next) => {
     prod_is_visible: 1
   }
 
+  if (req.query.search != undefined && req.query.search != '' ) {
+    const prodSearch = (req.query.search).trim();
+
+    Object.assign(query, {
+      [Op.or]: [
+        {
+          prod_name: {
+            [Op.like]: prodSearch
+          }
+        }
+      ]
+    });
+  }
+
   _filtering(req, obj, query)
 
   var options = { 
@@ -68,7 +82,6 @@ router.get('/', async (req, res, next) => {
     obj.data.pagination.total = prodTotal;
     obj.data.pagination = _pagination(obj.data.pagination);
 
-    console.log(prodTotal)
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
