@@ -68,7 +68,6 @@ router.get('/', async (req, res, next) => {
     obj.data.pagination.total = prodTotal;
     obj.data.pagination = _pagination(obj.data.pagination);
 
-    console.log(prodTotal)
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
@@ -229,18 +228,22 @@ function _filtering(req, obj, query) {
   }
 
   if (req.query.search && req.query.search.length > 2) {
+    const regexStr = /[^a-zA-Z0-9]/g;
+    const searchInput = `%${((decodeURIComponent(req.query.search)).trim()).replace(regexStr, '')}%`;
+
     query[Op.or] = [
       {
         '$band.band_name$': {
-          [Op.like]: `%${req.query.search}%`
+          [Op.like]: searchInput
         },
       },
       {
         prod_name: {
-          [Op.like]:`%${req.query.search}%`
+          [Op.like]: searchInput
         }
       }
     ];
+
     obj.data.breadcrumb.push({ path: '', name: req.query.search});
   }
 

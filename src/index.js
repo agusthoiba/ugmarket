@@ -95,6 +95,9 @@ app.engine('html', ejs.renderFile)
 
 app.use(function (req, res, next) {
   res.locals.session = req.session
+  res.locals.uri = {
+    query: req.query
+  }
   return next()
 })
 

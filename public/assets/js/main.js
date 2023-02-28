@@ -49,10 +49,11 @@ $(document).ready(function(){
     })
   });
 
-  $('#search').submit(function(e) {
+  $('#search-form').submit(function(e) {
     e.preventDefault()
 
-    var searchStr = $('#search-input').val();
-    window.location.assign('/p?search=' + searchStr);
+    var searchStr = ($('#search-input').val()).trim();
+
+    window.location.assign(`/products?search=${searchStr}`);
   })
 });
