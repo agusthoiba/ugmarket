@@ -7,7 +7,6 @@ class Product {
   constructor (args) {
     Object.assign(this, args);
 
-
     this.tableName = 'product';
     this.schema = this.db.define('product', {
       prod_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
@@ -44,7 +43,7 @@ class Product {
           model: this.band.schema,
      
           // This is the column name of the referenced model
-          key: 'cat_id'
+          key: 'band_id'
         }
       },
       prod_images: { type: Sequelize.TEXT },

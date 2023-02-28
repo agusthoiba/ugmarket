@@ -50,20 +50,6 @@ router.get('/', async (req, res, next) => {
     prod_is_visible: 1
   }
 
-  if (req.query.search != undefined && req.query.search != '' ) {
-    const prodSearch = (req.query.search).trim();
-
-    Object.assign(query, {
-      [Op.or]: [
-        {
-          prod_name: {
-            [Op.like]: prodSearch
-          }
-        }
-      ]
-    });
-  }
-
   _filtering(req, obj, query)
 
   var options = { 
@@ -242,18 +228,22 @@ function _filtering(req, obj, query) {
   }
 
   if (req.query.search && req.query.search.length > 2) {
+    const regexStr = /[^a-zA-Z0-9]/g;
+    const searchInput = `%${((decodeURIComponent(req.query.search)).trim()).replace(regexStr, '')}%`;
+
     query[Op.or] = [
       {
         '$band.band_name$': {
-          [Op.like]: `%${req.query.search}%`
+          [Op.like]: searchInput
         },
       },
       {
         prod_name: {
-          [Op.like]:`%${req.query.search}%`
+          [Op.like]: searchInput
         }
       }
     ];
+
     obj.data.breadcrumb.push({ path: '', name: req.query.search});
   }
 
