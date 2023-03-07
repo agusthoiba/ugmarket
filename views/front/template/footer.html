@@ -71,11 +71,11 @@
 <!--script type="text/javascript" src="/assets/js/slick.min.js"></script-->
 <script src="/assets/js/main.js"></script>
 
-<script src="/assets/js/main/utils.js"></script>
+<script src="/assets/js/main/utils.min.js"></script>
 
 <% if (locals.js != undefined) { %>
     <% for(var i in locals.js) { %>
-        <script src="/assets/js/main/front/<%= locals.js %>.js"></script>
+        <script src="/assets/js/main/<%= locals.js %>.min.js"></script>
     <% } %>
 <% } %>
 
