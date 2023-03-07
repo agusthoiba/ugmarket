@@ -9,6 +9,6 @@ echo "Starting Ugmarket Web"
 
 docker pull $IMAGE_NAMESPACE/$IMAGE_NAME
 docker rm $(docker stop $(docker ps -q -f name="$IMAGE_NAME"))
-docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 80:4000 --add-host mysqlhost:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME
+docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 2000:4000 --add-host mysqlhost:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME
 
 echo 'success'
