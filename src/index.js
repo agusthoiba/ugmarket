@@ -50,6 +50,19 @@ cloudinary.config({
 });
 
 app.locals.cloudinary = cloudinary;
+
+const uploadCloudinary = require('./uploadCloudinary');
+
+const fileStyleCss = 'public/assets/css/style.min.css';
+const styleMinCss = 'style.min.css';
+async function runUpload() {
+  return await uploadCloudinary(cloudinary, fileStyleCss, { 
+    public_id: styleMinCss,
+    resource_type: "auto" 
+  })
+}
+
+
 //app.locals.clo
 
 
@@ -93,11 +106,14 @@ app.use(function (err, req, res, next) {
 app.set('view engine', 'html')
 app.engine('html', ejs.renderFile)
 
-app.use(function (req, res, next) {
+app.use(async function (req, res, next) {
   res.locals.session = req.session
   res.locals.uri = {
     query: req.query
   }
+
+  
+  res.locals.styleMinCss = await runUpload();
   return next()
 })
 
