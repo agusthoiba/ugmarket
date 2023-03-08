@@ -51,21 +51,6 @@ cloudinary.config({
 
 app.locals.cloudinary = cloudinary;
 
-const uploadCloudinary = require('./uploadCloudinary');
-
-const fileStyleCss = 'public/assets/css/style.min.css';
-const styleMinCss = 'style.min.css';
-async function runUpload() {
-  return await uploadCloudinary(cloudinary, fileStyleCss, { 
-    public_id: styleMinCss,
-    resource_type: "auto" 
-  })
-}
-
-
-//app.locals.clo
-
-
 /* locals.meta = {
     title: 'Situs Jual Beli Online Khusus Merchanise Mudah Dan Terpercaya | Pasar Underground',
     description: 'Tempat jual beli online terpercaya di Indonesia, belanja murah, di Pasar Underground'
@@ -112,8 +97,6 @@ app.use(async function (req, res, next) {
     query: req.query
   }
 
-  
-  res.locals.styleMinCss = await runUpload();
   return next()
 })
 
