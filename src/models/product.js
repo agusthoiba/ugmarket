@@ -1,5 +1,6 @@
 
 const Sequelize = require('sequelize');
+const { QueryTypes } = require('@sequelize/core');
 const categoryModel = require('./category')
 const bandModel = require('./band')
 
@@ -200,6 +201,42 @@ class Product {
     } catch (e) {
       throw new Error(e)
     };
+  }
+
+  async findRaw(query = null, sort = null, offset = 0, limit = 20) {
+    let queryStr = "SELECT * FROM `product` INNER JOIN `band` AS `band` ON `product`.`prod_band_id` = `band`.`band_id`";
+    let option = {
+      replacements: [],
+      type: QueryTypes.SELECT,
+    };
+
+    if (query != null) {
+      queryStr += " WHERE "
+
+      let i = 0;
+      console.log('le --', Object.entries(query).length)
+      for (const [key, value] of Object.entries(query)) {
+        queryStr += ` ${key} = ? `
+        option.replacements.push(value);
+        i++;
+        if (i < (Object.entries(query)).length) {
+          queryStr += ' AND ';
+        }
+      }
+    }
+
+    if (sort != null) {
+      queryStr += ' ORDER BY ' 
+      for (const [key, value] of Object.entries(sort)) {
+        queryStr += ` ${key} ${value} `
+      }
+    }
+    
+    queryStr += ` LIMIT ${limit} `;
+
+    console.log('queryStr', queryStr)
+
+    return await this.db.query(queryStr, option);
   }
 }
 
