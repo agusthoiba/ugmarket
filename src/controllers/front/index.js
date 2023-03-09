@@ -18,9 +18,9 @@ router.get('/', async (req, res, next) => {
     })
   }
 
-
   const optionsFindBands = { sort: [['band_total_sold', 'DESC']] , limit: 20 }
-  const findBands = await res.locals.bandModel.find({}, optionsFindBands);
+  const queryBand = {band_enabled: 1};
+  const findBands = await res.locals.bandModel.find(queryBand, optionsFindBands);
 
   if (findBands.length > 0) {
     obj.data.bands = findBands.map(band => {

@@ -43,20 +43,14 @@ router.get('/', async (req, res, next) => {
   const maxLinkPagination = 5 // maximal number of link pagination
 
   let query = {
-    //prod_is_visible: 1
+    band_enabled: 1
   }
-
-  //_filtering(req, obj, query)
 
   var options = { 
     sort: [['band_slug', 'ASC']],
     page: obj.data.pagination.page,
     limit: obj.data.pagination.limit
   }
-
-  /* if (req.query.sort) {
-    options.sort = _sorting(req.query.sort);
-  } */
 
   try {
     const bandTotal = await res.locals.bandModel.count(query);
