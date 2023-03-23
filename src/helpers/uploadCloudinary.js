@@ -9,8 +9,6 @@ class Upload {
   } */
 
   async uploadToLocal(base64Str, path, filename) {
-    // base64Str. 
-    console.log('imhere uploadToLocal', path, filename)
 
     return new Promise((resolve, reject) => {
       if (base64Str == null) {
@@ -41,8 +39,6 @@ class Upload {
   }
 
   async uploadToCloud(localPathFileOrBase64, prefix = '', public_id = '') {
-     // console.log('uploadToCloud', localPathFileOrBase64)
-
     try {
       let options = {
         folder: prefix,
@@ -55,12 +51,12 @@ class Upload {
       }
 
       const resultUpload = await cloudinary.v2.uploader.upload(localPathFileOrBase64, options);
-      console.log('resultUpload', resultUpload)
+      console.log('[INFO][UPLOAD_CLOUDINARY] resultUpload', resultUpload)
 
       return resultUpload.secure_url
 
     } catch (err) {
-      console.log(err);
+      console.log(`[ERROR][UPLOAD_CLOUDINARY] on uploadToCloud - `, err);
 
       throw new UploadCloudinaryError(err.message, err.code)
     }
@@ -71,15 +67,14 @@ class Upload {
     try {
       let imgs = [];
       for (let imgBase64 of imagesBase64) {
-        const publicId = `${path}/${filename}`
 
-        const img = await this.uploadToCloud(imgBase64, publicId)
+        const img = await this.uploadToCloud(imgBase64, path, filename)
         imgs.push(img)
       }
       return imgs;
 
     } catch (err) {
-      console.log('error processMultipleUpload', err);
+      console.log('[ERROR][UPLOAD_CLOUDINARY] error on processMultipleUpload - ', err);
 
       throw new UploadCloudinaryError(err.message, err.code)
     }

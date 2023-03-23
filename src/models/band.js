@@ -30,10 +30,26 @@ class Band {
     this.schema.sync();
   }
 
-  async find(query, options) {
+  async findAll(query) {
+    const opts = {
+      order: [['band_name', 'ASC']]
+    }
+
+    const optsAll = {
+      where: query,
+      raw: true,
+      order: opts.order
+    };
+
+    const result = await this.schema.findAll(optsAll);
+
+    return result;
+  }
+
+  async find(query, options, limit = 20) {
     const opts = {
       page: 1,
-      limit: 20,
+      limit: limit,
       order: [['band_name', 'ASC']]
     }
     

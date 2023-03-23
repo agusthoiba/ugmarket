@@ -1,4 +1,4 @@
-function uploadImage(files, obj) {
+function uploadImageProduct(files, obj) {
   console.log(files);
   console.log(obj);
 
@@ -48,7 +48,9 @@ function uploadImage(files, obj) {
             $('#thumb_image_0').removeClass("pickfile-container")
             $('#thumb_image_0').find('.ori').css({ display: 'none' });
             $('#thumb_image_0').append('<img class="preview">');
-            $('#thumb_image_0').append('<textarea style="display: none" name="image_ori">' + img.src + '"</textarea>');
+
+
+            $('#image_ori').val(img.src)
 
             var dataURL = canvas.toDataURL(file.type);
             var imgPrev = $('#thumb_image_0').find('.preview')[0];
