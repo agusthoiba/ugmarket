@@ -66,13 +66,15 @@
     <div class="mb-3">
       <label for="name"  class="form-label">Upload Gambar Produk</label>
       <ul class="image-upload list-inline">
-          <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, $(this))">
+          <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImageProduct(this.files, $(this))">
 
           <li id="thumb_image_0" class="pickfile-container"  onclick="browseFile(event, $(this))" >
             <% if (data.item.thumbnails.length > 0) { %>
               <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.item.thumbnails[0] %>">
             <% } %>
           </li>
+
+          <textarea style="display: none" id="image_ori" name="image_ori"></textarea>
       </ul>
     </div>
 
@@ -135,6 +137,7 @@
     <button style="display: none" type="submit">submit</button>
     <a class="btn btn-default submit-prod" onclick="window.history.back();">Batal</a>
   </div>
+
 </form>
 
 </div>

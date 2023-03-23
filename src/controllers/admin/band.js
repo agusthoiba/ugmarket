@@ -114,7 +114,6 @@ router.get('/edit/:id', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
 	var obj = { error: null, data: null};
 
-	// return res.json(req.body)
 	const { payload, images } = await cleanPost(req.body);
 
 	// return res.json(payload)
@@ -177,7 +176,7 @@ async function cleanPost(body) {
 			payload, images
 		}
 
-	  } catch (err) {
+	} catch (err) {
 		console.log('error while upload cloudinary', err)
-	  }
+	}
 }
