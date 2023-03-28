@@ -10,30 +10,43 @@
     <div class="row band-list-toolbox">
 
             <div class="bands-sort-wrapper">
-                <!-- span> <%= data.pagination.total %> Produk </span -->
-                <!--select name="sort" class="sort-by" id="sort-select">
-                    <% _.each(data.sort, (val => { %>
-                        <option value="<%= val.slug %>" 
-                            <%= data.uri.query?.sort == val.slug ? 'selected': ''%> >
-                            <%= val.label %>
-                        </option>
-                    <% })) %>
-
-                </select -->
             </div>
-    </div>    
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                <!--li class="page-item">
+                    <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li -->
+                <% if (pagination.total > 0) { %>
+                    <% for (pagerow of pagination.list) { %> 
+                        <li class="page-item <%= pagerow.active ? 'active' : '' %>"   <%= pagerow.active ? 'aria-current="page"' : '' %> >
+                            <a class="page-link" href="<%= pagerow.link %>"><%= pagerow.no %></a>
+                        </li>
+                    <% } %>
+                <% } %>
+                <!--li class="page-item">
+                    <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li -->
+                </ul>
+            </nav>
+        </div>
+    </div>
 
     <div class="band-list">
         <!-- div class="col" -->
-
         
             <div class="row mb-3">
                 <% var bands = data.bands %>
                 <% for(var i in bands) { %>
                     <div class="col-md-3 col-6">
                         <div class="band-item">
-
-
                             <a href="/products?band=<%= bands[i].band_slug %>">
                                 <img class="thumbnail img-responsive" src="<%= bands[i].thumbnail %>"> 
                                 <div class="caption-item">        
@@ -49,17 +62,13 @@
                 <div class="col-lg-12">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        
-                        <i class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
+                            <% if (pagination.total > 0) { %>
+                                <% for (pagerow of pagination.list) { %> 
+                                    <li class="page-item <%= pagerow.active ? 'active' : '' %>"   <%= pagerow.active ? 'aria-current="page"' : '' %> >
+                                        <a class="page-link" href="<%= pagerow.link %>"><%= pagerow.no %></a>
+                                    </li>
+                                <% } %>
+                            <% } %>
                         </ul>
                     </nav>
                 </div>

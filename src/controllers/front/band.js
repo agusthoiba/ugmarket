@@ -2,12 +2,12 @@
 
 const router = express.Router()
 const URI = require("urijs");
-const { Op } = require("sequelize");
-const { PRODUCT_SORT } = require('../../constant');
 const pagination = require('../../helpers/pagination');
 const config = require('../../config');
 
 router.get('/', async (req, res, next) => {
+  const pageLimit = 20;
+  const currentPage = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
 
   let obj = {
     error: null,
@@ -20,13 +20,6 @@ router.get('/', async (req, res, next) => {
       // categories: req.app.locals.categories,
       bands: [],
       imageBaseUrl: config.file_host,
-      pagination: {
-        limit: 20,
-        page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
-        total_page: 1,
-        total: 0,
-        list: []
-      },
       uri: {
         path: '',
         params: '',
@@ -48,26 +41,17 @@ router.get('/', async (req, res, next) => {
 
   var options = { 
     sort: [['band_slug', 'ASC']],
-    page: obj.data.pagination.page,
-    limit: obj.data.pagination.limit
+    page: currentPage,
+    limit: pageLimit
   }
 
   try {
     const bandTotal = await res.locals.bandModel.count(query);
 
-    obj.data.pagination.total = bandTotal;
-    obj.data.pagination = pagination(obj.data.bands, obj.data.pagination.limit, obj.data.pagination.page);
-
     if (bandTotal > 0) {
-      const doc = await res.locals.bandModel.find(query, options);
+      const doc = await res.locals.bandModel.find(query, options);    
 
       obj.data.bands = doc.map(val => {
-        /* let thumbnail = '/image/no-image-180x180.png'
-        if (val.prod_images != null) {
-          let thumbArr = val.prod_images.split(',');
-          thumbnail = req.app.locals.cloudinary.url(thumbArr[0],{width: 220, height: 220, crop: 'thumb'});
-        } */
-
         const datum = Object.assign({}, 
           val,
           { 
@@ -75,10 +59,14 @@ router.get('/', async (req, res, next) => {
           }
         )
 
-        // datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
-
         return datum
       })
+
+
+      const currentPage = options.page;
+      const basePath = '/bands';
+      const page = pagination(pageLimit, currentPage, bandTotal, basePath);
+		  Object.assign(obj, page)
     }
 
     if (req.query.json == '1') {
