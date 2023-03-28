@@ -1,11 +1,10 @@
-function pagination(data, limit, page, total) {
+function pagination(limit, page, total, basePath) {
     limit = parseInt(limit)
     page = parseInt(page)
 
     var totalPage = Math.ceil(total / limit);
 
     var res = {
-        data: data,
         pagination: {
             limit: limit,
             page: page,
@@ -29,7 +28,7 @@ function pagination(data, limit, page, total) {
         for (let i = 1; i <= totalPage; i++) {
             // urlParams.set('page', i);
             res.pagination.list.push({
-              link: `/admin/band?page=${i}`,
+              link: `${basePath}?page=${i}`,
               no: i,
               active: res.pagination.page === i
             })

@@ -6,8 +6,9 @@ var router = express.Router();
 router.get('/', async function (req, res, next) {
 	var obj = { 
 		error: null, 
-		data: null,
-		//js: ['account_product']
+		data: {
+			bands: []
+		}
 	};
 
 	let query = {};
@@ -20,13 +21,12 @@ router.get('/', async function (req, res, next) {
 	try {
 		const bandCount = await res.locals.bandModel.count(query);
 
-
 		if (bandCount > 0) {
-			const bands = await res.locals.bandModel.find(query, option);
+			const bandsModel = await res.locals.bandModel.find(query, option);
 
 			const currentPage = option.page;
 			
-			const bandList = bands.map(val => {
+			obj.data.bands = bandsModel.map(val => {
 				val.logo = req.app.locals.cloudinary.image(`bands/${val.band_slug}-logo.png`, {
 					transformation: [
 						{width: 75}
@@ -40,14 +40,13 @@ router.get('/', async function (req, res, next) {
 				return val;
 			});
 			
-			const page = pagination(bandList, pageLimit, currentPage, bandCount);
+			const basePath = '/admin/band';
+			const page = pagination(pageLimit, currentPage, bandCount, basePath);
 		    Object.assign(obj, page)
 		}
 
-		// return res.json(obj);
 		return res.render('admin/band_list', obj);
 	} catch (err) {
-    	// return res.json(obj);
 	
 		obj.error = 'An Error occured while load band list';
 		console.error(err);
@@ -74,10 +73,8 @@ router.get('/add', async function (req, res, next) {
 			genres: await res.locals.genreModel.find(),
 		},
 		action: '/admin/band'
-		//js: ['account_product']
 	};
 
-	// return res.json(obj);
 	return res.render('admin/band_form', obj);
 });
 
@@ -91,7 +88,6 @@ router.get('/edit/:id', async function (req, res, next) {
 			genres: await res.locals.genreModel.find(),
 		},
 		action: `/admin/band/update/${bandId}`
-		//js: ['account_product']
 	};
 
 	let query = {
@@ -106,8 +102,6 @@ router.get('/edit/:id', async function (req, res, next) {
 		banner: req.app.locals.cloudinary.url(`bands/${band.band_slug}-banner.jpg`, {width: 300, height: 75})
 	})
 
-
-	// return res.json(obj);
 	return res.render('admin/band_form', obj);
 });
 
