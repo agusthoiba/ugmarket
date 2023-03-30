@@ -2,17 +2,12 @@ var router = express.Router()
 
 const URI = require("urijs");
 
-var Product = require('../../../models/product')
-var Category = require('../../../models/category')
 var Band = require('../../../models/band')
-// var User = require(config.base_dir + '/models/user');
 
-var fs = require('fs.extra');
 var crypto = require('crypto');
-const promisify = require('util').promisify
-const copyFile = promisify(fs.copyFile)
 const moment = require('moment')
 const Upload = require('../../../helpers/uploadCloudinary');
+const pagination = require('../../../helpers/pagination');
 const { SIZES } = require('../../../constant');
 
 router.get('/', async (req, res, next) => {
@@ -26,19 +21,28 @@ router.get('/', async (req, res, next) => {
   }
 
   var query = { prod_user_id: userId, prod_is_deleted: 0 }
-  // var options = { sort: { prod_created_at: 'desc' } };
+  const pageLimit = 20;
+	let option = {
+		limit: pageLimit,
+		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+	};
 
-  const doc = await res.locals.productModel.find(query, {});
+  const prodCount = await res.locals.productModel.count(query);
+  const doc = await res.locals.productModel.find(query, option);
+  const basePath = '/account/product';
   
   if (doc.length > 0) {
-      obj.data.products = doc.map(val => {
+    obj.data.products = doc.map(val => {
         val.is_visible = val.prod_is_visible == 1
         const imgs = val.prod_images.split(',');
         val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {width: 100, height: 100, crop: "thumb"});
 
         return val
-      })
-    }
+    });
+  }
+
+  const paginate = pagination(pageLimit, option.page, prodCount, basePath);
+  Object.assign(obj, paginate);
 
   if (req.query.json == '1') {
     return res.json(obj);
