@@ -12,7 +12,7 @@ router.get('/', async function (req, res, next) {
 	};
 
 	let query = {};
-	const pageLimit = 10;
+	const pageLimit = 100;
 	let option = {
 		limit: pageLimit,
 		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,

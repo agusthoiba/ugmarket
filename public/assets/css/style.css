@@ -1,12 +1,12 @@
 @font-face {
-    font-family: Myriad;
-    src: url('/assets/font/MyriadPro-Regular.otf');
+    font-family: 'Roboto';
+    /*src: url('/assets/font/MyriadPro-Regular.otf');*/
 }
 
-*{
+/**{
   font-family: 'Roboto';
   font-size: 14px;
-}
+}*/
 
 a:hover{
   text-decoration: none;
