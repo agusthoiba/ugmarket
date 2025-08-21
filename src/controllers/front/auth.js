@@ -146,7 +146,7 @@ router.post('/login', async function (req, res, next) {
   const findUser = await res.locals.userModel.findOne(query)
 
   if (!findUser) {
-    obj.error = 'Username and password is totally wrong. \n Please try again!';
+    obj.error = 'Username and password is totally wrong.  \n Please try again!';
     obj.data = {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
@@ -165,13 +165,13 @@ router.post('/login', async function (req, res, next) {
   authSession(req, userData);
 
   obj.data = findUser;
-  return res.redirect('/');
+  return res.redirect('/account/product');
 });
 
 router.get('/logout', function (req, res, next) {
   if (req.session.hasOwnProperty('user')) {
     req.session.user = null;
-    req.session.save();
+    //req.session.save();
     res.clearCookie('user');
   }
   res.redirect('/');
