@@ -21,6 +21,6 @@ then
    sudo docker rm $(sudo docker stop $(sudo docker ps -q -f name="$IMAGE_NAME"))
 fi
 
-sudo docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 2000:4000 --add-host mysqlhost:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME
+sudo docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 2000:4000 --add-host=host.docker.internal:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME
 
 echo 'success'
