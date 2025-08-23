@@ -2,6 +2,8 @@ require('dotenv').config()
 
 const env = process.env;
 
+console.log("env: ", env)
+
 const config = {
     protocol: env.APP_PROTOCOL,
     host: env.APP_HOST,
