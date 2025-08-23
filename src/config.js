@@ -10,7 +10,12 @@ const config = {
     port: env.PORT,
     db: {
         mysql: {
-            url: env.DB_MYSQL_URL
+            url: env.DB_MYSQL_URL,
+            host: env.DB_HOST,
+            port: env.DB_PORT,
+            user: env.DB_USER,
+            name: env.DB_NAME,
+            password: env.DB_PASSWORD
         }
     },
     file_host: `${env.APP_PROTOCOL}://${env.APP_HOST}:${process.env.PORT}`,
