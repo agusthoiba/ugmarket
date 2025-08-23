@@ -10,7 +10,7 @@ const connect = async () => {
   const { host, name,password,user,port } = config.db.mysql;
 
   const sequelize = new Sequelize(name, user, password, {
-    host: 'localhost',
+    host: host,
     dialect: 'mysql',
     pool: {
       max: 100,
