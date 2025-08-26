@@ -3,7 +3,16 @@ const Upload = require('../../helpers/uploadCloudinary');
 
 var router = express.Router();
 
-router.get('/', async function (req, res, next) {
+function authCheckSession(req, resp, next) {
+  if (req.session && !req.session.user_admin) {
+	console.log('redirect to login')
+	return resp.redirect('/admin/auth/login');			
+  }
+
+  return next();
+}
+
+router.get('/', authCheckSession, async function (req, res, next) {
 	var obj = { 
 		error: null, 
 		data: {
@@ -54,7 +63,7 @@ router.get('/', async function (req, res, next) {
 	}
 });
 
-router.get('/add', async function (req, res, next) {
+router.get('/add', authCheckSession, async function (req, res, next) {
 	var obj = { 
 		error: null, 
 		data: {
@@ -78,7 +87,7 @@ router.get('/add', async function (req, res, next) {
 	return res.render('admin/band_form', obj);
 });
 
-router.get('/edit/:id', async function (req, res, next) {
+router.get('/edit/:id', authCheckSession, async function (req, res, next) {
 	const bandId = parseInt(req.params.id, 10);
 
 	var obj = { 
@@ -105,7 +114,7 @@ router.get('/edit/:id', async function (req, res, next) {
 	return res.render('admin/band_form', obj);
 });
 
-router.post('/', async function (req, res, next) {
+router.post('/', authCheckSession, async function (req, res, next) {
 	var obj = { error: null, data: null};
 
 	const { payload, images } = await cleanPost(req.body);
@@ -116,7 +125,7 @@ router.post('/', async function (req, res, next) {
 	return res.redirect('/admin/band');
 });
 
-router.post('/update/:id', async function (req, res, next) {
+router.post('/update/:id', authCheckSession, async function (req, res, next) {
 	var obj = { error: null, data: null};
 	var bandId = parseInt(req.params.id, 10);
 

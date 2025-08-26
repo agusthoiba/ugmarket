@@ -20,7 +20,9 @@
 
       <div class="modal-body">
 
-        <p id="auth_alert_msg" class="bg-danger"><%= error %></p>
+        <div class="alert alert-danger" role="alert" style="display: none;">
+          <%= error %>
+        </div>
         
         <div class="fbLoginButton">
           <a href="/auth/login/facebook">

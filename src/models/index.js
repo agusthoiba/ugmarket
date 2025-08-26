@@ -6,6 +6,8 @@ const Product = require('./product')
 const User = require('./user')
 const Contact = require('./contact');
 
+const UserAdmin = require('./userAdmin');
+
 module.exports = {
     Genre,
     Band,
@@ -13,5 +15,6 @@ module.exports = {
     // Merchant,
     Product,
     User,
-    Contact
+    Contact,
+    UserAdmin
 }
