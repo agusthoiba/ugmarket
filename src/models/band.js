@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 const moment = require('moment');
 
 class Band {
@@ -47,12 +48,20 @@ class Band {
   }
 
   async find(query, options, limit = 20) {
+    console.log("query band model", query);
     const opts = {
       page: 1,
       limit: limit,
       order: [['band_name', 'ASC']]
     }
-    
+
+    if (query) {
+      if (query.band_name) {
+        const bandName = query.band_name;
+        query.band_name = { [Op.like]: `%${bandName}%` }
+      }
+    }
+
     if (options) {
       if (options.page) { opts.page =  options.page };
       if (options.limit) { opts.limit =  options.limit };
@@ -121,6 +130,13 @@ class Band {
   }
 
   async count(query) {
+    if (query) {
+      if (query.band_name) {
+        const bandName = query.band_name;
+        query.band_name = { [Op.like]: `%${bandName}%` }
+      }
+    }
+
     let obj = {
       where: query
     }

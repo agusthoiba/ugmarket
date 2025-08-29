@@ -17,10 +17,28 @@ router.get('/', authCheckSession, async function (req, res, next) {
 		error: null, 
 		data: {
 			bands: []
-		}
+		},
+		pagination: {}
 	};
 
+
 	let query = {};
+
+	if (req.query.q) {
+		const re = /^[A-Za-z0-9]+$/;
+		const qtr = (req.query.q).trim();
+		if (!re.test(qtr)) {
+			obj.error = 'Harus alfanumerik';
+
+			return res.render('admin/band_list', obj);
+		}
+		obj.data.q = qtr;
+		// at the time only by band name
+		query = {
+			band_name: qtr
+		}
+	}
+
 	const pageLimit = 100;
 	let option = {
 		limit: pageLimit,
@@ -28,7 +46,8 @@ router.get('/', authCheckSession, async function (req, res, next) {
 	};
 
 	try {
-		const bandCount = await res.locals.bandModel.count(query);
+		const queryCount = Object.assign({}, query);
+		const bandCount = await res.locals.bandModel.count(queryCount);
 
 		if (bandCount > 0) {
 			const bandsModel = await res.locals.bandModel.find(query, option);
@@ -54,11 +73,13 @@ router.get('/', authCheckSession, async function (req, res, next) {
 		    Object.assign(obj, page)
 		}
 
+		//return res.json(obj)
 		return res.render('admin/band_list', obj);
 	} catch (err) {
 	
 		obj.error = 'An Error occured while load band list';
 		console.error(err);
+		//return res.json(obj)
 		return res.render('admin/band_list', obj);
 	}
 });
