@@ -28,6 +28,7 @@ jobs:
           name: Setup Env
           command: |
             echo 'export IMAGE_NAME=ugmarket' >> $BASH_ENV
+            echo 'export COMMIT_ID=$COMMIT_ID' >> $BASH_ENV
             npm install
 
       - setup_remote_docker:
@@ -37,7 +38,7 @@ jobs:
           name: Build Docker image
           command: |
             docker build --build-arg=SERVICE_NAME=$IMAGE_NAME --platform linux/amd64 -t $DOCKER_USERNAME/$IMAGE_NAME .
-            docker tag $DOCKER_USERNAME/$IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
+            docker tag $DOCKER_USERNAME/$IMAGE_NAME  $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
 
 
       - run:
