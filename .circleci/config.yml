@@ -17,7 +17,6 @@ jobs:
 
     environment:
       IMAGE_NAME: ugmarket
-      COMMIT_ID: $(shell git rev-parse --short HEAD)
 
     working_directory: ~/ugmarket
 
@@ -25,10 +24,14 @@ jobs:
       - checkout
 
       - run:
+          name: Get commit SHA from git
+          command: |
+            COMMIT_ID=$(git rev-parse --short HEAD)
+
+      - run:
           name: Setup Env
           command: |
             echo 'export IMAGE_NAME=ugmarket' >> $BASH_ENV
-            echo $COMMIT_ID
             echo 'export COMMIT_ID=$COMMIT_ID' >> $BASH_ENV
             npm install
 
@@ -39,13 +42,12 @@ jobs:
           name: Build Docker image
           command: |
             docker build --build-arg=SERVICE_NAME=$IMAGE_NAME --platform linux/amd64 -t $DOCKER_USERNAME/$IMAGE_NAME .
-            docker tag $COMMIT_ID  $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
 
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push $DOCKER_USERNAME/$IMAGE_NAME
+            docker push $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
 
       - run:
           name: Deploy Code
