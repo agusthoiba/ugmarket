@@ -51,8 +51,12 @@ jobs:
             echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
 
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:8nXQ6S+MKYYbx4aPJD06nqWf8kp4GhySgmZ7tgqJn2k"
+
       - run:
           name: Deploy Code
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh"
+            ssh -i ~/.ssh/id_ed25519 -o "IdentitiesOnly=yes" $DO_USER@$DO_IP -p $SSH_PORT "/bin/bash ./app/do_deploy.sh"
  
