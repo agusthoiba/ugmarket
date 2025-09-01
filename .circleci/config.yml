@@ -53,10 +53,15 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:8nXQ6S+MKYYbx4aPJD06nqWf8kp4GhySgmZ7tgqJn2k"
+            - "SHA256:xbZ+lXdLpdvcoYj8X8X6huA/Z71TBVg+DErTqiooB4w"
+
+      - run:
+          name: Debug SSH
+          command: |
+            ssh -vvv -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "echo 'Testing connection'"
 
       - run:
           name: Deploy Code
           command: |
-            ssh -i ~/.ssh/id_ed25519 -o "IdentitiesOnly=yes" $DO_USER@$DO_IP -p $SSH_PORT "/bin/bash ./app/do_deploy.sh"
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "cd app && ./do_deploy.sh"
  
