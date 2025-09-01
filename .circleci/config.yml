@@ -63,5 +63,11 @@ jobs:
       - run:
           name: Deploy Code
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "cd app && ./do_deploy.sh"
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "
+              cd app && 
+              export MYSQL_HOST=$MYSQL_HOST &&
+              export IMAGE_TAG=$COMMIT_ID &&
+              export IMAGE_NAME=$IMAGE_NAME &&
+              ./do_deploy.sh
+            "
  
