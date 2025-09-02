@@ -42,7 +42,7 @@
             <% const bandsTop = locals.bandsTop %>
             <% for (let i = 0; i < bandsTop.length; i++) { %>
                 <li>
-                  <a href="/band/<%= bandsTop[i].band_slug %>">
+                  <a href="/products/?band=<%= bandsTop[i].band_slug %>">
                     <%= bandsTop[i].band_name %>
                   </a>
                 </li>
@@ -59,7 +59,7 @@
             <% const catsBottom = cats.filter(cat => cat.cat_parent_id == 0) %>
             <% for (let i = 0; i < catsBottom.length; i++) { %>
                 <li>
-                  <a href="/products/kategori=<%= catsBottom[i].cat_slug %>">
+                  <a href="/products?kategori=<%= catsBottom[i].cat_slug %>">
                     <%= catsBottom[i].cat_name %>
                   </a>
                 </li>
