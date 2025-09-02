@@ -81,6 +81,21 @@ class Band {
     return result;
   }
 
+  async findTopBands(limit = 10) {
+    const query = { band_total_product: {
+      [Op.gt]: 0 
+    }};
+
+    const optsAll = {
+      where: query,
+      raw: true,
+      order: [['band_total_product', 'DESC']],
+      limit: limit
+    };
+
+    return await this.schema.findAll(optsAll);
+  }
+
   findOne(query) {
     return new Promise((resolve, reject) => {
       this.schema.findOne({

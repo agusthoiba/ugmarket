@@ -13,6 +13,6 @@ docker pull $IMAGE_NAMESPACE/$IMAGE_NAME
 docker stop $IMAGE_NAME
 docker rm $IMAGE_NAME
 
-docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 2000:4000 --add-host=host.docker.internal:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME
+docker run -d --restart=always --env-file=.env --name $IMAGE_NAME -p 2000:4000 --add-host=host.docker.internal:$MYSQL_HOST $IMAGE_NAMESPACE/$IMAGE_NAME:$IMAGE_TAG
 
 echo 'success'
