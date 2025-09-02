@@ -155,6 +155,15 @@ const connMysql = async() => {
 connMysql()
 app.use(modelMid)
 
+async function getTopBands(req, res, next) {
+  req.app.locals.bandsAll = await res.locals.bandModel.findAll();
+  req.app.locals.bandsTop = await res.locals.bandModel.findTopBands();
+  
+  return next();
+}
+
+app.use(getTopBands);
+
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
 app.use('/contact', require('./controllers/front/contact'))

@@ -134,18 +134,14 @@ router.post('/update/:id', async function (req, res, next) {
   var obj = { error: null, data: null };
 
   try {
-    const payload = await cleanPost(req.body, res, 'update')
+    const payload = await cleanPost(req.body, res, 'update');
 
-    await res.locals.productModel.update(query, payload)
-
+    await res.locals.productModel.update(query, payload);
     return res.redirect('/account/product');
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while update your product';
-    //if (req.query.json == '1') {
-    return res.json(obj);
-    // }
-    // return res.render('front/account/product_form', obj);
+    return res.render('front/account/product_form', obj);
   }
 })
 
@@ -175,14 +171,26 @@ router.post('/create', async (req, res) => {
 
   req.body.user_id = req.session.user.id;
 
-  const findBand = await res.locals.bandModel.findOne({
-    band_id: req.body.band
-  });
-  const payload = await cleanPost(req.body, findBand);
+  try {
+    const findBand = await res.locals.bandModel.findOne({
+      band_id: req.body.band
+    });
+    const payload = await cleanPost(req.body, findBand);
 
-  await res.locals.productModel.create(payload)
+    await res.locals.productModel.create(payload)
 
-  return res.redirect('/account/product');
+    await res.locals.bandModel.update({ band_id: findBand.band_id }, {
+      band_total_product: findBand.band_total_product + 1
+    });
+
+    return res.redirect('/account/product');
+  } catch (err) {
+    console.error(err)
+    obj.error = 'An Error occured while create your product';
+    return res.render('front/account/product_form', obj)
+  }  
+
+  
 })
 
 module.exports = router;
