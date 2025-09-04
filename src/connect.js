@@ -2,10 +2,7 @@ const config = require('./config');
 const Sequelize = require('sequelize');
 
 const connect = async () => {
-  
   console.log(`Connecting Mysql ...`)
-  console.log('config:', config)
-  console.log('config db:', config.db.mysql)
 
   const { host, name,password,user,port } = config.db.mysql;
 

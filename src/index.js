@@ -1,13 +1,13 @@
 
 const http = require('http')
 const express = require('express')
-const config = require('./config')
-
+const pino = require('pino-http')()
 const underscore = require('underscore')
 const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const morgan = require('morgan');
+const config = require('./config')
 const cloudinary = require('cloudinary').v2;
 
 const CategoryModel = require('./models/category');
@@ -96,6 +96,7 @@ app.use(async function (req, res, next) {
   res.locals.uri = {
     query: req.query
   }
+  res.locals.ENV = process.env.ENVIRONMENT
 
   return next()
 })
@@ -164,6 +165,7 @@ async function getTopBands(req, res, next) {
 
 app.use(getTopBands);
 
+app.use(pino)
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
 app.use('/contact', require('./controllers/front/contact'))

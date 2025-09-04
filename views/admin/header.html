@@ -17,9 +17,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 
+  <link rel="stylesheet" type="text/css" href="/assets/css-minify/style.min.css">
 
-  <link rel="stylesheet" type="text/css" href="/assets/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="/assets/css/style-admin.css">
+  <% if (locals.ENV == 'development') { %>
+    <link rel="stylesheet" type="text/css" href="/assets/css/style-admin.css">
+  <% } else { %>
+    <link rel="stylesheet" type="text/css" href="/assets/css-minify/style-admin.min.css">
+  <% } %>
 
   <!-- link rel="stylesheet" type="text/css" href="/assets/css/style.css"-- >
 

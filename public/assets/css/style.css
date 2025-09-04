@@ -433,6 +433,13 @@ a:-webkit-any-link {
   float: right;
 }
 
+.nav-tab a{
+  color:#000;
+}
+
+.nav-tab a:hover{
+  color: #404040;
+}
 
 
 .nav-icon li{
@@ -644,7 +651,7 @@ Arrow
 Slider
 ============================================*/
 .slide {
-  margin-top: 50px;
+  margin-top: 0;
 }
 
 #slide{
