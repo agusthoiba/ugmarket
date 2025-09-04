@@ -90,7 +90,8 @@ router.get('/', async (req, res, next) => {
       return res.json(obj);
     }
 
-    return res.render('front/product_list', obj)
+    //return res.render('front/product_list', obj)
+    return res.render('front/product_list_new', obj)
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product'
@@ -99,7 +100,8 @@ router.get('/', async (req, res, next) => {
       return res.json(obj);
     }
 
-    return res.render('front/product_list', obj)
+    //return res.render('front/product_list', obj)
+    return res.render('front/product_list_new', obj)
   }
 })
 

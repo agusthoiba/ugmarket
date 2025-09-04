@@ -15,7 +15,8 @@
     "test:coverage": "LOG_LEVEL=fatal nyc _mocha ./test --recursive",
     "lint": "eslint src config",
     "lint:quiet": "eslint src config --quiet",
-    "lint:fix": "eslint src config --fix"
+    "lint:fix": "eslint src config --fix",
+    "css-minify": "./node_modules/css-minify/bin/css-minify.js -d public/assets/css/ -o public/assets/css-minify/"
   },
   "keywords": [
     "Marketplace",
