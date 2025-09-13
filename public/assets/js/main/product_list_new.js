@@ -1,4 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Product List New JS Loaded")
+
+  const sortSelectOption = document.getElementById("sort-select");
+  if (sortSelectOption) {
+    sortSelectOption.addEventListener("change", function() {
+      const sortVal = sortSelectOption.value;
+      console.log('sortVal', sortVal);
+      const url = new URL(window.location.href);
+      url.searchParams.set('sort', sortVal);
+      window.location.href = url.toString();
+    });
+  }
+
   // Mobile filter functionality
   const mobileFilterBtn = document.getElementById("mobile-filter-btn")
   const mobileFilterOverlay = document.getElementById("mobile-filter-overlay")
@@ -109,17 +122,44 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append(checkbox.name, checkbox.value)
     })
 
-    // Collect sort option
-    const sortSelect = document.getElementById("sort-select")
-    if (sortSelect) {
-      formData.append("sort", sortSelect.value)
+    // Collect sort input
+
+    console.log('formData before sort:', formData)
+    const checkedRadio = document.querySelector('input[type="radio"]:checked');
+    console.log("checkedRadio", checkedRadio);
+    if (checkedRadio) {
+      // checkedRadio.value contains the selected value
+      const sortInput = document.getElementById("sort-input")
+
+      console.log('sortInput', sortInput);
+ 
+      if (sortInput) {
+        sortInput.value = checkedRadio.value;
+        formData.append("sort", sortSelect.value)
+      }
     }
+
+    const prices = document.querySelector('input[name="price"]');
+    console.log('prices: ', prices);
+    console.log('prices.value:', prices.value);
+
+    const priceMinInput = document.getElementById('price-min');
+    const priceMaxInput = document.getElementById('price-max');
+    const priceMin = priceMinInput ? priceMinInput.value : '';
+    const priceMax = priceMaxInput ? priceMaxInput.value : '';
+
+    if (priceMin) formData.append('price_min', priceMin);
+    if (priceMax) formData.append('price_max', priceMax);
+
+    console.log("formData.entries:", formData.entries())
 
     // Build query string
     const params = new URLSearchParams()
     for (const [key, value] of formData.entries()) {
       params.append(key, value)
     }
+
+    console.log("params.toString():", params.toString())
 
     // Redirect with filters
     window.location.href = `${window.location.pathname}?${params.toString()}`
@@ -133,9 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     // Reset sort to default
-    const sortSelect = document.getElementById("sort-select")
+    const sortSelect = document.getElementById("sort-input")
     if (sortSelect) {
-      sortSelect.value = "newest"
+      sortSelect.value = "popularitas"
     }
 
     updateActiveFilters()
@@ -163,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Apply sort selection
     mobileRadios.forEach((radio) => {
       if (radio.name === "mobile-sort") {
-        const sortSelect = document.getElementById("sort-select")
+        const sortSelect = document.getElementById("sort-input")
         if (sortSelect) {
           sortSelect.value = radio.value
         }
@@ -186,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 
   // Listen for sort changes
-  const sortSelect = document.getElementById("sort-select")
+  const sortSelect = document.getElementById("sort-input")
   if (sortSelect) {
     sortSelect.addEventListener("change", () => {
       applyFilters()

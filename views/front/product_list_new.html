@@ -3,8 +3,8 @@
 <%- include ("../front/template/breadcrumb.html") %>
 
 <div class="container">
-        <!-- Mobile Filter Button -->
-        <div class="mobile-filter-header">
+    <!-- Mobile Filter Button -->
+    <div class="mobile-filter-header">
             <button id="mobile-filter-btn" class="mobile-filter-button">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -24,95 +24,24 @@
             <div id="active-filters" class="active-filters">
                 <!-- Active filter badges will be inserted here by JavaScript -->
             </div>
-        </div>
+    </div>
 
-        <div class="row main-content">
+    <div class="row main-content">
             <!-- Desktop Sidebar Filters -->
-            <aside class="desktop-filters">
-                <div class="filter-section">
-                    <h3 class="filter-title">Kategori</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="pakaian" <%= data.uri.query.kategori === 'pakaian' ? 'checked' : '' %>>
-                            <span class="checkmark"></span>
-                            Pakaian
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="aksesoris">
-                            <span class="checkmark"></span>
-                            Aksesoris
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="merchandise">
-                            <span class="checkmark"></span>
-                            Merchandise
-                        </label>
-                    </div>
-                </div>
-
-                <div class="filter-section">
-                    <h3 class="filter-title">Ukuran</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="s">
-                            <span class="checkmark"></span>
-                            S
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="m">
-                            <span class="checkmark"></span>
-                            M
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="l">
-                            <span class="checkmark"></span>
-                            L
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="xl">
-                            <span class="checkmark"></span>
-                            XL
-                        </label>
-                    </div>
-                </div>
-
-                <div class="filter-section">
-                    <h3 class="filter-title">Harga</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="0-100000">
-                            <span class="checkmark"></span>
-                            Di bawah Rp 100.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="100000-300000">
-                            <span class="checkmark"></span>
-                            Rp 100.000 - Rp 300.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="300000-500000">
-                            <span class="checkmark"></span>
-                            Rp 300.000 - Rp 500.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="500000+">
-                            <span class="checkmark"></span>
-                            Di atas Rp 500.000
-                        </label>
-                    </div>
-                </div>
-            </aside>
+            <%- include ("./product_list_sidebar_desktop.html") %>            
 
             <!-- Products Grid -->
             <main class="products-section">
                 <div class="products-header">
-                    <h1 class="products-title">Pakaian</h1>
+                    <h1 class="products-title"><%= data.pageTitle %></h1>
                     <div class="sort-dropdown">
-                        <select name="sort" id="sort-select">
-                            <option value="newest">Terbaru</option>
-                            <option value="price-low">Harga: Rendah ke Tinggi</option>
-                            <option value="price-high">Harga: Tinggi ke Rendah</option>
-                            <option value="popular">Terpopuler</option>
+                        <select name="sort" class="sort-by" id="sort-select">
+                            <% _.each(data.sort, (val => { %>
+                            <option value="<%= val.slug %>" 
+                                <%= data.uri.query?.sort == val.slug ? 'selected': ''%> >
+                                <%= val.label %>
+                            </option>
+                            <% })) %>
                         </select>
                     </div>
                 </div>
@@ -130,7 +59,7 @@
                                         </div>
                                         <div class="product-info">
                                             <h3 class="product-name"><%= product.prod_name %></h3>
-                                            <p class="product-price">Rp <%= product.prod_price.toLocaleString('id-ID') %></p>
+                                            <p class="product-price"><%= product.prod_price.toLocaleString('id-ID') %></p>
                                         </div>
                                     </a>
                                 </div>
@@ -140,154 +69,9 @@
                     </div>
                 </div>
             </main>
-        </div>
     </div>
-
-    <!-- Mobile Filter Overlay -->
-    <div id="mobile-filter-overlay" class="mobile-filter-overlay">
-        <div class="mobile-filter-sheet">
-            <div class="mobile-filter-header-sheet">
-                <h2>Filter & Sort</h2>
-                <button id="close-filter-btn" class="close-filter-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="mobile-filter-content">
-                <!-- Sort Section -->
-                <div class="mobile-filter-section">
-                    <h3 class="mobile-filter-title">Urutkan</h3>
-                    <div class="mobile-filter-options">
-                        <label class="mobile-filter-option">
-                            <input type="radio" name="mobile-sort" value="newest" checked>
-                            <span class="radio-mark"></span>
-                            Terbaru
-                        </label>
-                        <label class="mobile-filter-option">
-                            <input type="radio" name="mobile-sort" value="price-low">
-                            <span class="radio-mark"></span>
-                            Harga: Rendah ke Tinggi
-                        </label>
-                        <label class="mobile-filter-option">
-                            <input type="radio" name="mobile-sort" value="price-high">
-                            <span class="radio-mark"></span>
-                            Harga: Tinggi ke Rendah
-                        </label>
-                        <label class="mobile-filter-option">
-                            <input type="radio" name="mobile-sort" value="popular">
-                            <span class="radio-mark"></span>
-                            Terpopuler
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Category Filter -->
-                <div class="mobile-filter-section">
-                    <button class="mobile-accordion-trigger" data-target="kategori-mobile">
-                        <span>Kategori</span>
-                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6,9 12,15 18,9"></polyline>
-                        </svg>
-                    </button>
-                    <div id="kategori-mobile" class="mobile-accordion-content">
-                        <div class="mobile-filter-options">
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-kategori" value="pakaian" <%= data.uri.query.kategori === 'pakaian' ? 'checked' : '' %>>
-                                <span class="checkmark"></span>
-                                Pakaian
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-kategori" value="aksesoris">
-                                <span class="checkmark"></span>
-                                Aksesoris
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-kategori" value="merchandise">
-                                <span class="checkmark"></span>
-                                Merchandise
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Size Filter -->
-                <div class="mobile-filter-section">
-                    <button class="mobile-accordion-trigger" data-target="size-mobile">
-                        <span>Ukuran</span>
-                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6,9 12,15 18,9"></polyline>
-                        </svg>
-                    </button>
-                    <div id="size-mobile" class="mobile-accordion-content">
-                        <div class="mobile-filter-options">
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-size" value="s">
-                                <span class="checkmark"></span>
-                                S
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-size" value="m">
-                                <span class="checkmark"></span>
-                                M
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-size" value="l">
-                                <span class="checkmark"></span>
-                                L
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-size" value="xl">
-                                <span class="checkmark"></span>
-                                XL
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Price Filter -->
-                <div class="mobile-filter-section">
-                    <button class="mobile-accordion-trigger" data-target="price-mobile">
-                        <span>Harga</span>
-                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6,9 12,15 18,9"></polyline>
-                        </svg>
-                    </button>
-                    <div id="price-mobile" class="mobile-accordion-content">
-                        <div class="mobile-filter-options">
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-price" value="0-100000">
-                                <span class="checkmark"></span>
-                                Di bawah Rp 100.000
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-price" value="100000-300000">
-                                <span class="checkmark"></span>
-                                Rp 100.000 - Rp 300.000
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-price" value="300000-500000">
-                                <span class="checkmark"></span>
-                                Rp 300.000 - Rp 500.000
-                            </label>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-price" value="500000+">
-                                <span class="checkmark"></span>
-                                Di atas Rp 500.000
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mobile-filter-footer">
-                <button id="clear-filters-btn" class="clear-filters-btn">Hapus Semua</button>
-                <button id="apply-filters-btn" class="apply-filters-btn">Terapkan Filter</button>
-            </div>
-        </div>
-    </div>
+  
+    <%- include ("./product_list_sidebar_new.html") %>
 </div>
 
 <script src="/assets/js/main/product_list_new.js"></script>

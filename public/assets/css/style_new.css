@@ -97,6 +97,24 @@ body {
   padding:1em 0 0.5em;
 }
 
+.footer-social-wrap {
+  margin-bottom: 20px;
+}
+
+.footer-social-wrap a{
+  color: #000;
+  background: #fff;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 12px;
+  padding: 2px 0;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size: 18px;
+  border-radius: 50%;
+}
+
 /* Mobile Filter Header */
 .mobile-filter-header {
   display: block;
@@ -466,6 +484,7 @@ body {
 }
 
 .mobile-filter-footer {
+  margin-top: 12px;
   display: flex;
   gap: 12px;
   padding: 20px 24px;

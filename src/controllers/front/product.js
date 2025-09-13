@@ -50,6 +50,28 @@ router.get('/', async (req, res, next) => {
     prod_is_visible: 1
   }
 
+  // Price filter logic
+  if (req.query.price_min && parseInt(req.query.price_min) > 0 && (!req.query.price_max || parseInt(req.query.price_max) <= 0)) {
+    // Only price_min exists and > 0
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min)
+    };
+  } else if (req.query.price_max && parseInt(req.query.price_max) > 0 && (!req.query.price_min || parseInt(req.query.price_min) <= 0)) {
+    // Only price_max exists and > 0
+    query.prod_price = {
+      [Op.lte]: parseInt(req.query.price_max)
+    };
+  } else if (
+    req.query.price_min && parseInt(req.query.price_min) > 0 &&
+    req.query.price_max && parseInt(req.query.price_max) > 0
+  ) {
+    // Both price_min and price_max exist and > 0
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min),
+      [Op.lte]: parseInt(req.query.price_max)
+    };
+  }
+
   _filtering(req, obj, query)
 
   var options = { 
