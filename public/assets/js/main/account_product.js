@@ -76,7 +76,6 @@ function submitProd(e, obj) {
   var type = obj.data('type');
 
   var linkTokpedValidation =  document.getElementById("marketplaces-tokopedia-validation");
-  var linkBlValidation =  document.getElementById("marketplaces-bukalapak-validation");
 
   // Tokopedia Link
   var linkTokped = document.getElementById("marketplaces-tokopedia");
@@ -91,20 +90,6 @@ function submitProd(e, obj) {
       return false;
     } else {
       linkTokpedValidation.style.display = "none";
-    }
-  }
-
-   // Bukalapak Link
-   var linkBL = document.getElementById("marketplaces-bukalapak");
-   
-  if (linkBL.value != '') {
-    var uriBL = new URI(linkBL.value.trim());
-  
-    if (!['bukalapak.com', 'www.bukalapak.com'].includes(uriBL.hostname())) {
-      linkBlValidation.innerHTML = 'Harus URL bukalapak';
-      linkBlValidation.style.display = "block";
-      e.preventDefault()
-      return false;
     }
   }
 

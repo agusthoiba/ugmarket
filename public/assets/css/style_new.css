@@ -224,6 +224,7 @@ body {
   border-radius: 3px;
   position: relative;
   transition: all 0.2s ease;
+  margin-right: 6px;
 }
 
 .filter-option input[type="checkbox"]:checked + .checkmark {
@@ -327,6 +328,36 @@ body {
   font-size: 18px;
   font-weight: 600;
   color: #1f2937;
+}
+
+
+.product-form .image-upload li{
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
+  border: 1px dotted #b7b7b7;
+  border-radius: 4px;
+  margin-right: 10px;
+  padding: 0;
+}
+
+.product-card-wrapper {
+  /*font-family: Hind Madurai,sans-serif;*/
+  position: relative;
+  max-width: 200px;
+  height: 100%;
+  background: #fff;
+  border: 1px solid hsla(0,0%,92.2%,.8);
+  border-radius: 4px;
+}
+
+.product-card-wrapper a {
+  color:  rgba(0, 0, 0, 0.7);
+}
+
+.pickfile-container {
+    background: url(/image/add-product.png) no-repeat;
+    background-position: center;
 }
 
 /* Mobile Filter Overlay */

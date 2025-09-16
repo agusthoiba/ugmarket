@@ -167,7 +167,12 @@ router.get('/add', async (req, res, next) => {
 })
 
 router.post('/create', async (req, res) => {
-  var obj = { error: null, data: null };
+  var obj = { 
+    error: null, 
+    data: null,
+    action: '/account/product/create',
+    js: ['account_product']
+  };
 
   req.body.user_id = req.session.user.id;
 
@@ -175,17 +180,24 @@ router.post('/create', async (req, res) => {
     const findBand = await res.locals.bandModel.findOne({
       band_id: req.body.band
     });
+
     const payload = await cleanPost(req.body, findBand);
 
     await res.locals.productModel.create(payload)
 
-    await res.locals.bandModel.update({ band_id: findBand.band_id }, {
+    await res.locals.bandModel.update({ band_id: payload.prod_band_id }, {
       band_total_product: findBand.band_total_product + 1
     });
 
     return res.redirect('/account/product');
   } catch (err) {
     console.error(err)
+    obj.data = {
+      categories: await res.locals.categoryModel.find(),
+      bands:  await res.locals.bandModel.findAll(),
+      sizes: SIZES,
+      item: itemData()
+    }
     obj.error = 'An Error occured while create your product';
     return res.render('front/account/product_form', obj)
   }  
