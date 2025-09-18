@@ -37,21 +37,32 @@
                     </svg>
                 </button>
                  
-                <div id="kategori-mobile" class="mobile-accordion-content">
-                    <div class="mobile-filter-options">
+                <div id="kategori-mobile" class="mobile-accordion-content">                        
+                    <div class="mobile-filter-options mb-3" style="gap:5px">
                         <% data.categories.forEach(cat => { %>
-                            <label class="mobile-filter-option">
-                                <input type="checkbox" name="mobile-kategori" value="<%= cat.cat_slug %>"
+                            <div class="form-check" style="padding-left: 0">
+                                <input class="form-check-label" type="checkbox" name="mobile-kategori" value="<%= cat.cat_slug %>"
                                     <%= data.uri.query.kategori === cat.cat_slug ? 'checked' : '' %>>
-                                <span class="checkmark"></span>
-                                <%= cat.cat_name %>
-                            </label>
+                                <label for="kategori" class="form-label"><%= cat.cat_name %></label>
+                            </div>
+                            <div class="group-wrapper-body">
+                                <% for(catChild of cat.childs) { %>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" 
+                                            name="categories" value="<%= catChild.cat_slug %>" 
+                                            id="cat-<%= catChild.cat_id %>" <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> >
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            <%= catChild.cat_name %>
+                                        </label>
+                                    </div>
+                                <% } %>
+                            </div>
                         <% }) %>
                     </div>
                 </div>
 
                 <!-- old -->
-                <div class="mobile-accordion-content group-wrapper">
+                <!--div class="mobile-accordion-content group-wrapper">
                     <% for(cat of data.categories) { %>
                         <div class="group-wrapper-header">
                             <%= cat.cat_name %> 
@@ -70,11 +81,12 @@
                             <% } %>
                         </div>
                     <% } %>
-                </div>
+                </div-->
             </div>
 
             <!-- Size Filter -->
-            <div class="mobile-filter-section">
+             <!-- On Hold / Need change structure data -->
+            <!--div class="mobile-filter-section">
                 <button class="mobile-accordion-trigger" data-target="size-mobile">
                     <span>Ukuran</span>
                     <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -84,20 +96,58 @@
                 </button>
                 <div id="size-mobile" class="mobile-accordion-content">
                     <div class="mobile-filter-options gap-2">
-                        <% data.sizes.forEach(sz => { %>
-                            <div class="form-group">
-                                <label class="mobile-filter-option align-items-center" for="inlineCheckSize_<%= sz %>"  style="margin-right: 10px; flex-direction: row; cursor: pointer;">
-                                    <input class="form-control"  type="checkbox" name="sizes" value="<%= sz %>" id="inlineCheckSize_<%= sz %>" <%=(data.uri.query.size ||
-                                        []).includes(sz) ? 'checked' : '' %> >
-                                    <span class="checkmark" ></span>
-                                    <%= sz.toUpperCase() %>
-                                </label>
+ 
+                         <div class="mb-3">
+                            <label for="condition" class="form-label mobile-filter-option">Ukuran</label>
+                            <div class="mb-3">
+                            <% for (let size of data.sizes) { %>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckSize_<%= size %>" value="<%= size %>" <%= (data.uri.query.size || []).includes(size) ? 'checked' : '' %> >
+                                    <label class="form-check-label" for="inlineCheckSize_<%= size %>"><%= size.toUpperCase() %></label>
+                                </div>
+                            <% } %>
                             </div>
-                        <% }) %>
+                        </div>    
+                        
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Condition Filter -->
+            <div class="mobile-filter-section group condition">
+                <button class="mobile-accordion-trigger" data-target="condition-mobile">
+                    <span>Kondisi</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+
+                <div id="condition-mobile" class="mobile-accordion-content">
+                    <div class="mobile-filter-options">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                name="condition" value="b" id="flexCheckChecked"
+                                <%= data.uri.query.condition?.includes('b') ? 'checked' : '' %> 
+                                >
+                            <label class="form-check-label" for="flexCheckChecked">
+                                Baru
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                name="condition" value="s" id="flexCheckChecked"  
+                                <%= data.uri.query.condition?.includes('s') ? 'checked' : '' %> 
+                                >
+                            <label class="form-check-label" for="flexCheckChecked">
+                                Bekas
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Price Filter -->
             <div class="mobile-filter-section" style="border-bottom: none;">
                 <button class="mobile-accordion-trigger" data-target="price-mobile">
@@ -117,6 +167,8 @@
                     </label>
                 </div>
             </div>
+
+
         </div>
 
         <div class="mobile-filter-footer">

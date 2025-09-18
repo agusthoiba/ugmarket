@@ -118,15 +118,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Collect all checked filters
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked')
+    let sizes = '';
     checkboxes.forEach((checkbox) => {
-      formData.append(checkbox.name, checkbox.value)
-    })
+      if (checkbox.name == "sizes") {
+        console.log('checkbox.value:', checkbox.value);
+        sizes += checkbox.value + ',';
+      } else {
+        formData.append(checkbox.name, checkbox.value)
+      } 
+    });
 
-    // Collect sort input
+    if (sizes !== '') { 
+      sizes = sizes.slice(0, -1); // Remove trailing comma
+      console.log("sizes:", sizes)
+      formData.append("sizes", sizes);
+    }
 
-    console.log('formData before sort:', formData)
     const checkedRadio = document.querySelector('input[type="radio"]:checked');
-    console.log("checkedRadio", checkedRadio);
     if (checkedRadio) {
       // checkedRadio.value contains the selected value
       const sortInput = document.getElementById("sort-input")

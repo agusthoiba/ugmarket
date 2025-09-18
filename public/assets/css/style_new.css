@@ -466,7 +466,7 @@ body {
 }
 
 .mobile-accordion-content.active {
-  max-height: 300px;
+  max-height: 675px;
 }
 
 .mobile-filter-options {
@@ -545,6 +545,29 @@ body {
   color: white;
   cursor: pointer;
 }
+
+.group-wrapper {
+  overflow: visible;
+  margin-left: 10px;
+  margin-top: 7px
+}
+
+.group-wrapper-header {
+  margin-top: 12px
+}
+
+.group-wrapper-body {
+  margin-top: 0;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.group-wrapper .form-check {
+  margin-bottom: 5px
+}
+
 
 /* Desktop Styles */
 @media (min-width: 768px) {
