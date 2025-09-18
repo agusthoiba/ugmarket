@@ -474,6 +474,7 @@ body {
   flex-direction: column;
   gap: 16px;
   padding-bottom: 20px;
+  font-size: 14px;
 }
 
 .mobile-filter-option {

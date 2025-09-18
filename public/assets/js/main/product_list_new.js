@@ -119,10 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // Collect all checked filters
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked')
     let sizes = '';
+    let conditions = '';
+    let categories = '';
     checkboxes.forEach((checkbox) => {
       if (checkbox.name == "sizes") {
-        console.log('checkbox.value:', checkbox.value);
         sizes += checkbox.value + ',';
+      } else if (checkbox.name == "condition") {
+        console.log('checkbox.value:', checkbox.value);
+        conditions += checkbox.value + ',';
+      } else if (checkbox.name == "categories") {
+        categories += checkbox.value + ',';
       } else {
         formData.append(checkbox.name, checkbox.value)
       } 
@@ -130,8 +136,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (sizes !== '') { 
       sizes = sizes.slice(0, -1); // Remove trailing comma
-      console.log("sizes:", sizes)
       formData.append("sizes", sizes);
+    }
+
+    if (conditions !== '') { 
+      conditions = conditions.slice(0, -1); // Remove trailing comma
+      console.log("conditions:", conditions)
+      formData.append("condition", conditions);
+    }
+
+    if (categories !== '') { 
+      categories = categories.slice(0, -1); // Remove trailing comma
+      formData.append("categories", categories);
     }
 
     const checkedRadio = document.querySelector('input[type="radio"]:checked');
@@ -146,10 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("sort", sortSelect.value)
       }
     }
-
-    const prices = document.querySelector('input[name="price"]');
-    console.log('prices: ', prices);
-    console.log('prices.value:', prices.value);
 
     const priceMinInput = document.getElementById('price-min');
     const priceMaxInput = document.getElementById('price-max');
