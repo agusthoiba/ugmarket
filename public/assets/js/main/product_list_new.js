@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const applyFiltersBtn = document.getElementById("apply-filters-btn")
   const clearFiltersBtn = document.getElementById("clear-filters-btn")
   const activeFiltersContainer = document.getElementById("active-filters")
+  const kategoriCheckboxes = document.querySelectorAll('input[name="kategori"]');
 
   // Accordion functionality
   const accordionTriggers = document.querySelectorAll(".mobile-accordion-trigger")
@@ -121,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let sizes = '';
     let conditions = '';
     let categories = '';
+    let kategori = ''; // kategori for parent category
     checkboxes.forEach((checkbox) => {
       if (checkbox.name == "sizes") {
         sizes += checkbox.value + ',';
@@ -129,6 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
         conditions += checkbox.value + ',';
       } else if (checkbox.name == "categories") {
         categories += checkbox.value + ',';
+      } else if (checkbox.name == "kategori") {
+        kategori = checkbox.value;
       } else {
         formData.append(checkbox.name, checkbox.value)
       } 
@@ -143,6 +147,10 @@ document.addEventListener("DOMContentLoaded", () => {
       conditions = conditions.slice(0, -1); // Remove trailing comma
       console.log("conditions:", conditions)
       formData.append("condition", conditions);
+    }
+
+    if (kategori !== '') { 
+      formData.append("kategori", kategori);
     }
 
     if (categories !== '') { 
@@ -264,5 +272,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mobileCheckbox) {
       mobileCheckbox.checked = true
     }
+  })
+
+  kategoriCheckboxes.addEventListener('click', function() {
+    
   })
 })

@@ -1,79 +1,97 @@
 <%- include ("../front/template/head_new.html") %>
-<%- include ("../front/template/header.html") %>
-<%- include ("../front/template/breadcrumb.html") %>
+  <%- include ("../front/template/header.html") %>
+    <%- include ("../front/template/breadcrumb.html") %>
 
-<div class="container">
-    <!-- Mobile Filter Button -->
-    <div class="mobile-filter-header">
-            <button id="mobile-filter-btn" class="mobile-filter-button">
+      <div class="container">
+
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold mb-2"><%= data.pageTitle %></h1>
+          <p class="text-muted-foreground"><%= data.pagination.total %> Products</p>
+        </div>
+
+        <!-- Mobile Filter Button -->
+        <div class="mobile-filter-header">
+          <div class="mobile-filter-wrapper mb-6">
+            <div class="mobile-filter-wrapper-section" style="margin-right: 10px;"> 
+              <button id="mobile-filter-btn" class="mobile-filter-button">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
                 </svg>
-                Filter & Sort
-            </button>
-            
-            <!-- Active Filters -->
-            <div id="active-filters" class="active-filters">
-                <!-- Active filter badges will be inserted here by JavaScript -->
+                Filters
+              </button>
             </div>
-    </div>
 
-    <div class="row main-content">
-            <!-- Desktop Sidebar Filters -->
-            <%- include ("./product_list_sidebar_desktop.html") %>            
+            <div class="mobile-filter-wrapper-section"> 
+              <select class="mobile-filter-button" name="sort" class="sort-by" id="sort-select">
+                <% _.each(data.sort, (val=> { %>
+                  <option value="<%= val.slug %>" <%=data.uri.query?.sort==val.slug ? 'selected' : '' %> >
+                    <%= val.label %>
+                  </option>
+                <% })) %>
+              </select>
 
+            </div>
+
+          </div>
+
+          <!-- Active Filters -->
+          <div id="active-filters" class="active-filters">
+            <!-- Active filter badges will be inserted here by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Desktop Sidebar Filters -->
+        <%- include ("./product_list_sidebar_desktop.html") %>
+
+        <div class="row main-content">
             <!-- Products Grid -->
             <main class="products-section">
-                <div class="products-header">
-                    <h1 class="products-title"><%= data.pageTitle %></h1>
-                    <div class="sort-dropdown">
-                        <select name="sort" class="sort-by" id="sort-select">
-                            <% _.each(data.sort, (val => { %>
-                            <option value="<%= val.slug %>" 
-                                <%= data.uri.query?.sort == val.slug ? 'selected': ''%> >
-                                <%= val.label %>
-                            </option>
-                            <% })) %>
-                        </select>
-                    </div>
-                </div>
+              <!--div class="products-header">
+                <h1 class="products-title">
+                  <%= data.pageTitle %>
+                </h1>
+              </div-->
 
-                <div class="">
-                    <div class="row">
-                        <% data.products.forEach(product => { %>
-                        
-                            <div class="col-md-3 col-6">
-                                
-                                <div class="product-card">
-                                    <a href="/products/<%= product.prod_id %>/<%= product.prod_slug %>">
-                                        <div class="product-image">
-                                            <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
-                                        </div>
-                                        <div class="product-info">
-                                            <h3 class="product-name"><%= product.prod_name %></h3>
-                                            <p class="product-price"><%= product.prod_price.toLocaleString('id-ID') %></p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        
-                        <% }) %>
+              <div class="">
+                <div class="row">
+                  <% data.products.forEach(product=> { %>
+
+                    <div class="col-md-3 col-6">
+
+                      <div class="product-card">
+                        <a href="/products/<%= product.prod_id %>/<%= product.prod_slug %>">
+                          <div class="product-image">
+                            <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
+                          </div>
+                          <div class="product-info">
+                            <h3 class="product-name">
+                              <%= product.prod_name %>
+                            </h3>
+                            <p class="product-price">
+                              <%= product.prod_price.toLocaleString('id-ID') %>
+                            </p>
+                          </div>
+                        </a>
+                      </div>
                     </div>
+
+                    <% }) %>
                 </div>
+              </div>
             </main>
-    </div>
-  
-    <%- include ("./product_list_sidebar_new.html") %>
-</div>
+        </div>
 
-<script src="/assets/js/main/product_list_new.js"></script>
+        <%- include ("./product_list_sidebar_new.html") %>
+      </div>
 
-<%- include ("../front/template/footer.html") %>
+      <script src="/assets/js/main/product_list_new.js"></script>
+
+      <%- include ("../front/template/footer.html") %>

@@ -4,6 +4,7 @@ const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
 const { PRODUCT_SORT } = require('../../constant');
+const { isArray } = require("underscore");
 
 router.get('/', async (req, res, next) => {
   let pageLimit = 20;
@@ -189,13 +190,18 @@ router.get('/:id/:slug', async (req, res, next) => {
 module.exports = router
 
 function _filtering(req, obj, query) {
+  console.log("req.query.kategori: ", req.query.kategori )
   if (req.query.kategori) {
-    const catSlug = (req.query.kategori).trim()
+    let catSlug = '';
+    if (isArray(req.query.kategori)) {
+      catSlug = (req.query.kategori)[0]
+    } else {
+      catSlug = (req.query.kategori).trim()
+    }
     const findCat = req.app.locals.categoryList.find(cat => {
       return cat.cat_slug == catSlug
     });
 
-    
     obj.data.breadcrumb = [{
       link: '#', text: findCat.cat_name
     }]
@@ -272,10 +278,11 @@ function _filtering(req, obj, query) {
   }
 
   if (req.query.condition) {
-    const conditions = req.query.condition.split('')
+    const conditionTr = (req.query.condition).trim();
+    const conditions = conditionTr.split('')
     if (conditions.indexOf('b') > -1 || conditions.indexOf('s') > -1) {
       query.prod_condition = {
-        [Op.or]: req.query.condition.split(',')
+        [Op.or]: conditionTr.split(',')
       }
     }
   }
