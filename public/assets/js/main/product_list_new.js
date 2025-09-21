@@ -274,7 +274,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  kategoriCheckboxes.addEventListener('click', function() {
-    
-  })
+  kategoriCheckboxes.forEach((checkbox) => {
+    const selectedKategori = checkbox.checked ? checkbox.value : null;
+
+    checkbox.addEventListener("change", () => {
+      const childCheckboxes = document.querySelectorAll(`input[name="categories"][data-parentslug="${checkbox.value}"]`);
+      childCheckboxes.forEach((checkboxChild) => {
+        checkboxChild.checked = checkbox.checked;
+      });
+    });
+  });
 })

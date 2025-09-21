@@ -40,17 +40,27 @@
                 <div id="kategori-mobile" class="mobile-accordion-content">                        
                     <div class="mobile-filter-options mb-3" style="gap:5px">
                         <% data.categories.forEach(cat => { %>
+                            <% catParentIdChecked = 0 %>
+                            <% if (data.uri.query.kategori === cat.cat_slug) { %>
+                                <% catParentIdChecked = cat.cat_id %>
+                            <% } %>
                             <div class="form-check" style="padding-left: 0">
-                                <input class="form-check-label" type="checkbox" name="kategori" value="<%= cat.cat_slug %>"
-                                    <%= data.uri.query.kategori === cat.cat_slug ? 'checked' : '' %>>
+                                <input class="form-check-label" type="checkbox" id="cat-parent-<%= cat.cat_id %>" name="kategori" value="<%= cat.cat_slug %>"
+                                     <%= data.uri.query.kategori === cat.cat_slug ? 'checked' : '' %>   >
                                 <label for="kategori" class="form-label"><%= cat.cat_name %></label>
                             </div>
                             <div class="group-wrapper-body">
                                 <% for(catChild of cat.childs) { %>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" 
-                                            name="categories" value="<%= catChild.cat_slug %>" 
-                                            id="cat-<%= catChild.cat_id %>" <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> >
+                                            name="categories" data-parentslug="<%= cat.cat_slug %>" value="<%= catChild.cat_slug %>" 
+                                            id="cat-<%= catChild.cat_id %>"  
+                                            <% if (data.uri.query.categories) { %>
+                                                <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> 
+                                            <% } else { %>
+                                                <%= catParentIdChecked == catChild.cat_parent_id ? 'checked' : '' %>
+                                            <% } %>
+                                            >
                                         <label class="form-check-label" for="flexCheckChecked">
                                             <%= catChild.cat_name %>
                                         </label>
