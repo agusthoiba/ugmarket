@@ -57,6 +57,8 @@
                                             id="cat-<%= catChild.cat_id %>"  
                                             <% if (data.uri.query.categories) { %>
                                                 <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> 
+                                            <% } else if (data.uri.query.kategori) { %>
+                                                <%= data.uri.query.kategori.includes(catChild.cat_slug) ? 'checked' : '' %> 
                                             <% } else { %>
                                                 <%= catParentIdChecked == catChild.cat_parent_id ? 'checked' : '' %>
                                             <% } %>
