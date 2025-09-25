@@ -7,6 +7,7 @@ const User = require('./user')
 const Contact = require('./contact');
 
 const UserAdmin = require('./userAdmin');
+const Collections = require('./collections');
 
 module.exports = {
     Genre,
@@ -16,5 +17,6 @@ module.exports = {
     Product,
     User,
     Contact,
-    UserAdmin
+    UserAdmin,
+    Collections
 }

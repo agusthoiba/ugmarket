@@ -177,6 +177,7 @@ app.use('/account/profile', require('./controllers/front/account/profile'))
 
 app.use('/admin/auth', require('./controllers/admin/auth'))
 app.use('/admin/band', require('./controllers/admin/band'))
+app.use('/admin/collections', require('./controllers/admin/collections'))
 
 /* app.use(function(req, res, next){
   if (req.accepts('html')) {
