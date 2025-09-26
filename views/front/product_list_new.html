@@ -63,7 +63,6 @@
               <div class="">
                 <div class="row">
                   <% data.products.forEach(product=> { %>
-
                     <div class="col-md-3 col-6">
 
                       <div class="product-card">
@@ -72,9 +71,10 @@
                             <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
                           </div>
                           <div class="product-info">
-                            <h3 class="product-name">
+                            <h3 class="product-band"><%= product["band.band_name"] %></h3>
+                            <p class="product-name">
                               <%= product.prod_name %>
-                            </h3>
+                            </p>
                             <p class="product-price">
                               <%= product.prod_price.toLocaleString('id-ID') %>
                             </p>

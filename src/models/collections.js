@@ -33,7 +33,7 @@ class Collections {
       deletedAt: 'col_deleted_at' // Custom column name (optional)
     })
 
-    this.schema.sync({ alter: true })
+    this.schema.sync()
   }
 
   async find (query) {

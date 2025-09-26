@@ -8,4 +8,12 @@ const collectionsSchema = Joi.object({
   col_sort: Joi.string(),
 });
 
-module.exports = { collectionsSchema };
+const registerSchema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).max(20).required(),
+  confirm_password: Joi.string().min(6).max(20).required()
+})
+
+
+module.exports = { collectionsSchema, registerSchema };

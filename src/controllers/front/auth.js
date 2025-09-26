@@ -2,9 +2,10 @@ const router = express.Router();
 const crypto = require('crypto');
 const moment = require('moment');
 
-const { validate, ValidationError, Joi } = require('express-validation')
-
+const validate = require("../../middleware/validate");
 const { getFbAccessToken, graphApiGet } = require('../../helpers/facebookApi');
+
+const { registerSchema } = require("../../models/schema");
 
 router.get('/login', function (req, res, next) {
   const objView = {
@@ -14,18 +15,20 @@ router.get('/login', function (req, res, next) {
       action: '/auth/login'
     }
   };
-  return res.render('front/auth', objView);
+  return res.render('front/auth_login', objView);
 });
 
 router.get('/register', function (req, res, next) {
   const objView = {
-    error: null, data: {
+    error: null, 
+    data: {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
       action: '/auth/register'
-    }
+    },
+    js: ['auth_register']
   };
-  return res.render('front/auth', objView);
+  return res.render('front/auth_register', objView);
 });
 
 router.get('/login/facebook', function (req, res, next) {
@@ -75,7 +78,7 @@ router.get('/login/callback', async (req, res, next) => {
   return res.redirect('/');
 });
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', validate(registerSchema), async (req, res, next) => {
   var obj = { 
     error: null, 
     data: {
@@ -85,26 +88,9 @@ router.post('/register', async (req, res, next) => {
     }
   };
 
-  req.assert('email', 'required').notEmpty();
-  req.assert('email', 'valid email required').isEmail();
-  req.assert('password', 'password must be 4 to 20 characters required').len(4, 20);
-
-  var errValidate = req.validationErrors();
-
-  if (errValidate) {
-    var errorMsg = '';
-    errValidate.forEach(function (item) {
-      errorMsg += item.msg + '\n';
-    });
-
-    obj.error = errorMsg;
-
-    return res.render('front/auth', obj);
-  }
-
   if (req.body.password !== req.body.confirm_password) {
-    obj.error = 'Password confirmation does not match password';
-    return res.render('front/auth', obj);
+    obj.error = 'Konfirmasi password tidak sesuai dengan password';
+    return res.render('front/auth_register', obj);
   }
 
   const filter = {
@@ -113,13 +99,14 @@ router.post('/register', async (req, res, next) => {
 
   const findUser = await res.locals.userModel.findOne(filter);
   if (findUser) {
-    obj.error = 'Email already registered';
-    return res.render('front/auth', obj);
+    obj.error = 'Email sudah terdaftar';
+    return res.render('front/auth_register', obj);
   }
 
   const payload = {
+    user_name: (req.body.name).trim(),
     user_email: req.body.email,
-    user_password: crypto.createHash('sha1').update(req.body.password).digest("hex"),
+    user_password: crypto.createHash('sha512').update(req.body.password).digest("hex"),
     user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
   }
 
@@ -131,7 +118,7 @@ router.post('/register', async (req, res, next) => {
   }
 
   authSession(req, userData);
-  return res.redirect('/');
+  return res.redirect('/auth/login');
 });
 
 
@@ -140,20 +127,20 @@ router.post('/login', async function (req, res, next) {
 
   var query = {
     user_email: req.body.email,
-    user_password: crypto.createHash('sha1').update(req.body.password).digest("hex")
+    user_password: crypto.createHash('sha512').update(req.body.password).digest("hex")
   };
 
   const findUser = await res.locals.userModel.findOne(query)
 
   if (!findUser) {
-    obj.error = 'Username and password is totally wrong.  \n Please try again!';
+    obj.error = 'Email dan password salah 🤘';
     obj.data = {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
       action: '/auth/login'
     }
 
-    return res.render('front/auth', obj);
+    return res.render('front/auth_login', obj);
     // return res.json(obj);
   }
 

@@ -12,10 +12,10 @@ class User {
     this.schema = this.db.define('user', {
       user_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
       user_email: { type: Sequelize.STRING },
-      user_username: { type: Sequelize.STRING(100) },
+      user_username: { type: Sequelize.STRING(100)},
       user_name: { type: Sequelize.STRING },
       user_gender: { type: Sequelize.ENUM('m', 'f', ''), defaultValue: '' },
-      user_password: { type: Sequelize.STRING },
+      user_password: { type: Sequelize.STRING, allowNull: false },
       user_hp: { type: Sequelize.STRING(20) },
       user_avatar: { type: Sequelize.STRING },
       user_facebook_id: { type: Sequelize.STRING },
