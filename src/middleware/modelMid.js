@@ -21,11 +21,16 @@ const modelMiddleware = (req, res, next) => {
         db: req.app.locals.db
     });
 
+    res.locals.collectionModel = new Collections({
+       db: req.app.locals.db
+    });
+
     res.locals.productModel = new Product({
         db: req.app.locals.db,
         category: res.locals.categoryModel,
         band: res.locals.bandModel,
-        user: res.locals.userModel
+        user: res.locals.userModel,
+        collections: res.locals.collectionModel
     });
 
     // req.locals.merchantModel = new Merchant({
@@ -38,10 +43,6 @@ const modelMiddleware = (req, res, next) => {
 
 
     res.locals.userAdminModel = new UserAdmin({
-       db: req.app.locals.db
-    });
-
-    res.locals.collectionModel = new Collections({
        db: req.app.locals.db
     });
 

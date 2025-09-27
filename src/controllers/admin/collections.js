@@ -18,18 +18,29 @@ function authCheckSession(req, resp, next) {
 }
 
 async function cleanPayload(body) {
-  let result = {
-    col_name: (body.col_name).trim(),
-    col_desc: body.col_desc || '',
-    col_banner_isdisplay_home: body.col_banner_isdisplay_home != null ? 1 : 0,
-    col_is_visible: body.col_is_visible != null ? 1 : 0,
-    col_sort: body.col_sort || 0,
-    col_thumbnail: body.col_thumbnail || ''
+  let result = {}
+
+  if (body.col_name) {
+    result.col_name = (body.col_name).trim();
+    result.col_slug = slug((body.col_name).toLowerCase());
+  }
+  if (body.col_desc) {
+    result.col_desc = (body.col_desc).trim();
+  }
+  if (body.col_banner_isdisplay_home != null) {
+    result.col_banner_isdisplay_home = body.col_banner_isdisplay_home != null ? 1 : 0;
+  }
+  if (body.col_is_visible != null) {
+    result.col_is_visible = body.col_is_visible != null ? 1 : 0;
+  }
+  if (body.col_sort) {
+    result.col_sort = parseInt(body.col_sort);
   }
 
-  result.col_slug = slug((body.col_name).toLowerCase());
-
-	return result;
+  if (body.col_thumbnail) {
+    result.col_thumbnail = body.col_thumbnail || ''
+  }
+  return result;
 }
 
 
@@ -117,10 +128,14 @@ router.get('/:id', authCheckSession, async (req, res) => {
 });
 
 // Update a collection
-router.put('/:id', authCheckSession, async (req, res) => {
+router.put('/:id', authCheckSession, uploadMulter.single('col_thumbnail_file'), async (req, res) => {
   try {
 		delete req.body.col_id;
-		const payload = cleanPayload(req.body);
+    if (req.file) {
+      req.body.col_thumbnail = await uploadFile(res.locals, req.file)
+    }
+		const payload = await cleanPayload(req.body);
+
     const updated = await res.locals.collectionModel.update({ col_id: req.params.id }, payload);
     if (!updated) {
       return res.status(404).json({ error: 'Collection not found' });

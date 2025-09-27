@@ -9,6 +9,7 @@ const moment = require('moment')
 const Upload = require('../../../helpers/uploadCloudinary');
 const pagination = require('../../../helpers/pagination');
 const { SIZES } = require('../../../constant');
+const { collect } = require("underscore");
 
 router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)
@@ -61,6 +62,7 @@ router.get('/edit/:id', async (req, res, next) => {
       item: {},
       categories: [],
       bands: [],
+      collections: [],
       sizes: SIZES
     },
     action: `/account/product/update/${prodId}`,
@@ -107,6 +109,7 @@ router.get('/edit/:id', async (req, res, next) => {
 
     obj.data.categories = await res.locals.categoryModel.find();
     obj.data.bands = await res.locals.bandModel.findAll();
+    obj.data.collections = await res.locals.collectionModel.find({ col_is_visible: 1 });
 
     if (req.query.json == '1') {
       return res.json(obj);
@@ -156,6 +159,7 @@ router.get('/add', async (req, res, next) => {
   obj.data = {
     categories: await res.locals.categoryModel.find(),
     bands:  await res.locals.bandModel.findAll(),
+    collections: await res.locals.collectionModel.find({ col_is_visible: 1 }),
     sizes: SIZES,
     item: itemData()
   }
@@ -220,6 +224,7 @@ function itemData() {
     images: [],
     thumbnails: [],
     band: '',
+    collection_id: '',
     marketplaces: {
       tokopedia: '',
       bukalapak: '',
@@ -257,6 +262,7 @@ async function cleanPost(body, findBand, tipe = 'create') {
     prod_condition: body.condition,
     prod_stock: parseInt(body.stock),
     prod_band_id: body.band,
+    prod_col_id: body.collection_id ? parseInt(body.collection_id) : 0,
 
     prod_is_visible: body.is_visible == 'publish' ? 1 : 0,
     prod_sizes: body.sizes ? body.sizes.join() : ''

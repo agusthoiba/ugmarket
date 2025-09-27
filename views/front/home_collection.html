@@ -1,0 +1,29 @@
+<div class="collections" aria-labelledby="collections-heading">
+  <div class="collections__container">
+    <!--h2 id="collections-heading" class="collections__title">Collections</h2-->
+    <h3 class="title">Collections</h3>
+
+    <ul class="collections__grid" role="list">
+      <% if (Array.isArray(data.collections) && data.collections.length) { %>
+        <% data.collections.forEach(function(col){ %>
+          <li class="collections__item">
+            <a class="collections__card" href="<%= col.href %>" aria-label="<%= col.col_name %> collection">
+              <div class="collections__thumb">
+                <img
+                  src="<%= col.thumbnailUrl %>"
+                  alt="<%= col.col_name %>"
+                  loading="lazy"
+                  width="320"
+                  height="320"
+                />
+              </div>
+              <span class="collections__name"><%= col.col_name %></span>
+            </a>
+          </li>
+        <% }) %>
+      <% } else { %>
+        <li class="collections__empty">No collections available.</li>
+      <% } %>
+    </ul>
+  </div>
+</div>

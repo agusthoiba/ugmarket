@@ -39,7 +39,7 @@ class Collections {
   async find (query) {
     try {
       const result = await this.schema.findAll({
-        // where: query,
+        where: query,
         sort: {col_sort: 'asc'},
         raw: true
       })

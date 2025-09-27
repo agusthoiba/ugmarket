@@ -47,6 +47,17 @@ class Product {
           key: 'band_id'
         }
       },
+      prod_col_id: { 
+        type: Sequelize.INTEGER(11).UNSIGNED, 
+        defaultValue: 0,
+        references: {
+          // This is a reference to another model
+          model: this.collections.schema,
+     
+          // This is the column name of the referenced model
+          key: 'col_id'
+        }
+      },
       prod_images: { type: Sequelize.TEXT },
       prod_thumbnails: { type: Sequelize.TEXT },
       prod_sizes: { type: Sequelize.TEXT },
@@ -79,6 +90,7 @@ class Product {
     this.schema.belongsTo(this.user.schema, { foreignKey: 'prod_user_id', targetKey: 'user_id', as: 'user' })
     this.schema.belongsTo(this.category.schema, { foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category' })
     this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
+    this.schema.belongsTo(this.collections.schema, { foreignKey: 'prod_col_id', targetKey: 'col_id', as: 'collection' })
   }
 
   async count(query) {
@@ -104,6 +116,10 @@ class Product {
           model: this.band.schema,
           as: 'band',
           required: true
+        },
+        {
+          model: this.collections.schema,
+          as: 'collection'
         }
       ],
       limit: 20,
@@ -193,6 +209,11 @@ class Product {
           {
             model: this.band.schema,
             as: 'band',
+            required: true
+          },
+          {
+            model: this.collections.schema,
+            as: 'collection',
             required: true
           }
         ]

@@ -94,6 +94,10 @@ router.get('/', async (req, res, next) => {
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
 
+      if (req.query.collection) {
+        obj.data.pageTitle = `${doc[0]["collection.col_name"]} - Collection`;
+      }
+
       obj.data.products = doc.map(val => {
         let thumbnail = '/image/no-image-180x180.png'
         if (val.prod_images != null) {
@@ -346,6 +350,10 @@ function _filtering(req, obj, query) {
 
   if (req.query.band) {
     query['$band.band_slug$'] = req.query.band.trim();
+  }
+
+  if (req.query.collection) { 
+    query['$collection.col_slug$'] = req.query.collection.trim();
   }
 }
 

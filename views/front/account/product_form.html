@@ -2,9 +2,7 @@
 <div class="product-form">
 
   <h3> Jual Product </h3>
-  <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-    been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-    galley of type and scrambled it to make a type specimen book.
+  <p> Upload produk yang ingin kamu jual di Merchandise Official UG. Pastikan produk yang kamu jual sesuai dengan ketentuan yang berlaku.
   </p>
 
   <form method="POST" action="<%= action %>" id="add_product">
@@ -48,6 +46,18 @@
         <% for(var band_row of data.bands) { %>
         <option value="<%= band_row.band_id %>" <%= data.item.band == band_row.band_id ? 'selected' : '' %> >
             <%= band_row.band_name %>
+        </option>
+        <% } %>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="band"  class="form-label">Collections</label>
+      <select class="form-control" id="collections" name="collection_id" required>
+        <option value="">-- Pilih Collections --</option>
+        <% for(var row of data.collections) { %>
+        <option value="<%= row.col_id %>" <%= data.item.collection_id == row.col_id ? 'selected' : '' %> >
+            <%= row.col_name %>
         </option>
         <% } %>
       </select>
