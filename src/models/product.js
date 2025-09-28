@@ -213,8 +213,7 @@ class Product {
           },
           {
             model: this.collections.schema,
-            as: 'collection',
-            required: true
+            as: 'collection'
           }
         ]
       });
