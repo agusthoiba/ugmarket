@@ -2,6 +2,7 @@
 
 const router = express.Router()
 const URI = require("urijs");
+const { Op } = require("sequelize");
 const pagination = require('../../helpers/pagination');
 const config = require('../../config');
 
@@ -36,7 +37,7 @@ router.get('/', async (req, res, next) => {
   const maxLinkPagination = 5 // maximal number of link pagination
 
   let query = {
-    band_enabled: 1
+    band_total_product: {[Op.gt]: 0}
   }
 
   var options = { 
@@ -55,7 +56,7 @@ router.get('/', async (req, res, next) => {
         const datum = Object.assign({}, 
           val,
           { 
-            thumbnail: req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 245, height: 245})
+            thumbnail: val.band_image ? val.band_image : req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 245, height: 245})
           }
         )
 

@@ -48,7 +48,9 @@
                     <div class="col-md-3 col-6">
                         <div class="band-item">
                             <a href="/products?band=<%= bands[i].band_slug %>">
-                                <img class="thumbnail img-responsive" src="<%= bands[i].thumbnail %>"> 
+                                <div class="band-item-image">
+                                    <img class="thumbnail" src="<%= bands[i].thumbnail %>"> 
+                                </div>
                                 <div class="caption-item">        
                                     <h5><%= bands[i].band_name %></h5>
                                 </div>
