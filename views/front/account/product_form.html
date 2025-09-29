@@ -54,7 +54,7 @@
     <div class="mb-3">
       <label for="band"  class="form-label">Collections</label>
       <select class="form-control" id="collections" name="collection_id" required>
-        <option value="">-- Pilih Collections --</option>
+        <option value="0">-- Pilih Collections --</option>
         <% for(var row of data.collections) { %>
         <option value="<%= row.col_id %>" <%= data.item.collection_id == row.col_id ? 'selected' : '' %> >
             <%= row.col_name %>

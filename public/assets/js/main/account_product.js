@@ -18,9 +18,10 @@ function uploadImageProduct(files, obj) {
       return false;
     }
 
-    if (file.type != 'image/jpeg' && file.type != 'image/png') {
+    const imageAllowed = ['image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+    if (!imageAllowed.includes(file.type)) {
       console.log(file.type);
-      alert('Image harus jpg atau png');
+      alert('Image harus jpg,png,webp, or heic');
       return false;
     }
 

@@ -1,65 +1,61 @@
 <%- include ("../front/template/head.html") %>
 <%- include ("../front/template/header.html") %>
 
-
-  <div class="modal-dialog" role="document">
+<div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="row tab__container" style="margin: 0">
             <div class="col-md-6 pvl txtCenter <%= data.urlActive === '/login' ? 'tab__active' : '' %>">
-              <a href="<%= data.urlActive === '/login' ?  '#' : '/auth/login' %>">
-                <h4 class="modal-title" id="exampleModalLabel">Login</h4>
-              </a>
+                <a href="<%= data.urlActive === '/login' ? '#' : '/auth/login' %>">
+                    <h4 class="modal-title">Login</h4>
+                </a>
             </div>
             <div class="col-md-6 pvl txtCenter <%= data.urlActive === '/register' ? 'tab__active' : '' %>">
-              <a href="<%= data.urlActive === '/register' ? '#' : '/auth/register' %>">
-                <h4 class="modal-title" id="exampleModalLabel">Register</h4>
-              </a>
+                <a href="<%= data.urlActive === '/register' ? '#' : '/auth/register' %>">
+                    <h4 class="modal-title">Register</h4>
+                </a>
             </div>
-          </div>
-     
-
-      <div class="modal-body">
-
-        <div class="alert alert-danger" role="alert" style="display: none;">
-          <%= error %>
-        </div>
-        
-        <div class="fbLoginButton">
-          <a href="/auth/login/facebook">
-            <img src="../image/login-facebook-button-18026.png" width="321px" height="auto">
-          </a>
-        </div>
-        <div class="fbLoginNotes">
-          Kami tidak akan posting atas nama Anda atau membagikan informasi apapun tanpa persetujuan Anda.        
-        </div>
-        <div class="b-LoginContainer__fbOrLine align-center mtl text-lower">
-          <span>
-              Atau                        </span>
         </div>
 
-        <div class="box">
-          <div class="login__form ptl pbxl">
-            <form id="auth_form" method="POST" action="<%= data.action %>">
-              <div class="form-group">
-                <label for="auth-name" class="control-label"> Email address:</label>
-                <input type="email" class="form-control" name="email" id="auth_email" required>
-              </div>
-              <div class="form-group">
-                <label for="auth-password" class="control-label"> Password:</label>
-                <input type="password" class="form-control" name="password" id="auth_password" required>
-              </div>
-              <% if (data.urlActive === '/register') { %>
-                <div class="form-group">
-                  <label for="auth-password" class="control-label"> Confirm Password:</label>
-                  <input type="password" class="form-control" name="confirm_password" id="auth_password" required>
+        <div class="modal-body">
+            <div class="alert alert-danger d-none" role="alert">
+                <%= error %>
+            </div>
+
+            <div class="fbLoginButton text-center mb-3">
+                <a href="/auth/login/facebook">
+                    <img src="../image/login-facebook-button-18026.png" width="321px" height="auto" alt="Login with Facebook">
+                </a>
+            </div>
+            <div class="fbLoginNotes text-center mb-3">
+                Kami tidak akan posting atas nama Anda atau membagikan informasi apapun tanpa persetujuan Anda.
+            </div>
+            <div class="b-LoginContainer__fbOrLine align-center mtl text-lower text-center mb-3">
+                <span>Atau</span>
+            </div>
+
+            <div class="box">
+                <div class="login__form ptl pbxl">
+                    <form id="auth_form" method="POST" action="<%= data.action %>">
+                        <div class="form-group">
+                            <label for="auth_email" class="control-label">Email address:</label>
+                            <input type="email" class="form-control" name="email" id="auth_email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="auth_password" class="control-label">Password:</label>
+                            <input type="password" class="form-control" name="password" id="auth_password" required>
+                        </div>
+                        <% if (data.urlActive === '/register') { %>
+                            <div class="form-group">
+                                <label for="auth_confirm_password" class="control-label">Confirm Password:</label>
+                                <input type="password" class="form-control" name="confirm_password" id="auth_confirm_password" required>
+                            </div>
+                        <% } %>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin: 10px 0;">Submit</button>
+                    </form>
                 </div>
-              <% } %>
-              <button type="submit" class="btn btn-default"  style="width: 100%; margin: 10px 0;">Submit</button>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
 <%- include ("../front/template/footer.html") %>
