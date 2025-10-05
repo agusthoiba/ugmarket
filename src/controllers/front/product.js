@@ -89,7 +89,7 @@ router.get('/', async (req, res, next) => {
     const prodTotal = await res.locals.productModel.count(query);
 
     obj.data.pagination.total = prodTotal;
-    obj.data.pagination = _pagination(obj.data.pagination);
+    obj.data.pagination = _pagination(obj.data.pagination, req, maxLinkPagination);
 
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
@@ -383,7 +383,7 @@ function _sorting(sortParamText) {
   return sortResult;
 }
 
-function _pagination(objPagination, req) {
+function _pagination(objPagination, req, maxLinkPagination = 5) {
   const total = objPagination.total;
 
   if (total <= objPagination.limit) {
@@ -398,8 +398,13 @@ function _pagination(objPagination, req) {
     
     const totalPage = objPagination.total_page;
     
+    let urlParams; 
     
-    const urlParams = new URLSearchParams(req.query);
+    if (req.query) {
+      urlParams = new URLSearchParams(req.query);
+    } else {
+      urlParams = new URLSearchParams();
+    }
 
     let countLinkPage = maxLinkPagination;
     if (totalPage < maxLinkPagination) {

@@ -124,6 +124,7 @@ const { connectDb, modelMid } = require('./middleware')
  */
 const connect = require('./connect')
 const { SIZES } = require('./constant')
+const { error } = require('console')
 const connMysql = async() => {
   app.locals.db = await connect()
   const catModel = new CategoryModel({
@@ -166,6 +167,10 @@ async function getTopBands(req, res, next) {
 app.use(getTopBands);
 
 app.use(pino)
+
+
+
+
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
 app.use('/contact', require('./controllers/front/contact'))
@@ -179,19 +184,38 @@ app.use('/admin/auth', require('./controllers/admin/auth'))
 app.use('/admin/band', require('./controllers/admin/band'))
 app.use('/admin/collections', require('./controllers/admin/collections'))
 
-/* app.use(function(req, res, next){
-  if (req.accepts('html')) {
-    res.render('template/default/error')
-    return;
+// Add 404 handler - this should come after all other routes
+app.use((req, res, next) => {
+  console.log('404 handler')
+  let obj = {
+    data: {
+      pageTitle: 'Halaman Tidak Ditemukan'
+    },
+    error: {
+      code: 404,
+      message: 'Halaman yang Anda cari tidak ditemukan.'
+    }
+  }
+  return res.status(404).render('front/template/error', obj);
+});
+
+app.use(function(err, req, res, next){
+  if (res.headersSent) {
+    return next(err)
   }
 
-  if (req.accepts('json')) {
-    res.json({ error: 'Not found' });
-    return;
-  }
-  // default to plain-text. send()
-  res.type('txt').send('Not found');
-}) */
+  if (err.statusCode > 299) {
+    return res.status(err.statusCode).render('front/template/error', {
+      data: {
+        pageTitle: 'Page Not Found'
+      },
+      error: {
+        code: err.code,
+        message: err.message
+      }
+    })
+  } 
+});
 
 const server = http.createServer(app)
 
