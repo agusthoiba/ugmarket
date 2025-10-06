@@ -42,7 +42,7 @@
           <div class="product-detail-size">
             <h5>SIZE</h5>
             <% for (let size of data.sizes) { %>
-              <button type="button" class="btn btn-light" <%= data.product.sizes.includes(size) ? '' : 'disabled' %>>
+              <button type="button" class="btn <%= data.product.sizes.includes(size) ? 'btn-secondary' : 'btn-light' %>">
                 <%= size.toUpperCase() %>
               </button>
             <% } %>
