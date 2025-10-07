@@ -1410,21 +1410,47 @@ Pagination
 }
 
 .account {
-  padding: 20px;
   min-height: 500px;
-  margin-top: 70px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .account .sidebar {
-  border-right: 1px solid #ffffff;
+  border-bottom: 1px solid lightgray;
+  margin-bottom: 20px;
+}
+
+.account .sidebar ul {
+  justify-content: space-between;
 }
 
 .account .sidebar ul li{
   padding: 10px 0;
+  font-size: 13px;
+  text-align: center;
 }
+
+.account .sidebar ul li a{
+  color: #292929;
+  text-decoration: none;
+} 
 
 .account .content .highlight {
   background-color:#e7e7e7;
+}
+
+.account .desktop-nav {
+  padding-left: 20px;
+}
+
+.account .desktop-nav ul li{
+  text-align: justify; 
+  font-size: 16px;
+}
+
+.account .desktop-nav ul li i{
+  width: 20px;
+  height: auto;
 }
 
 /*.product-form {
