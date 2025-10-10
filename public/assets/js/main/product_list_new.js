@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Accordion functionality
   const accordionTriggers = document.querySelectorAll(".mobile-accordion-trigger")
+  const desktopAccordionTriggers = document.querySelectorAll(".desktop-accordion-trigger")
 
   // Open mobile filter
   mobileFilterBtn.addEventListener("click", () => {
@@ -62,6 +63,23 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!isActive) {
         this.classList.add("active")
         target.classList.add("active")
+      }
+    })
+  });
+
+  // Desktop accordion functionality (independent per section)
+  desktopAccordionTriggers.forEach((trigger) => {
+    trigger.addEventListener("click", function () {
+      const target = document.getElementById(this.dataset.target)
+      const isActive = this.classList.contains("active")
+
+      // Toggle only this section
+      if (isActive) {
+        this.classList.remove("active")
+        if (target) target.classList.remove("active")
+      } else {
+        this.classList.add("active")
+        if (target) target.classList.add("active")
       }
     })
   })
@@ -115,76 +133,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Apply filters
   function applyFilters() {
-    const formData = new FormData()
+    const params = new URLSearchParams()
 
     // Collect all checked filters
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked')
-    let sizes = '';
-    let conditions = '';
-    let categories = '';
+    let sizes = [];
+    let conditions = [];
+    let categories = [];
     let kategori = ''; // kategori for parent category
+    
     checkboxes.forEach((checkbox) => {
       if (checkbox.name == "sizes") {
-        sizes += checkbox.value + ',';
+        sizes.push(checkbox.value);
       } else if (checkbox.name == "condition") {
-        console.log('checkbox.value:', checkbox.value);
-        conditions += checkbox.value + ',';
+        conditions.push(checkbox.value);
       } else if (checkbox.name == "categories") {
-        categories += checkbox.value + ',';
+        categories.push(checkbox.value);
       } else if (checkbox.name == "kategori") {
         kategori = checkbox.value;
-      } else {
-        formData.append(checkbox.name, checkbox.value)
-      } 
+      }
     });
 
-    if (sizes !== '') { 
-      sizes = sizes.slice(0, -1); // Remove trailing comma
-      formData.append("sizes", sizes);
+    // Only add parameters if they have values
+    if (sizes.length > 0) { 
+      params.append("sizes", sizes.join(','));
     }
 
-    if (conditions !== '') { 
-      conditions = conditions.slice(0, -1); // Remove trailing comma
-      console.log("conditions:", conditions)
-      formData.append("condition", conditions);
+    if (conditions.length > 0) { 
+      params.append("condition", conditions.join(','));
     }
 
     if (kategori !== '') { 
-      formData.append("kategori", kategori);
+      params.append("kategori", kategori);
     }
 
-    if (categories !== '') { 
-      categories = categories.slice(0, -1); // Remove trailing comma
-      formData.append("categories", categories);
+    if (categories.length > 0) { 
+      params.append("categories", categories.join(','));
     }
 
+    // Check for sort from radio buttons or select dropdowns
     const checkedRadio = document.querySelector('input[type="radio"]:checked');
+    const sortSelect = document.getElementById("sort-select");
+    const sortSelectDesktop = document.getElementById("sort-select-desktop");
+    
     if (checkedRadio) {
-      // checkedRadio.value contains the selected value
-      const sortInput = document.getElementById("sort-input")
-
-      console.log('sortInput', sortInput);
- 
-      if (sortInput) {
-        sortInput.value = checkedRadio.value;
-        formData.append("sort", sortSelect.value)
-      }
+      params.append("sort", checkedRadio.value)
+    } else if (sortSelect && sortSelect.value) {
+      params.append("sort", sortSelect.value)
+    } else if (sortSelectDesktop && sortSelectDesktop.value) {
+      params.append("sort", sortSelectDesktop.value)
     }
 
+    // Handle price inputs separately
     const priceMinInput = document.getElementById('price-min');
     const priceMaxInput = document.getElementById('price-max');
-    const priceMin = priceMinInput ? priceMinInput.value : '';
-    const priceMax = priceMaxInput ? priceMaxInput.value : '';
-
-    if (priceMin) formData.append('price_min', priceMin);
-    if (priceMax) formData.append('price_max', priceMax);
-
-    console.log("formData.entries:", formData.entries())
-
-    // Build query string
-    const params = new URLSearchParams()
-    for (const [key, value] of formData.entries()) {
-      params.append(key, value)
+    
+    // Only add price parameters if they have values
+    if (priceMinInput && priceMinInput.value) {
+        params.append('price_min', priceMinInput.value);
+    }
+    if (priceMaxInput && priceMaxInput.value) {
+        params.append('price_max', priceMaxInput.value);
     }
 
     console.log("params.toString():", params.toString())
@@ -249,9 +258,32 @@ document.addEventListener("DOMContentLoaded", () => {
       updateActiveFilters()
 
       // Auto-apply filters on desktop (optional)
-      // applyFilters();
+      applyFilters();
     })
   })
+
+  // Listen for sort changes on desktop
+  document.querySelectorAll('.desktop-filters input[type="radio"]').forEach((radio) => {
+    radio.addEventListener("change", () => {
+      applyFilters();
+    })
+  })
+
+  // Listen for price input changes on desktop
+  const priceMinInput = document.getElementById('price-min');
+  const priceMaxInput = document.getElementById('price-max');
+  
+  if (priceMinInput) {
+    priceMinInput.addEventListener("input", () => {
+      setTimeout(() => applyFilters(), 500); // Debounce for 500ms
+    });
+  }
+  
+  if (priceMaxInput) {
+    priceMaxInput.addEventListener("input", () => {
+      setTimeout(() => applyFilters(), 500); // Debounce for 500ms
+    });
+  }
 
   // Listen for sort changes
   const sortSelect = document.getElementById("sort-input")
@@ -261,18 +293,38 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  // Listen for desktop sort changes
+  const sortSelectDesktop = document.getElementById("sort-select-desktop")
+  if (sortSelectDesktop) {
+    sortSelectDesktop.addEventListener("change", () => {
+      applyFilters()
+    })
+  }
+
   // Initialize active filters on page load
   updateActiveFilters()
 
+  // Auto-open accordion sections with selected filters
+  desktopAccordionTriggers.forEach((trigger) => {
+    const target = document.getElementById(trigger.dataset.target)
+    if (target) {
+      const checkedCheckboxes = target.querySelectorAll('input[type="checkbox"]:checked')
+      if (checkedCheckboxes.length > 0) {
+        trigger.classList.add("active")
+        target.classList.add("active")
+      }
+    }
+  })
+
   // Sync mobile filters with desktop on page load
-  document.querySelectorAll('.desktop-filters input[type="checkbox"]:checked').forEach((desktopCheckbox) => {
+  /*document.querySelectorAll('.desktop-filters input[type="checkbox"]:checked').forEach((desktopCheckbox) => {
     const name = "mobile-" + desktopCheckbox.name
     const value = desktopCheckbox.value
     const mobileCheckbox = document.querySelector(`input[name="${name}"][value="${value}"]`)
     if (mobileCheckbox) {
       mobileCheckbox.checked = true
     }
-  })
+  })*/
 
   kategoriCheckboxes.forEach((checkbox) => {
     const selectedKategori = checkbox.checked ? checkbox.value : null;
@@ -284,4 +336,60 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   });
+
 })
+
+function onlyNumberKey(evt) {
+    // Only ASCII character in that range allowed
+  var ASCIICode = (evt.which) ? evt.which : evt.keyCode;
+  if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) {
+    return false;
+  }
+  return true;
+}
+
+function validatePrice(input) {
+    // Remove any non-numeric characters
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    const minPrice = document.getElementById('price-min');
+    const maxPrice = document.getElementById('price-max');
+    const alertPriceMin = document.getElementById('alert-price-min');
+    const alertPriceMax = document.getElementById('alert-price-max');
+
+        // Clear previous error states
+    alertPriceMin.innerText = '';
+    alertPriceMax.innerText = '';
+    minPrice.classList.remove('is-invalid');
+    maxPrice.classList.remove('is-invalid');
+
+    console.log("maxPrice.value:", maxPrice.value, Number(maxPrice.value));
+    console.log("minPrice.value:", minPrice.value, Number(minPrice.value));
+
+    const minPriceVal = minPrice.value ? Number(minPrice.value) : 0;
+    const maxPriceVal = maxPrice.value ? Number(maxPrice.value) : Infinity;
+
+    // Handle different input scenarios
+    if (input.id === 'price-min') {
+        if (maxPrice.value && minPriceVal > maxPriceVal) {
+            alertPriceMin.innerText = 'Nilai harus lebih kecil dari harga maksimum';
+            input.classList.add('is-invalid');
+        }
+    } else if (input.id === 'price-max') {
+        if (minPrice.value && maxPriceVal < minPriceVal) {
+            alertPriceMax.innerText = 'Nilai harus lebih besar dari harga minimum';
+            input.classList.add('is-invalid');
+        }
+    }
+
+    // Additional validation if both values are present
+    if (minPrice.value && maxPrice.value && maxPriceVal < minPriceVal) {
+        if (input.id === 'price-min') {
+            alertPriceMin.innerText = 'Nilai harus lebih kecil dari harga maksimum';
+            input.classList.add('is-invalid');
+        } else {
+            alertPriceMax.innerText = 'Nilai harus lebih besar dari harga minimum';
+            input.classList.add('is-invalid');
+        }
+    }    
+}

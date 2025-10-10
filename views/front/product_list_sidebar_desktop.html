@@ -1,74 +1,82 @@
-<aside class="desktop-filters">
-                <div class="filter-section">
-                    <h3 class="filter-title">Kategori</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="pakaian" <%= data.uri.query.kategori === 'pakaian' ? 'checked' : '' %>>
-                            <span class="checkmark"></span>
-                            Pakaian
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="aksesoris">
-                            <span class="checkmark"></span>
-                            Aksesoris
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="kategori" value="merchandise">
-                            <span class="checkmark"></span>
-                            Merchandise
-                        </label>
-                    </div>
+<div class="filter-sidebar desktop-filters">
+    <!-- Price Range Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">Harga</h3>
+        <div class="filter-options">
+            <div class="price-range-inputs row">
+                <div class="col-md-5">
+                    <input type="text" placeholder="" class="form-control range-min" 
+                            data-type="min" min="0" name="price" id="price-min" 
+                            value="<%= (data.uri && data.uri.query && data.uri.query.price_min) || '' %>" 
+                            onkeypress="return onlyNumberKey(event)" 
+                            oninput="validatePrice(this)"
+                    >
+                    <div class="invalid-feedback invalid-feedback-price" id="alert-price-min" ></div>
                 </div>
+                <div class="col-md-1">
+                    <span>-</span>
+                </div>
+            
+                <div class="col-md-5">
+                    <input type="text" placeholder="" class="form-control range-max"
+                        data-type="max" min="0" name="price" id="price-max" 
+                        onkeypress="return onlyNumberKey(event)" 
+                        oninput="validatePrice(this)"
+                        value="<%= (data.uri && data.uri.query && data.uri.query.price_max) || '' %>" style="margin-left: 8px;"
+                    >
+                    <div class="invalid-feedback invalid-feedback-price" id="alert-price-max" ></div>
+                </div>
+            </div>
+            <div class="invalid-feedback" id="alert-price"></div>
+        </div>
+    </div>
 
-                <div class="filter-section">
-                    <h3 class="filter-title">Ukuran</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="s">
-                            <span class="checkmark"></span>
-                            S
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="m">
-                            <span class="checkmark"></span>
-                            M
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="l">
-                            <span class="checkmark"></span>
-                            L
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="size" value="xl">
-                            <span class="checkmark"></span>
-                            XL
-                        </label>
-                    </div>
-                </div>
+    <!-- Condition Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">Kondisi</h3>
+        <div class="filter-options">
+            
+                <label class="filter-option">
+                    <input type="checkbox" name="condition" value="b" <%= (data.uri && data.uri.query && data.uri.query.condition && data.uri.query.condition.includes('b')) ? 'checked' : '' %> > 
+                    <span>Baru</span>
+                </label>
 
-                <div class="filter-section">
-                    <h3 class="filter-title">Harga</h3>
-                    <div class="filter-options">
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="0-100000">
-                            <span class="checkmark"></span>
-                            Di bawah Rp 100.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="100000-300000">
-                            <span class="checkmark"></span>
-                            Rp 100.000 - Rp 300.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="300000-500000">
-                            <span class="checkmark"></span>
-                            Rp 300.000 - Rp 500.000
-                        </label>
-                        <label class="filter-option">
-                            <input type="checkbox" name="price" value="500000+">
-                            <span class="checkmark"></span>
-                            Di atas Rp 500.000
-                        </label>
+                <label class="filter-option">
+                    <input type="checkbox" name="condition" value="s" <%= (data.uri && data.uri.query && data.uri.query.condition && data.uri.query.condition.includes('s')) ? 'checked' : '' %> >
+                    <span>Bekas</span>
+                </label>
+            
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">Kategori</h3>
+        <div class="filter-options">
+            <% for(cat of data.categories) { %>
+                <div class="filter-group">
+                    <button type="button" class="filter-group-header desktop-accordion-trigger" data-target="desktop-cat-<%= cat.cat_id %>">
+                        <%= cat.cat_name %>
+                    </button>
+                    <div class="filter-group-body" id="desktop-cat-<%= cat.cat_id %>">
+                        <% for(catChild of cat.childs) { %>
+                            <label class="filter-option">
+                                <input class="form-check-input" type="checkbox" 
+                                    name="categories" value="<%= catChild.cat_slug %>" 
+                                    id="cat-<%= catChild.cat_id %>" <%= (data.uri && data.uri.query && data.uri.query.categories && data.uri.query.categories.includes(catChild.cat_slug)) ? 'checked' : '' %> >
+                                <span><%= catChild.cat_name %></span>
+                            </label>
+                        <% } %>
                     </div>
                 </div>
-            </aside>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Apply Filters Button -->
+    <!--div class="filter-actions">
+        <button type="button" class="btn btn-dark w-100" onclick="applyFilters()">
+            Terapkan Filter
+        </button>
+    </div-->
+</div>

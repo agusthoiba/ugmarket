@@ -172,10 +172,21 @@
 
                 <div id="price-mobile" class="mobile-accordion-content">
                     <label class="mobile-filter-option">
-                        <input type="number" placeholder="" class="form-control range-min" data-type="min" min="0" name="price" id="price-min" value="<%= data.uri.query.price_min %>" >
+                        <input type="text" placeholder="" class="form-control range-min" 
+                        data-type="min" min="0" name="price" id="mobile-price-min" 
+                        value="<%= data.uri.query.price_min %>" 
+                        style="margin-right: 8px;"
+                        onkeypress="return onlyNumberKey(event)" 
+                        oninput="validatePrice(this)"
+                        >
+                        <div class="invalid-feedback invalid-feedback-price" id="mobile-alert-price-min"></div>
                         <span>-</span>
-                        <input type="number" placeholder="" class="form-control range-max" data-type="max" min="0" name="price" id="price-max" value="<%= data.uri.query.price_max %>" style="margin-left: 8px;">
-                        <div class="invalid-feedback" id="alert-price" style="font-size:12px"></div>
+                        <input type="text" placeholder="" class="form-control range-max"
+                         data-type="max" min="0" name="price" id="mobile-price-max" 
+                         onkeypress="return onlyNumberKey(event)" 
+                         oninput="validatePrice(this)"
+                         value="<%= data.uri.query.price_max %>" style="margin-left: 8px;">
+                        <div class="invalid-feedback invalid-feedback-price" id="mobile-alert-price-max"></div>
                     </label>
                 </div>
             </div>
