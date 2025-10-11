@@ -8,8 +8,8 @@
       <ul class="list-unstyled">
         <li  > <a href="/account/profile"><i class="far fa-user"></i>  Profile</a> </li>
         <li  > <a href="/account/product"><i class="fas fa-store" aria-hidden="true"></i>   Produk </a> </li>
-        <li  > <a href="#/account/inbox"><i class="far fa-envelope"></i>  Inbox </a> </li>
-        <li > <a href="#/account/transaction">  </a><i class="fas fa-receipt"></i>  Transaksi </li>
+        <li  > <a href="#/account/inbox" onclick="underdev(event)"><i class="far fa-envelope"></i>  Inbox </a> </li>
+        <li > <a href="#/account/transaction" onclick="underdev(event)">  <i class="fas fa-receipt"></i>  Transaksi </a></li>
       </ul>
     </div>
 
@@ -28,7 +28,7 @@
           </a> 
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#"> 
+          <a class="nav-link" href="#" onclick="underdev(event)"> 
             <i class="far fa-envelope fa-2x"></i>
             <div> Inbox </div>
           </a> 
@@ -36,7 +36,7 @@
         
        
         <li class="nav-item"> 
-          <a class="nav-link" href="#"> 
+          <a class="nav-link" href="#" onclick="underdev(event)"> 
             <i class="fas fa-receipt fa-2x"></i> 
             <div> Transaksi </div>
           </a> 
@@ -44,6 +44,13 @@
       </ul>
 
     </div>
+
+    <script>
+      function underdev(event) {
+        event.preventDefault();
+        alert('Fitur dalam pengembangan');
+      }
+    </script>
 
     <div class="col-md-9" class="content">
       <div class="" class="highlight">
