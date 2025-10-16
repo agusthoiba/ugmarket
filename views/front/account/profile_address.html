@@ -1,0 +1,59 @@
+<h4>Alamat</h4>
+
+<!-- Initial value address -->
+<input type="hidden" id="init_province" value="<%= data.user.user_address_province_id || '' %>">
+<input type="hidden" id="init_city" value="<%= data.user.user_address_city_id || '' %>">
+<input type="hidden" id="init_district" value="<%= data.user.user_address_district_id || '' %>">
+<input type="hidden" id="init_village" value="<%= data.user.user_address_village_id || '' %>">
+
+<div class="row mb-3">
+    <div class="col-md-6" style="margin-bottom: 15px;">
+        <label for="province" class="form-label">Provinsi</label>
+        <select class="form-select" id="province" name="province" required>
+            <option value="">Pilih Provinsi</option>
+        </select>
+        <div class="invalid-feedback">Silakan pilih provinsi</div>
+    </div>
+
+    <div class="col-md-6" style="margin-bottom: 15px;">
+        <label for="city" class="form-label">Kota/Kabupaten</label>
+        <select class="form-select" id="city" name="city" required>
+            <option value="">Pilih Kota/Kabupaten</option>
+        </select>
+        <div class="invalid-feedback">Silakan pilih kota/kabupaten</div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6" style="margin-bottom: 15px;">
+        <label for="district" class="form-label">Kecamatan</label>
+        <select class="form-select" id="district" name="district" required>
+            <option value="">Pilih Kecamatan</option>
+        </select>
+        <div class="invalid-feedback">Silakan pilih kecamatan</div>
+    </div>
+
+    <div class="col-md-6" style="margin-bottom: 15px;">
+        <label for="village" class="form-label">Kelurahan/Desa</label>
+        <select class="form-select" id="village" name="village" required>
+            <option value="">Pilih Kelurahan/Desa</option>
+        </select>
+        <div class="invalid-feedback">Silakan pilih kelurahan/desa</div>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <label for="street" class="form-label">Alamat <span class="small">(jalan, kompleks, nomor rumah, RT RW)</span></label>
+        <textarea class="form-control" id="street" name="street" rows="2"
+            required><%= data.user.user_address_street || '' %></textarea>
+        <div class="invalid-feedback">Silakan isi alamat lengkap</div>
+    </div>
+
+    <div class="col-md-4">
+        <label for="zipcode" class="form-label">Kode Pos</label>
+        <input type="text" class="form-control" id="zipcode" name="zipcode"
+            value="<%= data.user.user_address_zipcode || '' %>" pattern="[0-9]{5}" maxlength="5" required>
+        <div class="invalid-feedback">Masukkan kode pos 5 digit</div>
+    </div>
+</div>

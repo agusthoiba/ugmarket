@@ -16,7 +16,8 @@
     "lint": "eslint src config",
     "lint:quiet": "eslint src config --quiet",
     "lint:fix": "eslint src config --fix",
-    "css-minify": "./node_modules/css-minify/bin/css-minify.js -d public/assets/css/ -o public/assets/css-minify/"
+    "css-minify": "./node_modules/css-minify/bin/css-minify.js -d public/assets/css/ -o public/assets/css-minify/",
+    "js-minify": "script/minifyjs.sh"
   },
   "keywords": [
     "Marketplace",
@@ -48,6 +49,8 @@
     "sequelize": "6.29.0",
     "slug": "^0.9.1",
     "svg-captcha": "^1.4.0",
+    "territory-indonesia": "^0.1.4",
+    "terser": "^5.44.0",
     "underscore": "^1.8.3",
     "urijs": "^1.19.2"
   },

@@ -1,7 +1,8 @@
 
 const http = require('http')
 const express = require('express')
-const pino = require('pino-http')()
+const pino = require('pino')
+const pinoHttp = require('pino-http')()
 const underscore = require('underscore')
 const app = express()
 const ejs = require('ejs')
@@ -11,6 +12,7 @@ const config = require('./config')
 const cloudinary = require('cloudinary').v2;
 
 const CategoryModel = require('./models/category');
+const { address, villages } = require('./helpers/address');
 
 global.config = config
 global.express = express
@@ -150,8 +152,9 @@ const connMysql = async() => {
   }
 
   app.locals.categories = categoriesNested;
-
   app.locals.sizes = SIZES;
+  app.locals.address = await address();
+  app.locals.villages = await villages();
 }
 
 connMysql()
@@ -166,9 +169,7 @@ async function getTopBands(req, res, next) {
 
 app.use(getTopBands);
 
-app.use(pino)
-
-
+app.use(pinoHttp)
 
 
 app.use('/', require('./controllers/front/index'))
@@ -183,6 +184,10 @@ app.use('/account/profile', require('./controllers/front/account/profile'))
 app.use('/admin/auth', require('./controllers/admin/auth'))
 app.use('/admin/band', require('./controllers/admin/band'))
 app.use('/admin/collections', require('./controllers/admin/collections'))
+
+
+// general public api 
+app.use('/idn', require('./controllers/idn'))
 
 // Add 404 handler - this should come after all other routes
 app.use((req, res, next) => {

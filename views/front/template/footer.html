@@ -108,14 +108,16 @@
 <!--script type="text/javascript" src="/assets/js/slick.min.js"></script-->
 <script src="/assets/js/main.js"></script>
 
-<script src="/assets/js/main/utils.min.js"></script>
+
 
  
 <% if (locals.js != undefined) { %>
     <% for(var i in locals.js) { %>
       <% if (locals.ENV == 'development') { %>
+        <script src="/assets/js/main/utils.js"></script>
         <script src="/assets/js/main/<%= locals.js %>.js"></script>
       <% } else { %>
+        <script src="/assets/js/main-minify/utils.min.js"></script>
         <script src="/assets/js/main-minify/<%= locals.js %>.min.js"></script>
       <% } %>      
     <% } %>

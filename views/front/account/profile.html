@@ -2,54 +2,79 @@
 <div class="product-form">
 
 <h3> Profile </h3>
-<p> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-  been the industry's standard dummy text ever since the 1500s, when an unknown printer took a
-  galley of type and scrambled it to make a type specimen book.
-</p>
+<p> </p>
 
-<form method="POST" action="/account/profile/update">
-  <div class="form-group">
+<form method="POST" action="/account/profile/update" id="uploadForm">
+  <% if (error)  { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <% if (message != undefined && message != '') { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% } %>
+
+  <div class="mb-3">
     <label for="name">Email</label>
     <input type="text" class="form-control" id="email" value="<%= data.user.user_email %>" disabled>
   </div>
 
-  <div class="form-group">
-    <label for="name">Name</label>
+  <div class="mb-3">
+    <label for="name">Nama</label>
     <input type="text" class="form-control" id="name" name="name" value="<%= data.user.user_name %>" placeholder="">
+    <div class="invalid-feedback"></div>
   </div>
 
-  <div class="form-group">
-    <label for="description">Phone Number</label>
-    <input type="text" class="form-control" rows="3" id="hp" name="hp" value="<%= data.user.user_hp %>">
+  <div class="mb-3">
+    <label for="description">No HP/WhatsApp</label>
+    <input type="text" class="form-control" id="hp" name="hp" value="<%= data.user.user_hp %>">
+    <div class="invalid-feedback"> </div>
   </div>
 
-  <div class="form-group">
-    <label for="name">Profile picture</label>
+  <div class="mb-3">
+    <label for="name">Avatar (500x500) </label>
     <ul class="image-upload list-inline">
-      <input id="upload_image"  type="file" name="image" accept="image/*" style="display:none" onchange="uploadImage(this.files)">
-          
-          <li id="thumb_image_0" class="pickfile-container" id="pickfile-container" onclick="browseFile(event, $(this))" >
-              <% if (typeof data.user.user_avatar != 'undefined') { %>
-                <img class="preview" width="100" height="auto" src="/user/thumbnail/<%= data.user.user_avatar %>">
-              <% }%>
-            </li>
-          
-            <!--div  style="text-align: center; width: 50%; line-height: 110px; margin-left: auto; margin-right: auto">
-              <i style="color:#b7b7b7" class="fa fa-camera fa-2x" aria-hidden="true"></i>
-            </div-->
-          
+      <input id="upload_image_avatar" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, 'avatar')">
+      <li id="thumb_image_avatar" class="pickfile-container"  onclick="browseFile(event, 'avatar')" >
+        <% if (data.user.user_avatar != 'undefined' ) { %>
+          <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.user.user_avatar %>">
+        <% } %>
+      </li>
+
+      <input type="hidden" id="image_ori_avatar" name="image_ori_avatar">
     </ul>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <label for="condition">Gender</label>
-    <select class="form-control" id="condition" name="gender">
-      <option value="1" <%= data.user.gender ? 'selected' : '' %> > Male </option>
-      <option value="0" <%= !data.user.gender ? 'selected' : '' %> > Female </option>
-    </select>
+    <div class="mb-3">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="m" <%= data.user.user_gender  == 'm' ? 'checked' : '' %>>
+        <label class="form-check-label" for="inlineRadio1">Laki-laki</label>
+      </div>
+
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="f" <%= data.user.user_gender == 'f' ? 'checked' : '' %>>
+        <label class="form-check-label" for="inlineRadio2">Perempuan</label>
+      </div>
+    </div>
   </div>
 
-  <button type="submit" class="btn btn-default">Submit</button>
+  <!-- ...existing code... -->
+
+  <div class="mb-3">
+    <%- include ("profile_address.html") %>
+  </div>
+
+  <!-- ...existing code... -->
+
+  <div class="mb-3 btn-form-wrapper">
+    <button type="submit" class="btn btn-default">Submit</button>
+  </div>
 </form>
 
 </div>

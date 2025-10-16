@@ -11,7 +11,7 @@ router.get('/', async (req, res, next) => {
 
   let obj = {
     error: null,
-    /*js: ['product_list'],*/
+    js: ['product_list_new'],
     data: {
       breadcrumb: [
         {link: '#', text: 'products'}
