@@ -64,14 +64,13 @@ class User {
       tableName: this.tableName
     })
 
-
-    //this.schema.sync();
+    this.schema.sync();
 
     // one time sync, after altered, remove this
     // Sync with alter option
-    this.schema.sync({ alter: true })
-      .then(() => console.log('User table synchronized'))
-      .catch(err => console.error('User table sync error:', err))
+    // this.schema.sync({ alter: true })
+    //  .then(() => console.log('User table synchronized'))
+    //  .catch(err => console.error('User table sync error:', err))
   }
 
   async create (payload) {
