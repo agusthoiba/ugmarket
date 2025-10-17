@@ -37,7 +37,13 @@
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown10" data-bs-toggle="dropdown"
-              aria-expanded="false"><i class="fas fa-user fa-2x"></i></a>
+              aria-expanded="false">
+              <% if (session != undefined && session.user != undefined) { %>
+                <img src="<%= session.user.avatar %>" class="avatar-image" style="width: 35px;"/>
+              <% } else { %>
+                <i class="fas fa-user fa-2x"></i>
+              <% } %>
+            </a>
             <ul class="dropdown-menu" aria-labelledby="dropdown10">
               <% if (session !=undefined && session.user !=undefined) { %>
                 <li><a class="dropdown-item" href="/account/profile" rel="follow">Profile</a></li>

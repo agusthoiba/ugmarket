@@ -146,7 +146,10 @@ router.post('/login', async function (req, res, next) {
 
   const userData = {
     id: findUser.user_id,
-    email: findUser.user_email
+    email: findUser.user_email,
+    avatar: req.app.locals.cloudinary.url(findUser.user_avatar, {
+      width: 50, height: 50, crop: 'thumb'
+    })
   }
 
   authSession(req, userData);

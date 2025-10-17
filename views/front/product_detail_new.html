@@ -1,0 +1,138 @@
+<%- include ("../front/template/head.html") %> 
+<%- include ("../front/template/header.html") %>
+
+  <main class="container">
+    <%- include ("../front/template/breadcrumb.html") %>
+    <section class="product">
+      <!-- LEFT: GALLERY -->
+      <div class="gallery">
+        <div class="gallery__stage">
+          <img src="<%= (product.images && product.images[0]) || '/img/placeholder.png' %>"
+               alt="<%= product.title %>" class="gallery__hero" loading="eager">
+
+        </div>
+        <% if ((product.images || []).length > 1) { %>
+          <div class="gallery__thumbs" role="list">
+            <% product.images.forEach((src, idx) => { %>
+              <button class="thumb" data-index="<%= idx %>" aria-label="Gambar <%= idx+1 %>">
+                <img src="<%= src %>" alt="" loading="lazy">
+              </button>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- RIGHT: DETAILS -->
+      <div class="details">
+        <h1 class="band"><%= product.band %></h1>
+        <h2 class="product-title"><%= product.title %></h2>
+
+        <div class="price-row">
+          <div class="price">Rp <%= product.price.toLocaleString('id-ID') %></div>
+        </div>
+
+        <% if (product.shippingNote) { %>
+          <p class="note"><%= product.shippingNote %></p>
+        <% } %>
+
+        <!-- SIZE PICKER -->
+        <% if (sizes && sizes.length) { %>
+        <div class="option">
+          <div class="option__label">Ukuran</div>
+          <div class="size-grid" role="radiogroup" aria-label="Pilih ukuran">
+            <% sizes.forEach(s => { 
+              const id = `size-${s.value}`; 
+              const hasStock = product.sizes && product.sizes.includes(s.value);
+              const bgClass = hasStock ? 'has-stock' : 'no-stock';
+            %>
+              <input hidden type="radio" name="size" id="<%= id %>" value="<%= s.value %>" <%= !hasStock ? 'disabled' : '' %>>
+              <label for="<%= id %>" class="pill <%= bgClass %> <%= !hasStock ? 'is-disabled' : '' %>">
+                <%= s.label %>
+              </label>
+            <% }); %>
+          </div>
+          <!--a class="size-guide" href="/size-guide" target="_blank" rel="noopener">Panduan ukuran</a-->
+        </div>
+        <% } %>
+
+        <!-- CTA -->
+        <div class="cta">
+          <% if (product.inStock) { %>
+            <!--button class="btn btn-dark" id="addToCart">Tambah ke Keranjang</button-->
+            <a href="https://wa.me/<%= seller.hp %>?text=Halo, saya tertarik dengan <%= product.title %> - <%= product.band %> (Rp <%= product.price.toLocaleString('id-ID') %>)" 
+              class="btn btn-success" target="_blank" rel="noopener" style="width: 170px;">
+              <i class="fab fa-whatsapp"></i> Pesan sekarang
+            </a>
+          <% } else { %>
+            <button class="btn btn-disabled" disabled>Stok Habis</button>
+          <% } %>
+          <% if (marketplaces && marketplaces.length) { %>
+            <div class="marketplaces">
+              <% marketplaces.forEach(m => { %>
+                <a class="btn btn-ghost" href="<%= m.url %>" target="_blank" rel="noopener" aria-label="Buka di <%= m.name %>">
+                  <!--img src="<%= m.icon %>" alt="" class="ico"> <span><%= m.name %></span-->
+                  <img width="auto" height="25" src="/marketplace/tokopedia.png">
+                </a>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- TRUST ROW -->
+        <ul class="trust">
+          <li>COD & Online</li>
+          <li>Retur 7 hari</li>
+          <li>Transaksi aman</li>
+        </ul>
+
+        <!-- SELLER -->
+        <div class="seller">
+          <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
+          <div>
+            <div class="seller__name"><%= seller.name %></div>
+            <!--a class="seller__link" href="/seller/<%= seller.slug %>">Lihat lapak</a-->
+          </div>
+        </div>
+
+        <% if (product.description) { %>
+          <div class="desc">
+            <h3>Deskripsi</h3>
+            <p><%- product.description.replace(/\n/g, '<br>') %></p>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+  
+    
+  </main>
+
+  <!-- STICKY BAR (MOBILE) -->
+  <div class="sticky-bar">
+    <div class="sticky-bar__price">Rp <%= product.price.toLocaleString('id-ID') %></div>
+    
+    <!--button class="btn btn-primary" id="stickyAdd">Beli Sekarang</button-->
+    <a href="https://wa.me/<%= seller.hp %>?text=Halo, saya tertarik dengan <%= product.title %> - <%= product.band %> (Rp <%= product.price.toLocaleString('id-ID') %>)" 
+     class="btn btn-success" 
+     target="_blank" 
+     rel="noopener">
+      <i class="fab fa-whatsapp"></i> <%= seller.name %>
+    </a>
+  </div>
+
+  <!-- Optional: tiny no-framework JS just to switch gallery image and forward sticky CTA -->
+  <script>
+    const hero = document.querySelector('.gallery__hero');
+    /*document.querySelectorAll('.thumb').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = +btn.dataset.index;
+        //const src = <%- JSON.stringify(product.images || []) %>[idx];
+        //if (src) hero.src = src;
+      });
+    });*/
+    const add = document.getElementById('addToCart');
+    const stickyAdd = document.getElementById('stickyAdd');
+    if (add && stickyAdd) stickyAdd.addEventListener('click', () => add.click());
+  </script>
+
+<%- include ("../front/template/footer.html") %>

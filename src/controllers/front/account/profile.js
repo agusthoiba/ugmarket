@@ -50,6 +50,12 @@ router.post('/update', async function (req, res, next) {
   var userId = req.session.user.id
 
   const payload = await cleanPost(req.body, userId);
+
+  if (payload.user_avatar) {
+    req.session.user.avatar = req.app.locals.cloudinary.url(payload.user_avatar, {
+      width: 50, height: 50, crop: 'thumb'
+    });
+  }
   
   try {
     await res.locals.userModel.update({ user_id: userId }, payload);

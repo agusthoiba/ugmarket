@@ -356,7 +356,12 @@ a:-webkit-any-link {
   border-bottom: 1px solid #e6e6e6;
 }
 .container {
-  margin: 0 auto;
+  margin: 10px auto;
+  max-width: 1200px;
+}
+
+.breadcrumb-container {
+  margin: 10px;
   max-width: 1200px;
 }
 
@@ -1663,7 +1668,7 @@ Pagination
   margin-top: 20px;
 }
 
-.breadcrumb {
+/*.breadcrumb {
   margin-top: 80px;
   text-transform: uppercase;
 }
@@ -1676,7 +1681,7 @@ Pagination
 .breadcrumb-item a:hover {
   text-decoration: underline;
   color:#c9c9c9;
-}
+}*/
 
 .c-icon {
   font-style: normal;
@@ -1696,7 +1701,7 @@ Pagination
 }
 
 .avatar-image {
-  width: 100px;
+  width: 50px;
   height: auto;
   border-radius: 50%;
 }

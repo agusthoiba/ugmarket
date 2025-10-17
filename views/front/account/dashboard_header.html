@@ -17,7 +17,11 @@
       <ul class="nav">
         <li class="nav-item">
           <a class="nav-link  <%= uri.path == '/account/profile' ? 'active' : '' %>" aria-current="page" href="/account/profile"> 
-            <i class="far fa-user fa-2x"></i>
+            <% if (session.user && session.user.avatar) { %>
+              <img src="<%= session.user.avatar %>" class="avatar-image" style="width: 32px;"/>
+            <% }  else { %>
+              <i class="far fa-user fa-2x"></i>
+            <% } %>
             <div> Profile </div>
           </a> 
         </li>

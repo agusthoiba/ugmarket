@@ -132,7 +132,70 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-router.get('/:id/:slug', async (req, res, next) => {
+router.get('/:id/:slug', async (req, res) => {
+  const prodId = parseInt(req.params.id); // prodId
+  const product = await res.locals.productModel.findOne({prod_id: prodId})
+
+  const imageArr = req.app.locals.strToArr(product.prod_images, ',');
+
+  let images = [];
+
+  if (imageArr.length > 0) {
+      for (let img of imageArr) {
+        //obj.data.product.thumbnails.push(req.app.locals.cloudinary.url(img, {width: 100, height: 100, crop: 'thumb'}));
+        images.push(req.app.locals.cloudinary.url(img, {width: 475}))
+      }
+  }
+
+  // Map your existing fields into the template shape
+  const data = {
+    data: {
+      breadcrumb: [
+        { text: product['category.cat_name'], link: `/products?kategori=${product['category.cat_slug']}` },
+        { text: product.prod_name, link: '' }
+      ]
+    },
+    product: {
+      id: product.prod_id,
+      title: product.prod_name,
+      band: product['band.band_name'],
+      images: images,        
+      price: product.prod_price,
+      description: product.prod_desc,
+      inStock: product.prod_stock > 0,
+      shippingNote: '',
+      sizes: product.prod_sizes
+    },
+    sizes: [
+      { value:'xs', label:'XS' },
+      { value:'s',  label:'S'  },
+      { value:'m',  label:'M'  },
+      { value:'l',  label:'L'  },
+      { value:'xl', label:'XL' },
+      { value:'xxl', label:'XXL' },
+      { value:'3xl', label:'3XL' },
+      { value:'4xl', label:'4XL' },
+    ],
+    seller: { 
+      name: product['user.user_name'], 
+      slug: slug((product['user.user_name']).toLowerCase(), '-'),
+      avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
+      hp: product['user.user_hp']
+    },
+    marketplaces: [
+      { name:'Tokopedia', url: product.tokopediaUrl || 'https://tokopedia.com/', icon:'/img/marketplaces/tokopedia.svg' }
+    ]
+    // related: await getRelatedProducts(product.id)
+  }
+
+  if (req.query.json == '1') {
+    return res.json(data)
+  }
+
+  res.render('front/product_detail_new', data);
+});
+
+/*router.get('/:id/:slug', async (req, res, next) => {
   const prodId = parseInt(req.params.id)
 
   let obj = {
@@ -165,7 +228,7 @@ router.get('/:id/:slug', async (req, res, next) => {
 
       obj.data.user = {
         name: product['user.user_name'],
-        avatar: product['user.user_avatar'] != null ? `/user/thumbnail/${product['user.user_avatar']}` : '/image/logo-ugmarket.jpg'
+        avatar: product['user.user_avatar'] != null ? req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 100, height: 100, crop: 'thumb'}) : '/image/logo-ugmarket.jpg'
       };
 
       const images = req.app.locals.strToArr(product.prod_images, ',');
@@ -189,7 +252,7 @@ router.get('/:id/:slug', async (req, res, next) => {
   }
 
   return res.render('front/product_detail', obj)
-})
+})*/
 
 module.exports = router
 
