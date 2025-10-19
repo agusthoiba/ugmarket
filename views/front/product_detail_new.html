@@ -59,8 +59,7 @@
         <div class="cta">
           <% if (product.inStock) { %>
             <!--button class="btn btn-dark" id="addToCart">Tambah ke Keranjang</button-->
-            <a href="https://wa.me/<%= seller.hp %>?text=Halo, saya tertarik dengan <%= product.title %> - <%= product.band %> (Rp <%= product.price.toLocaleString('id-ID') %>)" 
-              class="btn btn-success" target="_blank" rel="noopener" style="width: 170px;">
+           <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener" style="width: 170px;">
               <i class="fab fa-whatsapp"></i> Pesan sekarang
             </a>
           <% } else { %>
@@ -112,11 +111,8 @@
     <div class="sticky-bar__price">Rp <%= product.price.toLocaleString('id-ID') %></div>
     
     <!--button class="btn btn-primary" id="stickyAdd">Beli Sekarang</button-->
-    <a href="https://wa.me/<%= seller.hp %>?text=Halo, saya tertarik dengan <%= product.title %> - <%= product.band %> (Rp <%= product.price.toLocaleString('id-ID') %>)" 
-     class="btn btn-success" 
-     target="_blank" 
-     rel="noopener">
-      <i class="fab fa-whatsapp"></i> <%= seller.name %>
+    <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp"></i> Pesan sekarang
     </a>
   </div>
 

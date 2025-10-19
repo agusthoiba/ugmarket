@@ -147,13 +147,17 @@ router.get('/:id/:slug', async (req, res) => {
       }
   }
 
+
+  const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+
   // Map your existing fields into the template shape
   const data = {
     data: {
       breadcrumb: [
         { text: product['category.cat_name'], link: `/products?kategori=${product['category.cat_slug']}` },
         { text: product.prod_name, link: '' }
-      ]
+      ],
+      waHref: `https://wa.me/${product['user.user_hp']}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}` 
     },
     product: {
       id: product.prod_id,

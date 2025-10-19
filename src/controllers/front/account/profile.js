@@ -74,9 +74,17 @@ router.post('/update', async function (req, res, next) {
 module.exports = router;
 
 async function cleanPost(body, userId) {
+    // Format phone number: convert 0 prefix to +62
+  let formattedPhone = body.hp.trim();
+  if (formattedPhone.startsWith('0')) {
+    formattedPhone = '+62' + formattedPhone.substring(1);
+  } else if (!formattedPhone.startsWith('+62')) {
+    formattedPhone = '+62' + formattedPhone;
+  }
+
   var payload = {
     user_name: body.name.trim(),
-    user_hp: body.hp.trim(),
+    user_hp: formattedPhone,
     user_gender: body.gender
   }
   
