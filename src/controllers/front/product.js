@@ -261,7 +261,6 @@ router.get('/:id/:slug', async (req, res) => {
 module.exports = router
 
 function _filtering(req, obj, query) {
-  console.log("req.query.kategori: ", req.query.kategori )
   if (req.query.kategori) {
     let catSlug = '';
     if (isArray(req.query.kategori)) {
@@ -329,8 +328,9 @@ function _filtering(req, obj, query) {
   }
 
   if (req.query.search && req.query.search.length > 2) {
-    const regexStr = /[^a-zA-Z0-9]/g;
+    const regexStr = /[^a-zA-Z0-9 ]/g;
     const searchInput = `%${((decodeURIComponent(req.query.search)).trim()).replace(regexStr, '')}%`;
+    console.log('searchInput: ', searchInput);
 
     query[Op.or] = [
       {

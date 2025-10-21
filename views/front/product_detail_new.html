@@ -1,4 +1,10 @@
 <%- include ("../front/template/head.html") %> 
+<% if (locals.ENV == 'development') { %>
+    <link rel="stylesheet" type="text/css" href="/assets/css/product_detail_new.css" />
+<% } else { %>
+    <link rel="stylesheet" type="text/css" href="/assets/css-minify/product_detail_new.min.css" />
+<% } %>    
+
 <%- include ("../front/template/header.html") %>
 
   <main class="container">

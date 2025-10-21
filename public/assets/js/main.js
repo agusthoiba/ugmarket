@@ -49,11 +49,27 @@ $(document).ready(function(){
     })
   });
 
-  $('#search-form').submit(function(e) {
+  /*$('#search-form').submit(function(e) {
     e.preventDefault()
 
     var searchStr = ($('#search-input').val()).trim();
 
     window.location.assign(`/products?search=${searchStr}`);
-  })
+  })*/
 });
+
+function searchProduct(e) {
+  e.preventDefault()
+
+ // try to find the form/input reliably
+  const form = e.target && (e.target.tagName === 'FORM' ? e.target : e.target.closest && e.target.closest('form'));
+  const input = (form && (form.querySelector('input[name="search"]') || form.querySelector('input[type="search"]') || form.querySelector('input'))) 
+                || (e.target && (e.target.querySelector && e.target.querySelector('input')));
+
+  const searchStr = input && input.value ? input.value.trim() : '';
+
+  // if empty, do nothing (or you can redirect to /products)
+  if (!searchStr) return;
+
+  window.location.assign(`/products?search=${encodeURIComponent(searchStr)}`);
+}

@@ -3,32 +3,28 @@
 
 <div class="container account">
   <div class="row">
-    <div class="col-md-3 sidebar d-none d-md-block desktop-nav">
+    <div class="col-md-3 sidebar d-md-none desktop-nav">
       
       <ul class="list-unstyled">
         <li  > <a href="/account/profile"><i class="far fa-user"></i>  Profile</a> </li>
-        <li  > <a href="/account/product"><i class="fas fa-store" aria-hidden="true"></i>   Produk </a> </li>
+        <li  > <a href="/account/product"><i class="fas fa-store" aria-hidden="true"></i>   Lapak </a> </li>
         <li  > <a href="#/account/inbox" onclick="underdev(event)"><i class="far fa-envelope"></i>  Inbox </a> </li>
         <li > <a href="#/account/transaction" onclick="underdev(event)">  <i class="fas fa-receipt"></i>  Transaksi </a></li>
       </ul>
     </div>
 
-    <div class="sidebar d-block d-md-none nav-user-mobile">
+    <div class="sidebar d-block d-lg-none nav-user-mobile">
       <ul class="nav">
         <li class="nav-item">
           <a class="nav-link  <%= uri.path == '/account/profile' ? 'active' : '' %>" aria-current="page" href="/account/profile"> 
-            <% if (session.user && session.user.avatar) { %>
-              <img src="<%= session.user.avatar %>" class="avatar-image" style="width: 32px;"/>
-            <% }  else { %>
-              <i class="far fa-user fa-2x"></i>
-            <% } %>
+            <i class="far fa-user fa-2x"></i>
             <div> Profile </div>
           </a> 
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/account/product"> 
             <i class="fas fa-store fa-2x" aria-hidden="true"></i> 
-            <div> Produk  </div>
+            <div> Lapak  </div>
           </a> 
         </li>
         <li class="nav-item">

@@ -26,6 +26,17 @@ body {
   color: #404040;
 }
 
+.d-md-none {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .d-md-none {
+    display: flex !important;
+  }
+}
+
+
 /* Breadcrumb Styles */
 .breadcrumb-container {
   margin: 10px;
@@ -798,6 +809,26 @@ body {
   width: 50px;
   height: auto;
   border-radius: 50%;
+}
+
+.search-md-form {
+  display: none !important;
+}
+
+.search-lg-form {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .search-md-form {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-lg-form {
+    display: flex !important;
+  }
 }
 
 /* Responsive adjustments */
