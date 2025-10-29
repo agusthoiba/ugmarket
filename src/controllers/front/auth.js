@@ -9,12 +9,19 @@ const { registerSchema } = require("../../models/schema");
 
 router.get('/login', function (req, res, next) {
   const objView = {
-    error: null, data: {
+    error: null, 
+    data: {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
       action: '/auth/login'
-    }
+    },
+    message: null
   };
+
+  if (req.query.message != undefined && req.query.message != '') {
+    objView.message = req.query.message;
+  }
+
   return res.render('front/auth_login', objView);
 });
 
@@ -78,7 +85,10 @@ router.get('/login/callback', async (req, res, next) => {
   return res.redirect('/');
 });
 
+
 router.post('/register', validate(registerSchema), async (req, res, next) => {
+  console.log('req.body: ', req.body)
+
   var obj = { 
     error: null, 
     data: {
@@ -90,7 +100,8 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
 
   if (req.body.password !== req.body.confirm_password) {
     obj.error = 'Konfirmasi password tidak sesuai dengan password';
-    return res.render('front/auth_register', obj);
+
+    return res.status(400).json(obj)
   }
 
   const filter = {
@@ -100,7 +111,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   const findUser = await res.locals.userModel.findOne(filter);
   if (findUser) {
     obj.error = 'Email sudah terdaftar';
-    return res.render('front/auth_register', obj);
+    return res.status(409).json(obj)
   }
 
   const payload = {
@@ -110,6 +121,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
     user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
   }
 
+  return res.json(payload)
   const docCreate = await res.locals.userModel.create(payload)
 
   var userData = {
@@ -123,7 +135,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
 
 
 router.post('/login', async function (req, res, next) {
-  var obj = { error: null, data: null };
+  var obj = { error: null, data: null, message: null };
 
   var query = {
     user_email: req.body.email,

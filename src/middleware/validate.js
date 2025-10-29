@@ -2,6 +2,7 @@
 const Joi = require("joi");
 
 function validate(schema) {
+  
   return (req, res, next) => {
     const options = { abortEarly: false, allowUnknown: true, stripUnknown: true };
     const { error, value } = schema.validate(req.body, options);
@@ -10,7 +11,8 @@ function validate(schema) {
     if (error) {
       console.log(error.details)
       return res.status(400).json({
-        error: error.details.map(d => d.message),
+        //error: error.details.map(d => d.message),
+        error: error.details[0].message
       });
     }
 
