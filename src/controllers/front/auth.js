@@ -121,7 +121,6 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
     user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
   }
 
-  return res.json(payload)
   const docCreate = await res.locals.userModel.create(payload)
 
   var userData = {
