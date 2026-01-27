@@ -25,6 +25,10 @@ const config = {
         appRedirectUri: env.FB_APP_REDIRECT_URI,
         graphBaseUrl: env.FB_GRAPH_BASEURL,
         graphOauthTokenUrl: env.FB_GRAPH_OAUTH_TOKEN_URL
+    },
+    google: {
+        apiKey: env.GOOGLE_API_KEY,
+        mapsUrl: env.GOOGLE_MAPS_URL
     }
 }
 

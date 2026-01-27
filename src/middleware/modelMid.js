@@ -1,5 +1,9 @@
 const config = require('../config');
-const { Band, Genre, Category, Product, User, Contact, UserAdmin, Collections  } = require('../models')
+const { 
+    Band, Genre, Category, Product,
+    User, Contact, UserAdmin, Collections, Seller
+} = require('../models');
+
 const Upload = require('../helpers/uploadCloudinary');
 
 const modelMiddleware = (req, res, next) => {
@@ -33,10 +37,6 @@ const modelMiddleware = (req, res, next) => {
         collections: res.locals.collectionModel
     });
 
-    // req.locals.merchantModel = new Merchant({
-    //    db: req.app.locals.db
-    // });
-
     res.locals.contactModel = new Contact({
        db: req.app.locals.db
     });
@@ -45,6 +45,11 @@ const modelMiddleware = (req, res, next) => {
     res.locals.userAdminModel = new UserAdmin({
        db: req.app.locals.db
     });
+
+    req.app.locals.sellerModel = new Seller({
+        db: req.app.locals.db,
+        user: res.locals.userModel,
+    })
 
     res.locals.uploadCloudinary = new Upload();
 

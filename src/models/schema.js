@@ -13,7 +13,7 @@ const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).max(20).required(),
   confirm_password: Joi.string().min(6).max(20).required()
-})
+});
 
 
 const profileSchema = Joi.object({
@@ -24,6 +24,20 @@ const profileSchema = Joi.object({
   bio: Joi.string().max(255).allow(''),
   address: Joi.string().allow(''),
   zipcode: Joi.string().max(5).allow(''),
-})
+});
 
-module.exports = { collectionsSchema, registerSchema, profileSchema };
+const sellerSchema = Joi.object({
+  name: Joi.string().regex(/[a-zA-Z0-9_.]/).required(),
+  hp: Joi.string().regex(/^(\+62|62|0)[0-9]{9,12}$/).required(),
+  image_ori_avatar: Joi.string().allow(''),
+  image_banner: Joi.string().allow(''),
+  description: Joi.string().allow(''),
+  province: Joi.string().regex(/[0-9]/).allow(''),
+  city: Joi.string().regex(/[0-9]/).allow(''),
+  district: Joi.string().regex(/[0-9]/).allow(''),
+  village: Joi.string().regex(/[0-9]/).allow(''),
+  street: Joi.string().allow(''),
+  zipcode: Joi.string().regex(/[0-9]/).max(5).allow(''),
+});
+
+module.exports = { collectionsSchema, registerSchema, profileSchema, sellerSchema };

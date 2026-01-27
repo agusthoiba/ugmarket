@@ -18,6 +18,10 @@ router.get('/', async (req, res, next) => {
     })
   }
 
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
+
   const optionsFindBands = { sort: [['band_total_sold', 'DESC']] , limit: 20 }
   const queryBand = {band_enabled: 1};
   const findBands = await res.locals.bandModel.find(queryBand, optionsFindBands);

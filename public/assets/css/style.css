@@ -1529,6 +1529,17 @@ Pagination
     padding-top: 16px;
 }
 
+
+.account-sidebar-menu {
+  min-width: 250px;
+}
+
+
+.account-sidebar-menu-href a{
+  color: #212121;
+  text-decoration: none;
+}
+
 /*.invalid-feedback {
     font-size: 12px;
     color: #dc3545;
@@ -2035,6 +2046,15 @@ OWL carousel
   list-style: none;
 }
 
+.card-maps {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
 @media (min-width: 640px) {
   .collections__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2102,6 +2122,11 @@ OWL carousel
   color: #6b7280;
   border: 1px dashed var(--border);
   border-radius: var(--radius);
+}
+
+.upload-banner-preview {
+  width: 512px;
+  height: calc(512/4);
 }
 
 

@@ -1,16 +1,17 @@
 
 const http = require('http')
 const express = require('express')
-const pino = require('pino')
+const logger = require('pino')()
 const pinoHttp = require('pino-http')()
 const underscore = require('underscore')
 const app = express()
 const ejs = require('ejs')
 const bodyParser = require('body-parser')
 const morgan = require('morgan');
+const cors = require('cors');
+
 const config = require('./config')
 const cloudinary = require('cloudinary').v2;
-
 const CategoryModel = require('./models/category');
 const { address, villages } = require('./helpers/address');
 
@@ -80,7 +81,7 @@ app.use(function (err, req, res, next) {
   /* if (err.type == 'redirect') {
     res.redirect('/error')
   } */
-
+  console.error('im here')
   const errResp = {
     code: err.code,
     message: 'An error occured'
@@ -171,7 +172,7 @@ app.use(getTopBands);
 
 app.use(pinoHttp)
 
-
+app.use(cors());
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
 app.use('/contact', require('./controllers/front/contact'))
@@ -180,13 +181,13 @@ app.use('/bands', require('./controllers/front/band'))
 app.use('/auth', require('./controllers/front/auth'))
 app.use('/account/product', require('./controllers/front/account/product'))
 app.use('/account/profile', require('./controllers/front/account/profile'))
+app.use('/account/seller', require('./controllers/front/account/seller'))
+app.use('/account/upload', require('./controllers/upload'))
 
 app.use('/admin/auth', require('./controllers/admin/auth'))
 app.use('/admin/band', require('./controllers/admin/band'))
 app.use('/admin/collections', require('./controllers/admin/collections'))
 
-
-// general public api 
 app.use('/idn', require('./controllers/idn'))
 
 // Add 404 handler - this should come after all other routes
@@ -208,6 +209,9 @@ app.use(function(err, req, res, next){
   if (res.headersSent) {
     return next(err)
   }
+
+  logger.error(`Error handler reached: ${err}`)
+  console.error(err)
 
   if (err.statusCode > 299) {
     return res.status(err.statusCode).render('front/template/error', {

@@ -41,7 +41,9 @@ class Upload {
   async uploadToCloud(localPathFileOrBase64, prefix = '', public_id = '') {
     try {
       let options = {
-        folder: prefix,
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true
       }
 
       if (public_id != '') {
