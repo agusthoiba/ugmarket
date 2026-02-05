@@ -266,7 +266,21 @@
         }
         
         // Redirect or refresh page
-        window.location.href = '/account/seller';
+        
+        // Show success state first
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Success';
+        submitBtn.classList.remove('btn-default');
+        submitBtn.classList.add('btn-success');
+        showAlert(alertContainer, 'Data toko berhasil disimpan!', 'success');
+        
+        // Return to default state after 5 seconds
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+          submitBtn.classList.remove('btn-success');
+          submitBtn.classList.add('btn-default');
+        }, 5000);
 
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -285,6 +299,8 @@
         
       container.classList.remove('d-none');
       container.classList.add('d-block');
+      container.classList.remove('alert-success');
+      container.classList.add(alertClass);
       container.innerText = message;
 
       // Auto-dismiss after 5 seconds for success messages
@@ -292,6 +308,7 @@
         setTimeout(() => {
           container.classList.remove('d-none');
           container.classList.add('d-block');
+          container.classList.remove('alert-danger');
           container.classList.add(alertClass);
           container.innerText = message;
         }, 5000);
