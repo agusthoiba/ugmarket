@@ -1,0 +1,118 @@
+<%- include ("../front/template/head.html") %> <%- include
+("../front/template/header.html") %>
+
+<!-- External CSS -->
+<link rel="stylesheet" href="/assets/css/band_list.css" />
+
+<div class="band-list-page">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">METAL & ROCK BANDS</h1>
+            <!--p class="page-subtitle">
+                Discover the heaviest bands in metal history. From classic heavy
+                metal to extreme subgenres.
+            </p-->
+        </div>
+
+        <!-- Stats Bar -->
+        <!--div class="band-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="band-total-count"><%= data.bandTotal %></span>
+                    <span class="stat-label">Bands</span>
+                </div>
+            <div class="stat-item">
+                <span class="stat-number">100+</span>
+                <span class="stat-label">Genres</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">1K+</span>
+                <span class="stat-label">Products</span>
+            </div>
+        </div-->
+
+        <!-- Filters and Search -->
+        <div class="band-filters">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search bands by name, genre, or country..."
+                    value=""
+                />
+            </div>
+
+            <div class="filter-controls">
+                <select class="filter-select" id="genreFilter">
+                    <option value="">All Genres</option>
+                    <option value="metal">Metal</option>
+                    <option value="rock">Rock</option>
+                    <option value="black-metal">Black Metal</option>
+                    <option value="punk">Punk</option>
+                    <option value="heavy-metal">Heavy Metal</option>
+                    <option value="progressive-metal">Progressive Metal</option>
+                    <option value="hard-rock">Hard Rock</option>
+                    <option value="thrash-metal">Thrash Metal</option>
+                    <option value="speed-metal">Speed Metal</option>
+                </select>
+
+                <select class="filter-select" id="countryFilter">
+                    <option value="">All Countries</option>
+                    <option value="indonesia">Indonesia</option>
+                    <option value="United States">USA</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                </select>
+
+                <select class="filter-select" id="sortFilter">
+                    <option value="popular">Most Popular</option>
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="grid">
+                <i class="fas fa-th-large"></i> Grid
+            </button>
+            <button class="view-btn" data-view="list">
+                <i class="fas fa-list"></i> List
+            </button>
+        </div>
+
+        <!-- Band data for JS — all bands loaded once, no further API calls -->
+        <script>window.__BANDS__ = <%- JSON.stringify(data.bands || []).replace(/<\//g, '<\\/') %>;</script>
+
+        <!-- Band Grid — populated entirely by band_list_new.js -->
+        <% if (data.bandTotal > 0) { %>
+        <div class="band-grid" id="bandGrid"></div>
+        <!-- Loading Spinner for infinite scroll -->
+        <div id="band-loading-spinner" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <% } else { %>
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-guitar"></i>
+            </div>
+            <h3 class="empty-title">No Bands Found</h3>
+            <p class="empty-message">
+                We couldn't find any bands matching your criteria. Try adjusting
+                your filters or search terms.
+            </p>
+            <button class="band-link" id="resetFilters">
+                Reset All Filters
+            </button>
+        </div>
+        <% } %>
+
+        <!-- Pagination removed — lazy loading handles loading more bands -->
+    </div>
+</div>
+
+<%- include ("../front/template/footer.html") %>

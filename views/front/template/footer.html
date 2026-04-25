@@ -110,14 +110,17 @@
 <!--script src="https://unpkg.com/joi/dist/joi-browser.min.js"></script-->
 
 
+<% if (locals.ENV == 'production') { %>
+  <script src="/assets/js/main-minify/utils.min.js"></script>
+<% } else { %>
+  <script src="/assets/js/main/utils.js"></script>
+<% } %>
  
 <% if (locals.js != undefined) { %>
     <% for(var i in locals.js) { %>
       <% if (locals.ENV == 'development') { %>
-        <script src="/assets/js/main/utils.js"></script>
         <script src="/assets/js/main/<%= locals.js[i] %>.js"></script>
       <% } else { %>
-        <script src="/assets/js/main-minify/utils.min.js"></script>
         <script src="/assets/js/main-minify/<%= locals.js[i] %>.min.js"></script>
       <% } %>      
     <% } %>

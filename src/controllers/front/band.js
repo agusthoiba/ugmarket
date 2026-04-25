@@ -1,90 +1,51 @@
-
-
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 const URI = require("urijs");
-const { Op } = require("sequelize");
-const pagination = require('../../helpers/pagination');
-const config = require('../../config');
 
-router.get('/', async (req, res, next) => {
-  const pageLimit = 20;
-  const currentPage = req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1;
+const { getCountryFlag } = require("../../helpers/countryFlag");
+const config = require("../../config");
 
+router.get("/", async (req, res, next) => {
   let obj = {
     error: null,
-    // js: ['band_list'],
+    js: ["band_list_new"],
     data: {
-      breadcrumb: [
-        {link: '#', text: 'bands'}
-      ],
-      pageTitle: 'Bands',
-      // categories: req.app.locals.categories,
+      breadcrumb: [{ link: "#", text: "bands" }],
+      pageTitle: "Bands",
       bands: [],
+      genres: [],
       imageBaseUrl: config.file_host,
-      uri: {
-        path: '',
-        params: '',
-        query: {}
-      },
-      // sort: PRODUCT_SORT,
-      sizes: req.app.locals.sizes
-    }
-  }
+      uri: { path: "", params: "", query: {} },
+      sizes: req.app.locals.sizes,
+    },
+  };
 
   var url = new URI(req.originalUrl);
-
   obj.data.uri.query = url.query();
-  const maxLinkPagination = 5 // maximal number of link pagination
 
-  let query = {
-    band_total_product: {[Op.gt]: 0}
-  }
-
-  var options = { 
-    sort: [['band_slug', 'ASC']],
-    page: currentPage,
-    limit: pageLimit
-  }
+  let query = { band_enabled: 1 };
 
   try {
-    const bandTotal = await res.locals.bandModel.count(query);
+    const doc = await res.locals.bandModel.find(query, { page: 1, limit: 100000 });
 
-    if (bandTotal > 0) {
-      const doc = await res.locals.bandModel.find(query, options);    
-
-      obj.data.bands = doc.map(val => {
-        const datum = Object.assign({}, 
-          val,
-          { 
-            thumbnail: val.band_image ? val.band_image : req.app.locals.cloudinary.url(`bands/${val.band_slug}-thumbnail.jpg`, {width: 245, height: 245})
-          }
-        )
-
-        return datum
-      })
-
-
-      const currentPage = options.page;
-      const basePath = '/bands';
-      const page = pagination(pageLimit, currentPage, bandTotal, basePath);
-		  Object.assign(obj, page)
+    if (doc.length > 0) {
+      obj.data.bands = doc.map((val) =>
+        Object.assign({}, val, {
+          thumbnail: val.band_image,
+          bandCountryFlag: getCountryFlag(val.band_country),
+          has_products: val.band_total_product > 0,
+        })
+      );
     }
 
-    if (req.query.json == '1') {
-      return res.json(obj);
-    }
+    obj.data.bandTotal = doc.length;
 
-    return res.render('front/band_list', obj)
+    return res.render("front/band_list_new", obj);
   } catch (err) {
-    console.error(err)
-    obj.error = 'An Error occured while load your band'
-
-    if (req.query.json == '1') {
-      return res.json(obj);
-    }
-
-    return res.render('front/band_list', obj)
+    console.error(err);
+    obj.error = "An Error occured while load your band";
+    return res.render("front/band_list_new", obj);
   }
 });
 
-module.exports = router
+module.exports = router;
