@@ -148,6 +148,9 @@ document.addEventListener("DOMContentLoaded", function () {
         "</div>";
 
       bandGrid.appendChild(card);
+
+      var nameEl = card.querySelector(".band-name");
+      if (nameEl) fitBandName(nameEl);
     });
   }
 
@@ -211,6 +214,19 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ─── Shared ───────────────────────────────────────────────────────────────
+
+  function fitBandName(el) {
+    var MAX = 22, MIN = 10;
+    el.style.fontSize = MAX + "px";
+    if (el.scrollWidth <= el.offsetWidth) return;
+    var lo = MIN, hi = MAX;
+    while (hi - lo > 0.5) {
+      var mid = (lo + hi) / 2;
+      el.style.fontSize = mid + "px";
+      if (el.scrollWidth <= el.offsetWidth) lo = mid; else hi = mid;
+    }
+    el.style.fontSize = lo + "px";
+  }
 
   function escapeHtml(str) {
     if (!str) return "";
