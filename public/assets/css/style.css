@@ -1593,6 +1593,92 @@ Pagination
     background-position: center;
 }
 
+/* Product image upload grid (account product form) */
+.prod-img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.prod-img-slot {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.prod-img-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.prod-img-add {
+  border: 2px dashed #aaa;
+  background: url(/image/add-product.png) no-repeat;
+  background-position: center
+}
+
+.prod-img-add:hover {
+  border-color: #666;
+  background: #f0f0f0;
+}
+
+.prod-img-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  display: none;
+}
+
+.prod-img-slot:hover .prod-img-remove {
+  display: block;
+}
+
+.prod-img-uploading img {
+  opacity: 0.5;
+}
+
+.prod-img-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #555;
+  pointer-events: none;
+}
+
+.prod-img-spinner::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: prod-spin 0.6s linear infinite;
+}
+
+@keyframes prod-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* .home-banner {
   background-image: url('/image/rock-concert-smoke-light-78521.jpeg');
   height: 300px;

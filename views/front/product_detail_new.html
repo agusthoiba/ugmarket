@@ -125,16 +125,18 @@
   <!-- Optional: tiny no-framework JS just to switch gallery image and forward sticky CTA -->
   <script>
     const hero = document.querySelector('.gallery__hero');
-    /*document.querySelectorAll('.thumb').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = +btn.dataset.index;
-        //const src = <%- JSON.stringify(product.images || []) %>[idx];
-        //if (src) hero.src = src;
+    const images = <%- JSON.stringify(product.images || []) %>;
+    document.querySelectorAll('.thumb').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var src = images[+btn.dataset.index];
+        if (src) hero.src = src;
+        document.querySelectorAll('.thumb').forEach(function (b) { b.classList.remove('thumb--active'); });
+        btn.classList.add('thumb--active');
       });
-    });*/
+    });
     const add = document.getElementById('addToCart');
     const stickyAdd = document.getElementById('stickyAdd');
-    if (add && stickyAdd) stickyAdd.addEventListener('click', () => add.click());
+    if (add && stickyAdd) stickyAdd.addEventListener('click', function () { add.click(); });
   </script>
 
 <%- include ("../front/template/footer.html") %>

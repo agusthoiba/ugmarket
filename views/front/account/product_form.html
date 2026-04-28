@@ -76,18 +76,20 @@
     </div>
 
     <div class="mb-3">
-      <label for="name"  class="form-label">Upload Gambar Produk</label>
-      <ul class="image-upload list-inline">
-          <input id="upload_image" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImageProduct(this.files, $(this))">
-
-          <li id="thumb_image_0" class="pickfile-container"  onclick="browseFile(event, $(this))" >
-            <% if (data.item.thumbnails.length > 0) { %>
-              <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.item.thumbnails[0] %>">
-            <% } %>
-          </li>
-
-          <textarea style="display: none" id="image_ori" name="image_ori"></textarea>
-      </ul>
+      <label class="form-label">Upload Gambar Produk</label>
+      <div class="prod-img-grid" id="prod-img-grid">
+        <% data.item.thumbnails.forEach(function(thumb, i) { %>
+        <div class="prod-img-slot" data-path="<%= data.item.images[i] %>">
+          <img src="<%= thumb %>" alt="Product Image">
+          <button type="button" class="prod-img-remove" onclick="removeProdImg(this)">×</button>
+        </div>
+        <% }) %>
+        <div class="prod-img-slot prod-img-add" id="prod-img-add" onclick="document.getElementById('prod-img-file').click()">
+          <!--img src="/image/add-product.png" alt="Tambah Gambar"-->
+        </div>
+      </div>
+      <input type="file" id="prod-img-file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" style="display:none" onchange="handleProdImgUpload(this)">
+      <input type="hidden" name="prod_images_path" id="prod_images_path" value="<%= data.item.images.join(',') %>">
     </div>
 
   <div class="mb-3">

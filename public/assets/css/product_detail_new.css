@@ -19,7 +19,7 @@ body{
 
 /* Layout */
 /*.container{max-width:1100px; margin:24px auto 120px; padding:0 16px}*/
-.product{display:grid; grid-template-columns: 1.05fr .95fr; gap:28px}
+.product{display:grid; grid-template-columns: 1.05fr .95fr; gap:28px; margin-bottom:40px}
 @media (max-width: 960px){ .product{grid-template-columns:1fr} }
 
 /* Breadcrumb */
@@ -38,6 +38,7 @@ body{
 .thumb{border:1px solid var(--line); background:#fff; border-radius:8px; cursor:pointer}
 .thumb img{width:70px; height:70px; object-fit:cover; border-radius:8px; display:block}
 .thumb:hover{border-color:var(--brand)}
+.thumb--active{border-color:var(--brand); border-width:2px}
 
 /* Details */
 .details{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:20px}

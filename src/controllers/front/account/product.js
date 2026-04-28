@@ -4,9 +4,7 @@ const URI = require("urijs");
 
 var Band = require('../../../models/band')
 
-var crypto = require('crypto');
 const moment = require('moment')
-const Upload = require('../../../helpers/uploadCloudinary');
 const pagination = require('../../../helpers/pagination');
 const { SIZES } = require('../../../constant');
 const { collect } = require("underscore");
@@ -66,7 +64,7 @@ router.get('/edit/:id', async (req, res, next) => {
       sizes: SIZES
     },
     action: `/account/product/update/${prodId}`,
-    js: ['account_product']
+    js: ['account_product', 'product_image_dropzone']
   };
 
   try {
@@ -102,6 +100,7 @@ router.get('/edit/:id', async (req, res, next) => {
     if (product.prod_images && product.prod_images != null) {
       const thumbs = req.app.locals.strToArr(product.prod_images, ',')
 
+      obj.data.item.images = thumbs;
       obj.data.item.thumbnails = thumbs.map(val => {
         return req.app.locals.cloudinary.url(val, {width: 100, height: 100, crop: "thumb"});
       });
@@ -153,12 +152,12 @@ router.get('/add', async (req, res, next) => {
     error: null,
     data: {},
     action: '/account/product/create',
-    js: ['account_product']
+    js: ['account_product', 'product_image_dropzone']
   };
 
   obj.data = {
     categories: await res.locals.categoryModel.find(),
-    bands:  await res.locals.bandModel.findAll(),
+    bands:  await res.locals.bandModel.findAll({ band_enabled: 1}),
     collections: await res.locals.collectionModel.find({ col_is_visible: 1 }),
     sizes: SIZES,
     item: itemData()
@@ -175,7 +174,7 @@ router.post('/create', async (req, res) => {
     error: null, 
     data: null,
     action: '/account/product/create',
-    js: ['account_product']
+    js: ['account_product', 'product_image_dropzone']
   };
 
   req.body.user_id = req.session.user.id;
@@ -285,22 +284,9 @@ async function cleanPost(body, findBand, tipe = 'create') {
     payload.prod_marketplace_bukalapak_path = uriBukalapak.path();
   }
 
-  if (body.image_ori) {
-    var current_date = (new Date()).valueOf().toString();
-    var random = Math.random().toString();
-    var randomName = (crypto.createHash('sha1').update(current_date + random).digest('hex')).substring(0,5);
-    var fileName = `${prodSlug}_${randomName}`;
-    
-    try {
-      const upload = new Upload();
-      await upload.uploadToCloud(body.image_ori, '', fileName);
-      payload.prod_images = fileName;
-
-      return payload;
-    } catch (err) {
-      console.log('[ERROR][CLEANPOST_UPLOAD] in prod ', err)
-      return err;
-    }
+  if (body.prod_images_path) {
+    payload.prod_images = body.prod_images_path;
+    return payload;
   }
 
   return payload;

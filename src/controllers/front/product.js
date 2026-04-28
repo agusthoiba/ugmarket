@@ -3,8 +3,10 @@
 const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
+
+
 const { PRODUCT_SORT } = require('../../constant');
-const { isArray } = require("underscore");
+const { isArray, drop } = require("underscore");
 
 router.get('/', async (req, res, next) => {
   let pageLimit = 20;
