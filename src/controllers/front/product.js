@@ -463,7 +463,7 @@ function _pagination(objPagination, req, maxLinkPagination = 5) {
       active: true
     });
   } else {
-    objPagination.total_page =  Math.floor(objPagination.total / objPagination.limit);
+    objPagination.total_page =  Math.ceil(objPagination.total / objPagination.limit);
     
     const totalPage = objPagination.total_page;
     

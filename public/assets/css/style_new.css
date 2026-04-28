@@ -877,3 +877,19 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
+
+.pagination .page-item.active .page-link {
+  background-color: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.pagination .page-link {
+  color: #111;
+}
+
+.pagination .page-link:hover {
+  background-color: #333;
+  border-color: #333;
+  color: #fff;
+}
