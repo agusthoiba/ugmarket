@@ -6,6 +6,7 @@ const { Op } = require("sequelize");
 
 
 const { PRODUCT_SORT } = require('../../constant');
+const cloudinaryTransformation = require('../../helpers/cloudinaryTransformation');
 const { isArray, drop } = require("underscore");
 
 router.get('/', async (req, res, next) => {
@@ -104,7 +105,10 @@ router.get('/', async (req, res, next) => {
         let thumbnail = '/image/no-image-180x180.png'
         if (val.prod_images != null) {
           let thumbArr = val.prod_images.split(',');
-          thumbnail = req.app.locals.cloudinary.url(thumbArr[0],{width: 220, height: 220, crop: 'thumb'});
+          thumbnail = req.app.locals.cloudinary.url(thumbArr[0], {
+            width: 220, height: 220, crop: 'thumb',
+            ...cloudinaryTransformation.watermark,
+          });
         }
 
         const datum = Object.assign({}, val, { thumbnail: thumbnail })
@@ -145,7 +149,10 @@ router.get('/:id/:slug', async (req, res) => {
   if (imageArr.length > 0) {
       for (let img of imageArr) {
         //obj.data.product.thumbnails.push(req.app.locals.cloudinary.url(img, {width: 100, height: 100, crop: 'thumb'}));
-        images.push(req.app.locals.cloudinary.url(img, {width: 475}))
+        images.push(req.app.locals.cloudinary.url(img, {
+          width: 475,
+          ...cloudinaryTransformation.watermark,
+        }))
       }
   }
 

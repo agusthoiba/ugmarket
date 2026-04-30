@@ -14,12 +14,13 @@
     <% } %>
 
     <div class="mb-3">
-      <label for="name" class="form-label">Nama Barang</label>
+      <label for="name" class="form-label">Nama Barang <span class="text-danger">*</span></label>
       <input type="text" class="form-control" id="name" name="name" value="<%= data.item.name %>" required>
+      <div class="invalid-feedback" id="name-validation"></div>
     </div>
 
     <div class="mb-3">
-      <label for="category" class="form-label">Kategori</label>
+      <label for="category" class="form-label">Kategori <span class="text-danger">*</span></label>
       <select class="form-control" id="category" name="category" required>
         <option value="">-- Pilih Kategori --</option>
         <% for(var i in data.categories) { %>
@@ -37,10 +38,11 @@
           <% } %>
         <% } %>
       </select>
+      <div class="invalid-feedback" id="category-validation"></div>
     </div>
 
     <div class="mb-3">
-      <label for="band"  class="form-label">Band / Artis</label>
+      <label for="band"  class="form-label">Band / Artis <span class="text-danger">*</span></label>
       <select class="form-control" id="band" name="band" required>
         <option value="">-- Pilih Band --</option>
         <% for(var band_row of data.bands) { %>
@@ -49,11 +51,12 @@
         </option>
         <% } %>
       </select>
+      <div class="invalid-feedback" id="band-validation"></div>
     </div>
 
     <div class="mb-3">
       <label for="band"  class="form-label">Collections</label>
-      <select class="form-control" id="collections" name="collection_id" required>
+      <select class="form-control" id="collections" name="collection_id">
         <option value="0">-- Pilih Collections --</option>
         <% for(var row of data.collections) { %>
         <option value="<%= row.col_id %>" <%= data.item.collection_id == row.col_id ? 'selected' : '' %> >
@@ -68,15 +71,16 @@
       <textarea class="form-control" rows="3" id="description" name="description"><%= data.item.desc %></textarea>
     </div>
 
-    <label for="name"  class="form-label">Harga Satuan</label>
+    <label for="name"  class="form-label">Harga Satuan <span class="text-danger">*</span></label>
     <div class="input-group mb-3">
       <span class="input-group-text">Rp.</span>
       <input type="number" class="form-control" name="price" id="price"  aria-label="Amount (to the nearest price)" value="<%= data.item.price %>">
       <!--span class="input-group-text">.00</span -->
+      <div class="invalid-feedback" id="price-validation"></div>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Upload Gambar Produk</label>
+      <label class="form-label">Upload Gambar Produk <span class="text-danger">*</span></label>
       <div class="prod-img-grid" id="prod-img-grid">
         <% data.item.thumbnails.forEach(function(thumb, i) { %>
         <div class="prod-img-slot" data-path="<%= data.item.images[i] %>">
@@ -90,6 +94,7 @@
       </div>
       <input type="file" id="prod-img-file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" style="display:none" onchange="handleProdImgUpload(this)">
       <input type="hidden" name="prod_images_path" id="prod_images_path" value="<%= data.item.images.join(',') %>">
+      <div class="invalid-feedback" id="prod-img-validation"></div>
     </div>
 
   <div class="mb-3">
@@ -102,7 +107,15 @@
       <input type="text" class="form-control" name="marketplace_tokopedia" id="marketplaces-tokopedia" placeholder="tokopedia link" value="<%= data.item.marketplace_tokopedia %>">
       <div class="invalid-feedback" id="marketplaces-tokopedia-validation"></div>
     </div>
-    
+
+    <div class="mb-3">
+      <label for="marketplaces-shopee" class="form-label">
+        <img width="auto" height="25" src="/marketplace/shopee.png">
+      </label>
+      <input type="text" class="form-control" name="marketplace_shopee" id="marketplaces-shopee" placeholder="shopee link" value="<%= data.item.marketplace_shopee %>">
+      <div class="invalid-feedback" id="marketplaces-shopee-validation"></div>
+    </div>
+
   </div>
 
   <div class="mb-3">

@@ -305,14 +305,11 @@ document.addEventListener("DOMContentLoaded", function () {
         bandGrid.style.display = "block";
         bandGrid.classList.add("alpha-view");
         alphaNav.style.display = "flex";
-        if (sortFilter) sortFilter.closest("select") && (sortFilter.parentNode.style.display = "none");
-        if (sortFilter) sortFilter.style.display = "none";
         renderListView();
       } else {
         bandGrid.classList.remove("alpha-view");
         bandGrid.style.display = "";
         alphaNav.style.display = "none";
-        if (sortFilter) sortFilter.style.display = "";
         state.rendered = 0;
         bandGrid.innerHTML = "";
         renderNextBatch();

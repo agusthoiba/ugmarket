@@ -74,8 +74,8 @@ class Product {
 
       prod_total_sold: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
 
-      prod_marketplace_tokopedia_path: { type: Sequelize.TEXT},
-      prod_marketplace_bukalapak_path: { type: Sequelize.TEXT},
+      prod_marketplace_tokopedia_path: { type: Sequelize.TEXT, defaultValue: null },
+      prod_marketplace_shoope_path: { type: Sequelize.TEXT, defaultValue: null },
 
       prod_created_at: { type: Sequelize.DATE },
       prod_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },

@@ -81,7 +81,8 @@ router.get('/edit/:id', async (req, res, next) => {
       weight: product.prod_weight,
       desc: product.prod_desc,
       marketplace_tokopedia: product.prod_marketplace_tokopedia_path == null ? '' : `https://www.tokopedia.com${product.prod_marketplace_tokopedia_path}`,
-      marketplace_bukalapak: product.prod_marketplace_bukalapak_path == null ? '' : `https://www.bukalapak.com${product.prod_marketplace_bukalapak_path}`,
+      marketplace_shoope: product.prod_marketplace_shoope_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shoope_path}`,
+      marketplace_shopee: product.prod_marketplace_shopee_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shopee_path}`,
       is_visible: product.prod_is_visible == 1,
       sizes: req.app.locals.strToArr(product.prod_sizes, ','),
       condition: product.prod_condition,
@@ -279,9 +280,17 @@ async function cleanPost(body, findBand, tipe = 'create') {
     payload.prod_marketplace_tokopedia_path = uriTokped.path();
   }
 
-  if (body.marketplace_bukalapak) {
-    const uriBukalapak = new URI((body.marketplace_bukalapak).trim());
-    payload.prod_marketplace_bukalapak_path = uriBukalapak.path();
+  if (body.marketplace_shoope) {
+    const uriShoope = new URI((body.marketplace_shoope).trim());
+    payload.prod_marketplace_shoope_path = uriShoope.path();
+  }
+
+  if (body.marketplace_shopee) {
+    const uriShopee = new URI((body.marketplace_shopee).trim());
+    if (!['shopee.co.id'].includes(uriShopee.hostname())) {
+      throw new Error('Invalid shopee URL');
+    }
+    payload.prod_marketplace_shopee_path = uriShopee.path();
   }
 
   if (body.prod_images_path) {

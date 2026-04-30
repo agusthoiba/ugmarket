@@ -362,11 +362,10 @@ body {
   transform: translateY(-2px);
 }
 
-.product-card a {
+.product-card-link {
   text-decoration: none;
   color: inherit;
   display: block;
-  height: 100%;
 }
 
 .product-image {
