@@ -1,17 +1,13 @@
-
 var router = express.Router()
 
-var Product = require('../../../models/product')
-var Category = require('../../../models/category')
-var Band = require('../../../models/band')
-// var User = require(config.base_dir + '/models/user');
+const URI = require("urijs");
 
-var fs = require('fs.extra');
-var crypto = require('crypto');
-const promisify = require('util').promisify
-const copyFile = promisify(fs.copyFile)
+var Band = require('../../../models/band')
+
 const moment = require('moment')
-const upload = require('../../../helpers/upload')
+const pagination = require('../../../helpers/pagination');
+const { SIZES } = require('../../../constant');
+const { collect } = require("underscore");
 
 router.get('/', async (req, res, next) => {
   var userId = parseInt(req.session.user.id)
@@ -24,24 +20,33 @@ router.get('/', async (req, res, next) => {
   }
 
   var query = { prod_user_id: userId, prod_is_deleted: 0 }
-  // var options = { sort: { prod_created_at: 'desc' } };
+  const pageLimit = 20;
+	let option = {
+		limit: pageLimit,
+		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+	};
 
-  const doc = await res.locals.productModel.find(query, {});
+  const prodCount = await res.locals.productModel.count(query);
+  const doc = await res.locals.productModel.find(query, option);
+  const basePath = '/account/product';
   
   if (doc.length > 0) {
-      obj.data.products = doc.map(val => {
+    obj.data.products = doc.map(val => {
         val.is_visible = val.prod_is_visible == 1
-        const pathThumb = `${config.file_host}/product/thumbnail`
-        val.thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-        if (val.prod_thumbnails.includes(',')) {
-          let thumbArr = val.prod_thumbnails.split(',')
-          val.thumbnail = `${pathThumb}/${thumbArr[0]}`
-        }
-        return val
-      })
-    }
+        const imgs = val.prod_images.split(',');
+        val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {width: 100, height: 100, crop: "thumb"});
 
-  // return res.json(obj)
+        return val
+    });
+  }
+
+  const paginate = pagination(pageLimit, option.page, prodCount, basePath);
+  Object.assign(obj, paginate);
+
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
+
   return res.render('front/account/product_list', obj)
 })
 
@@ -50,13 +55,16 @@ router.get('/edit/:id', async (req, res, next) => {
   const prodId = parseInt(req.params.id)
 
   var obj = {
-    error: null, data: {
+    error: null, 
+    data: {
       item: {},
       categories: [],
       bands: [],
+      collections: [],
+      sizes: SIZES
     },
     action: `/account/product/update/${prodId}`,
-    js: ['account_product']
+    js: ['account_product', 'product_image_dropzone']
   };
 
   try {
@@ -72,13 +80,11 @@ router.get('/edit/:id', async (req, res, next) => {
       price: product.prod_price,
       weight: product.prod_weight,
       desc: product.prod_desc,
-      marketplaces: {
-        tokopedia: '',
-        bukalapak: '',
-        shopee: ''
-      },
+      marketplace_tokopedia: product.prod_marketplace_tokopedia_path == null ? '' : `https://www.tokopedia.com${product.prod_marketplace_tokopedia_path}`,
+      marketplace_shoope: product.prod_marketplace_shoope_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shoope_path}`,
+      marketplace_shopee: product.prod_marketplace_shopee_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shopee_path}`,
       is_visible: product.prod_is_visible == 1,
-      sizes: req.app.locals.strToArr(product.prod_sizes_available, ','),
+      sizes: req.app.locals.strToArr(product.prod_sizes, ','),
       condition: product.prod_condition,
       stock: product.prod_stock,
       created_at: product.prod_created_at
@@ -92,28 +98,33 @@ router.get('/edit/:id', async (req, res, next) => {
       }
     }
 
-    const thumbs = req.app.locals.strToArr(product.prod_thumbnails, ',')
+    if (product.prod_images && product.prod_images != null) {
+      const thumbs = req.app.locals.strToArr(product.prod_images, ',')
 
-    obj.data.item.thumbnails = thumbs.map(val => {
-      return `${config.file_host}/product/thumbnail/${val}`
-    })
+      obj.data.item.images = thumbs;
+      obj.data.item.thumbnails = thumbs.map(val => {
+        return req.app.locals.cloudinary.url(val, {width: 100, height: 100, crop: "thumb"});
+      });
+    }
 
-    obj.data.categories = await res.locals.categoryModel.find()
-    obj.data.bands = await res.locals.bandModel.find({}, {
-      order: [['band_name', 'ASC']],
-      page: 1,
-      limit: 20
-    })
+    obj.data.categories = await res.locals.categoryModel.find();
+    obj.data.bands = await res.locals.bandModel.findAll();
+    obj.data.collections = await res.locals.collectionModel.find({ col_is_visible: 1 });
 
-    //return res.json(obj)
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+
+    return res.render('front/account/product_form', obj);
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product';
-    return res.json(obj);
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+    return res.render('front/account/product_form', obj);
   }
 
-  //return res.json(obj)
-  return res.render('front/account/product_form', obj);
 })
 
 router.post('/update/:id', async function (req, res, next) {
@@ -126,15 +137,14 @@ router.post('/update/:id', async function (req, res, next) {
   var obj = { error: null, data: null };
 
   try {
-    const payload = await cleanPost(req.body, 'update')
-    const docUpd = await res.locals.productModel.update(query, payload)
+    const payload = await cleanPost(req.body, res, 'update');
 
+    await res.locals.productModel.update(query, payload);
     return res.redirect('/account/product');
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while update your product';
-    res.json(obj);
-    return res.render('/error', obj);
+    return res.render('front/account/product_form', obj);
   }
 })
 
@@ -143,27 +153,60 @@ router.get('/add', async (req, res, next) => {
     error: null,
     data: {},
     action: '/account/product/create',
-    js: ['account_product']
+    js: ['account_product', 'product_image_dropzone']
   };
 
   obj.data = {
     categories: await res.locals.categoryModel.find(),
-    bands:  await res.locals.bandModel.find(),
+    bands:  await res.locals.bandModel.findAll({ band_enabled: 1}),
+    collections: await res.locals.collectionModel.find({ col_is_visible: 1 }),
+    sizes: SIZES,
     item: itemData()
   }
   
-  // return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
   return res.render('front/account/product_form', obj);
 })
 
-router.post('/create', async (req, res, next) => {
-  var obj = { error: null, data: null };
+router.post('/create', async (req, res) => {
+  var obj = { 
+    error: null, 
+    data: null,
+    action: '/account/product/create',
+    js: ['account_product', 'product_image_dropzone']
+  };
 
   req.body.user_id = req.session.user.id;
 
-  const payload = await cleanPost(req.body)
-  await res.locals.productModel.create(payload)
-  return res.redirect('/account/product');
+  try {
+    const findBand = await res.locals.bandModel.findOne({
+      band_id: req.body.band
+    });
+
+    const payload = await cleanPost(req.body, findBand);
+
+    await res.locals.productModel.create(payload)
+
+    await res.locals.bandModel.update({ band_id: payload.prod_band_id }, {
+      band_total_product: findBand.band_total_product + 1
+    });
+
+    return res.redirect('/account/product');
+  } catch (err) {
+    console.error(err)
+    obj.data = {
+      categories: await res.locals.categoryModel.find(),
+      bands:  await res.locals.bandModel.findAll(),
+      sizes: SIZES,
+      item: itemData()
+    }
+    obj.error = 'An Error occured while create your product';
+    return res.render('front/account/product_form', obj)
+  }  
+
+  
 })
 
 module.exports = router;
@@ -181,6 +224,7 @@ function itemData() {
     images: [],
     thumbnails: [],
     band: '',
+    collection_id: '',
     marketplaces: {
       tokopedia: '',
       bukalapak: '',
@@ -205,10 +249,12 @@ function itemData() {
     return errVal;
 }*/
 
-async function cleanPost(body, tipe = 'create') {
+async function cleanPost(body, findBand, tipe = 'create') {
+  const prodSlug = slug(`${findBand.band_slug}-${body.name.trim().toLowerCase()}`)
+
   var payload = {
     prod_name: body.name.trim(),
-    prod_slug: slug(body.name.trim().toLowerCase()),
+    prod_slug: prodSlug,
     prod_cat_id: body.category,
     prod_desc: body.description.trim(),
     prod_price: parseInt(body.price),
@@ -216,9 +262,10 @@ async function cleanPost(body, tipe = 'create') {
     prod_condition: body.condition,
     prod_stock: parseInt(body.stock),
     prod_band_id: body.band,
+    prod_col_id: body.collection_id ? parseInt(body.collection_id) : 0,
 
     prod_is_visible: body.is_visible == 'publish' ? 1 : 0,
-    prod_sizes_available: ''
+    prod_sizes: body.sizes ? body.sizes.join() : ''
   }
 
   if (tipe == 'create') {
@@ -228,174 +275,30 @@ async function cleanPost(body, tipe = 'create') {
     })
   }
 
-  if (body.image_ori) {
-    if (typeof body.image_ori == 'string') {
-      body.image_ori = [body.image_ori];
-      body.image_thumbnail = [body.image_thumbnail];
+  if (body.marketplace_tokopedia) {
+    const uriTokped = new URI((body.marketplace_tokopedia).trim());
+    payload.prod_marketplace_tokopedia_path = uriTokped.path();
+  }
+
+  if (body.marketplace_shoope) {
+    const uriShoope = new URI((body.marketplace_shoope).trim());
+    payload.prod_marketplace_shoope_path = uriShoope.path();
+  }
+
+  if (body.marketplace_shopee) {
+    const uriShopee = new URI((body.marketplace_shopee).trim());
+    if (!['shopee.co.id'].includes(uriShopee.hostname())) {
+      throw new Error('Invalid shopee URL');
     }
-
-    var current_date = (new Date()).valueOf().toString();
-    var random = Math.random().toString();
-    var randomName = crypto.createHash('sha1').update(current_date + random).digest('hex');
-    var fileName = payload.prod_slug + '-' + randomName;
-
-    try {
-      const oris = await processMultipleUpload('product/original/', body.image_ori, fileName)
-      payload.prod_images = oris.join(',')
-
-      const thumbs = await processMultipleUpload('product/thumbnail/', body.image_thumbnail, fileName)
-      payload.prod_thumbnails = thumbs.join(',')
-
-      return new Promise((resolve, reject) => {
-        return resolve(payload)
-      })
-    } catch (err) {
-      return new Promise((resolve, reject) => {
-        return reject(err)
-      })
-    }
+    payload.prod_marketplace_shopee_path = uriShopee.path();
   }
 
-  payload.prod_marketplaces = []
-  if (body.mp_tokopedia) {
-      payload.prod_marketplaces.push({name: "tokopedia", url: body.mp_tokopedia});
+  if (body.prod_images_path) {
+    payload.prod_images = body.prod_images_path;
+    return payload;
   }
 
-  if (body.mp_bukalapak) {
-      payload.prod_marketplaces.push({name: "bukalapak", url: body.mp_bukalapak});
-  }
-
-  if (body.mp_shopee) {
-      payload.prod_marketplaces.push({name: 'shopee', url: body.mp_shopee});
-  }
-
-  return new Promise((resolve, reject) => {
-    return resolve(payload)
-  })
-
-  /*async.parallel({
-      img: function(cbPar) {
-          async.forEachOf(body.image_ori, function(val, k, cb) {
-              var filePathName = 'product/original/' + fileName;
-              upload.createImageBase64(val, 'product/original/' + fileName, function(err, img) {
-                  if(err) return cb(err);
-
-                  payload.image.push(img.url);
-                  copyResize(img.path, fileName+'.'+img.ext).then(function(doc){
-                      cb();
-                  }, function(err) {
-                      return cb(err);
-                  })
-              })
-          }, function(err) {
-              if (err) return cbPar(err)
-
-              return cbPar(null, payload);
-          })
-      },
-      thumb: function(cbPar){
-          async.forEachOf(body.image_thumbnail, function(val, k, cb) {
-              upload.createImageBase64(val, 'product/thumbnail/' + fileName, function(err, img) {
-                  if(err) return cb(err);
-
-                  payload.thumbnail.push(img.url);
-                  cb();
-              })
-          }, function(err) {
-              if (err) return cbPar(err)
-
-              return cbPar(null, payload);
-          })
-      }
-  }, function(err, results) {
-      if (err) return fn(err)
-      return fn(null, payload);
-  })*/
-}
-
-async function uploadImageBase(path, val, fileName) {
-  let imgUrls = []
-  const filePathName = path + fileName;
-  let img
-
-  try {
-    img = await upload.createImageBase64(val, filePathName)
-  } catch (err) {
-    return new Promise((resolve, reject) => {
-      return reject(err)
-    })
-  }
-
-  try {
-    if (path == 'product/original/') {
-      const resize = await copyResize(img.path, fileName + '.' + img.ext)
-    }
-  } catch (err) {
-    return new Promise((resolve, reject) => {
-      return reject(err)
-    })
-  }
-
-  return fileName + '.' + img.ext
-}
-
-async function processMultipleUpload(path, images, filename) {
-  let imgs = []
-  try {
-    for (let image of images) {
-      const img = await uploadImageBase(path, image, filename)
-      imgs.push(img)
-    }
-    return new Promise((resolve, reject) => {
-      return resolve(imgs)
-    })
-  } catch (err) {
-    return new Promise((resolve, reject) => {
-      return reject(err)
-    })
-  }
-}
-
-/*async function copyResize(src, name) {
-    var destLarge = config.file_dir + 'product/large/'+ name;
-        
-    let fileLarge
-    let fileMedium
-
-    try {
-        await copyFile(src, destLarge)
-    } catch (err) {
-        return err
-    }
-
-    try {
-        fileLarge = await upload.resize(destLarge, 500, 1000)
-    } catch (err) {
-        return err
-    }
-    
-    return fileLarge
-}*/
-
-
-async function copyResize(src, name) {
-  try {
-    const destLarge = config.file_dir + 'product/large/' + name
-    await copyFile(src, destLarge, { replace: false })
-    const imgLarge = await upload.resize(src, destLarge, 500, 1000)
-
-    // const destMedium = config.file_dir + 'product/medium/'+ name
-    // await copyFile(src, destMedium, {replace: false})
-
-    // const imgMedium = await upload.resize(destMedium, 300, 600)
-    return { l: imgLarge }
-    //m: imgMedium
-  } catch (err) {
-    return new Promise((resolve, reject) => {
-      return reject(err)
-    })
-  }
-
+  return payload;
 }
 
 function getCategory(categoryModel) {

@@ -1,12 +1,12 @@
 
 const Sequelize = require('sequelize');
+const { QueryTypes } = require('@sequelize/core');
 const categoryModel = require('./category')
 const bandModel = require('./band')
 
 class Product {
   constructor (args) {
     Object.assign(this, args);
-
 
     this.tableName = 'product';
     this.schema = this.db.define('product', {
@@ -44,12 +44,23 @@ class Product {
           model: this.band.schema,
      
           // This is the column name of the referenced model
-          key: 'cat_id'
+          key: 'band_id'
+        }
+      },
+      prod_col_id: { 
+        type: Sequelize.INTEGER(11).UNSIGNED, 
+        defaultValue: 0,
+        references: {
+          // This is a reference to another model
+          model: this.collections.schema,
+     
+          // This is the column name of the referenced model
+          key: 'col_id'
         }
       },
       prod_images: { type: Sequelize.TEXT },
       prod_thumbnails: { type: Sequelize.TEXT },
-      prod_sizes_available: { type: Sequelize.STRING },
+      prod_sizes: { type: Sequelize.TEXT },
       prod_price: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       prod_weight: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
       prod_desc: { type: Sequelize.TEXT, allowNull: false },
@@ -61,7 +72,10 @@ class Product {
       prod_condition: { type: Sequelize.ENUM('b', 's', ''), defaultValue: '' },
       prod_stock: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
 
-      prod_marketplaces:  { type: Sequelize.JSON },
+      prod_total_sold: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
+
+      prod_marketplace_tokopedia_path: { type: Sequelize.TEXT, defaultValue: null },
+      prod_marketplace_shoope_path: { type: Sequelize.TEXT, defaultValue: null },
 
       prod_created_at: { type: Sequelize.DATE },
       prod_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW },
@@ -76,6 +90,16 @@ class Product {
     this.schema.belongsTo(this.user.schema, { foreignKey: 'prod_user_id', targetKey: 'user_id', as: 'user' })
     this.schema.belongsTo(this.category.schema, { foreignKey: 'prod_cat_id', targetKey: 'cat_id', as: 'category' })
     this.schema.belongsTo(this.band.schema, { foreignKey: 'prod_band_id', targetKey: 'band_id', as: 'band' })
+    this.schema.belongsTo(this.collections.schema, { foreignKey: 'prod_col_id', targetKey: 'col_id', as: 'collection' })
+  }
+
+  async count(query) {
+    let obj = {
+      where: query
+    }
+    const countProd =  await this.schema.count(obj);
+
+    return countProd;
   }
 
   async find (query, options) {
@@ -86,22 +110,30 @@ class Product {
         {
           model: this.category.schema,
           as: 'category'
+         
         },
         {
           model: this.band.schema,
-          as: 'band'
+          as: 'band',
+          required: true
+        },
+        {
+          model: this.collections.schema,
+          as: 'collection'
         }
-      ]
+      ],
+      limit: 20,
+      offset: 0
     }
 
-    if (options !== undefined && options && _.isEmpty(options)) {
-      if (options.sort !== undefined && options.sort) {
+    if (!_.isEmpty(options)) {
+      if (options.sort) {
         obj.order = options.sort
       }
-      if (options.limit !== undefined && options.limit && !isNaN(options.limit) && options.limit > 0) {
+      if (options.limit && !isNaN(options.limit) && options.limit > 0) {
         obj.limit = options.limit
-        if (options.page !== undefined && options.page && !isNaN(options.page) && options.page > 0) {
-          obj.offset = options.page - 1 * options.limit
+        if (options.page && !isNaN(options.page) && options.page > 0) {
+          obj.offset = (options.page - 1) * options.limit
         }
       }
     }
@@ -162,6 +194,69 @@ class Product {
       throw new Error(e)
     }
     return updateObj
+  }
+
+  /**
+   * Count 
+   * Be carefull in innodb storage engine count query dangerous!
+   * @param {object} filter filter
+   */
+  async count (filter) {
+    try {
+      const productAmount = await this.schema.count({
+        where: filter,
+        include: [
+          {
+            model: this.band.schema,
+            as: 'band',
+            required: true
+          },
+          {
+            model: this.collections.schema,
+            as: 'collection'
+          }
+        ]
+      });
+      return productAmount;
+    } catch (e) {
+      throw new Error(e)
+    };
+  }
+
+  async findRaw(query = null, sort = null, offset = 0, limit = 20) {
+    let queryStr = "SELECT * FROM `product` INNER JOIN `band` AS `band` ON `product`.`prod_band_id` = `band`.`band_id`";
+    let option = {
+      replacements: [],
+      type: QueryTypes.SELECT,
+    };
+
+    if (query != null) {
+      queryStr += " WHERE "
+
+      let i = 0;
+      console.log('le --', Object.entries(query).length)
+      for (const [key, value] of Object.entries(query)) {
+        queryStr += ` ${key} = ? `
+        option.replacements.push(value);
+        i++;
+        if (i < (Object.entries(query)).length) {
+          queryStr += ' AND ';
+        }
+      }
+    }
+
+    if (sort != null) {
+      queryStr += ' ORDER BY ' 
+      for (const [key, value] of Object.entries(sort)) {
+        queryStr += ` ${key} ${value} `
+      }
+    }
+    
+    queryStr += ` LIMIT ${limit} `;
+
+    console.log('queryStr', queryStr)
+
+    return await this.db.query(queryStr, option);
   }
 }
 

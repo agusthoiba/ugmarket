@@ -1,40 +1,61 @@
-function pagination(data, limit, page){
-    limit = parseInt(limit)
-    page = parseInt(page)
+function pagination(limit, page, total, basePath, maxPages = 15) {
+    limit = parseInt(limit);
+    page = parseInt(page);
 
-    var totalPage = Math.ceil(data.length / limit);
-    var idx = page - 1;
-    var startIndex = idx  * limit;
-    var endIndex = 0;
-    if (data.length < limit) {
-        endIndex = data.length;
+    const totalPage = Math.ceil(total / limit);
+
+    let startPage, endPage;
+    if (totalPage <= maxPages) {
+        // less than maxPages total pages so show all
+        startPage = 1;
+        endPage = totalPage;
     } else {
-        endIndex = startIndex + limit;
-        if (data.length < endIndex) {
-            endIndex = data.length;
+        // more than maxPages, calculate start and end
+        const half = Math.floor(maxPages / 2);
+        if (page <= half) {
+            startPage = 1;
+            endPage = maxPages;
+        } else if (page + half >= totalPage) {
+            startPage = totalPage - maxPages + 1;
+            endPage = totalPage;
+        } else {
+            startPage = page - half;
+            endPage = page + half;
+            if (maxPages % 2 === 0) endPage -= 1; // adjust for even maxPages
         }
     }
 
-    var result = [];
-    for(var i = startIndex; i < endIndex; i++){
-        result.push(data[i]);
+    const list = [];
+    for (let i = startPage; i <= endPage; i++) {
+        list.push({
+            link: `${basePath}?page=${i}`,
+            no: i,
+            active: page === i
+        });
     }
 
+    const paginationObj = {
+        limit: limit,
+        page: page,
+        total_page: totalPage,
+        total: total,
+        list: list
+    };
 
-    var res = {
-        data: result,
-        pagination: {
-            limit: limit,
-            page: page,
-            total_page: totalPage
-        }
+    if (page < totalPage) {
+        paginationObj.next_page = page + 1;
+    }
+    if (page > 1) {
+        paginationObj.prev_page = page - 1;
+    }
+    if (startPage > 1) {
+        paginationObj.first_page = 1;
+    }
+    if (endPage < totalPage) {
+        paginationObj.last_page = totalPage;
     }
 
-    if (totalPage > page) {
-        res.pagination = Object.assign(res.pagination, {next_page: page + 1})
-    }
-    
-    return res;
+    return { pagination: paginationObj };
 }
 
 module.exports = pagination;

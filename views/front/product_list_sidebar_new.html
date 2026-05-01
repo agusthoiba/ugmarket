@@ -1,0 +1,202 @@
+<div id="mobile-filter-overlay" class="mobile-filter-overlay">
+    <div class="mobile-filter-sheet">
+        <div class="mobile-filter-header-sheet">
+            <h2>Filter</h2>
+            <button id="close-filter-btn" class="close-filter-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mobile-filter-content">
+            <!-- Sort Section -->
+            <!--div class="mobile-filter-section">
+                <h3 class="mobile-filter-title">Urutkan</h3>
+                <div class="mobile-filter-options">
+
+                    <% for (const key in data.sort) { %>
+                        <label class="mobile-filter-option">
+                            <input type="radio" name="sort" id="sort-input" value="<%= data.sort[key].slug %>" <%= data.uri.query?.sort == data.sort[key].slug ? 'checked': ''%>>
+                            <span class="radio-mark"></span>
+                            <%= data.sort[key].label %>
+                        </label>
+                    <% } %>
+
+                </div>
+            </div-->
+
+            <!-- Category Filter -->
+            <div class="mobile-filter-section">
+                <button class="mobile-accordion-trigger" data-target="kategori-mobile">
+                    <span>Kategori</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                 
+                <div id="kategori-mobile" class="mobile-accordion-content">                        
+                    <div class="mobile-filter-options mb-3" style="gap:5px">
+                        <% data.categories.forEach(cat => { %>
+                            <% catParentIdChecked = 0 %>
+                            <% if (data.uri.query.kategori === cat.cat_slug) { %>
+                                <% catParentIdChecked = cat.cat_id %>
+                            <% } %>
+                            <div class="form-check" style="padding-left: 0">
+                                <input class="form-check-label" type="checkbox" id="cat-parent-<%= cat.cat_id %>" name="kategori" value="<%= cat.cat_slug %>"
+                                     <%= data.uri.query.kategori === cat.cat_slug ? 'checked' : '' %>   >
+                                <label for="kategori" class="form-label"><%= cat.cat_name %></label>
+                            </div>
+                            <div class="group-wrapper-body">
+                                <% for(catChild of cat.childs) { %>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" 
+                                            name="categories" data-parentslug="<%= cat.cat_slug %>" value="<%= catChild.cat_slug %>" 
+                                            id="cat-<%= catChild.cat_id %>"  
+                                            <% if (data.uri.query.categories) { %>
+                                                <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> 
+                                            <% } else if (data.uri.query.kategori) { %>
+                                                <%= data.uri.query.kategori.includes(catChild.cat_slug) ? 'checked' : '' %> 
+                                            <% } else { %>
+                                                <%= catParentIdChecked == catChild.cat_parent_id ? 'checked' : '' %>
+                                            <% } %>
+                                            >
+                                        <label class="form-check-label" for="flexCheckChecked">
+                                            <%= catChild.cat_name %>
+                                        </label>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <!-- old -->
+                <!--div class="mobile-accordion-content group-wrapper">
+                    <% for(cat of data.categories) { %>
+                        <div class="group-wrapper-header">
+                            <%= cat.cat_name %> 
+                            <i class="fas fa-angle-down"></i>
+                        </div>
+                        <div class="group-wrapper-body">
+                            <% for(catChild of cat.childs) { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                        name="categories" value="<%= catChild.cat_slug %>" 
+                                        id="cat-<%= catChild.cat_id %>" <%= data.uri.query.categories?.includes(catChild.cat_slug) ? 'checked' : '' %> >
+                                    <label class="form-check-label" for="flexCheckChecked">
+                                        <%= catChild.cat_name %>
+                                    </label>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% } %>
+                </div-->
+            </div>
+
+            <!-- Size Filter -->
+             <!-- On Hold / Need change structure data -->
+            <!--div class="mobile-filter-section">
+                <button class="mobile-accordion-trigger" data-target="size-mobile">
+                    <span>Ukuran</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <div id="size-mobile" class="mobile-accordion-content">
+                    <div class="mobile-filter-options gap-2">
+ 
+                         <div class="mb-3">
+                            <label for="condition" class="form-label mobile-filter-option">Ukuran</label>
+                            <div class="mb-3">
+                            <% for (let size of data.sizes) { %>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="sizes" id="inlineCheckSize_<%= size %>" value="<%= size %>" <%= (data.uri.query.size || []).includes(size) ? 'checked' : '' %> >
+                                    <label class="form-check-label" for="inlineCheckSize_<%= size %>"><%= size.toUpperCase() %></label>
+                                </div>
+                            <% } %>
+                            </div>
+                        </div>    
+                        
+                    </div>
+                </div>
+            </div-->
+
+            <!-- Condition Filter -->
+            <div class="mobile-filter-section group condition">
+                <button class="mobile-accordion-trigger" data-target="condition-mobile">
+                    <span>Kondisi</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+
+                <div id="condition-mobile" class="mobile-accordion-content">
+                    <div class="mobile-filter-options">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                name="condition" value="b" id="flexCheckChecked"
+                                <%= data.uri.query.condition?.includes('b') ? 'checked' : '' %> 
+                                >
+                            <label class="form-check-label" for="flexCheckChecked">
+                                Baru
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                name="condition" value="s" id="flexCheckChecked"  
+                                <%= data.uri.query.condition?.includes('s') ? 'checked' : '' %> 
+                                >
+                            <label class="form-check-label" for="flexCheckChecked">
+                                Bekas
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Price Filter -->
+            <div class="mobile-filter-section" style="border-bottom: none;">
+                <button class="mobile-accordion-trigger" data-target="price-mobile">
+                    <span>Harga</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+
+                <div id="price-mobile" class="mobile-accordion-content">
+                    <label class="mobile-filter-option">
+                        <input type="text" placeholder="" class="form-control range-min" 
+                        data-type="min" min="0" name="price" id="mobile-price-min" 
+                        value="<%= data.uri.query.price_min %>" 
+                        style="margin-right: 8px;"
+                        onkeypress="return onlyNumberKey(event)" 
+                        oninput="validatePrice(this)"
+                        >
+                        <div class="invalid-feedback invalid-feedback-price" id="mobile-alert-price-min"></div>
+                        <span>-</span>
+                        <input type="text" placeholder="" class="form-control range-max"
+                         data-type="max" min="0" name="price" id="mobile-price-max" 
+                         onkeypress="return onlyNumberKey(event)" 
+                         oninput="validatePrice(this)"
+                         value="<%= data.uri.query.price_max %>" style="margin-left: 8px;">
+                        <div class="invalid-feedback invalid-feedback-price" id="mobile-alert-price-max"></div>
+                    </label>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="mobile-filter-footer">
+            <button id="clear-filters-btn" class="clear-filters-btn">Hapus Semua</button>
+            <button id="apply-filters-btn" class="apply-filters-btn">Terapkan</button>
+        </div>
+    </div>
+</div>

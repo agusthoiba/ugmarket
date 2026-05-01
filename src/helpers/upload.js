@@ -1,6 +1,5 @@
 var fs = require('fs');
 var config = require('../config');
-var sharp = require('sharp');
 const promisify = require('util').promisify
 const copyFile = promisify(fs.copyFile)
 
@@ -29,7 +28,8 @@ Upload.prototype.createImageBase64 = function(base64Str, fileName) {
 
         return fs.writeFile(filePath, new Buffer.from(base64Arr[1], "base64"), err => {
             if (err) {
-                return reject(err);
+              console.error('utils upload err', err)
+              return reject(err);
             }
 
             var fileUrl = config.file_host + fileName + '.' + ext;
@@ -38,20 +38,6 @@ Upload.prototype.createImageBase64 = function(base64Str, fileName) {
     });
 }
 
-Upload.prototype.resize = function(src, dest, maxWidth, maxHeight){
-    var imgArr = src.split('.');
-    var ext = imgArr[imgArr.length - 1];
-
-    return new Promise((resolve, reject) => {
-        sharp(src).resize(maxWidth)
-        .toFile(dest, (err, info) => {
-            if(err) return reject(err)
-
-            console.log('info upload large', JSON.stringify(info));
-            resolve(src)
-        });
-    });
-}
 
 
 Upload.prototype.uploadImageBase = async function (path, val, fileName) {

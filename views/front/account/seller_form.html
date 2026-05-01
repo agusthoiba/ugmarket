@@ -1,0 +1,75 @@
+<%- include ("dashboard_header.html") %>
+<div class="product-form">
+
+<h3> Lapak </h3>
+<p> </p>
+
+<form method="POST" action="/account/seller" id="uploadForm">
+  <% let alertClass = error ? 'd-block' : 'd-none' %>
+  
+  <div class="alert alert-danger <%= alertClass %>" role="alert" id="alert" >
+    <%= error %>
+  </div>
+  
+
+  <div class="mb-3">
+    <label for="name">Nama Toko <span class="text-danger">*</span> </label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= data.seller.name %>" placeholder="">
+
+    <div class="invalid-feedback"></div>
+  </div>
+
+  <div class="mb-3">
+    <label for="description">No HP/WhatsApp <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" id="hp" name="hp" value="<%= data.seller.phone %>">
+    <div class="invalid-feedback"> </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="name">Avatar (300x300) </label>
+    <ul class="image-upload list-inline">
+      <input id="upload_image_avatar" type="file" name="image_avatar" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, 'avatar')">
+      <li id="thumb_image_avatar" class="pickfile-container"  onclick="browseFile(event, 'avatar')" >
+        <% if (data.seller.avatar != 'undefined' ) { %>
+          <img class="preview" width="100" style="vertical-align: baseline;" src="<%=  data.seller.avatar %>">
+        <% } %>
+      </li>
+
+      <input type="hidden" id="image_ori_avatar" name="image_ori_avatar">
+    </ul>
+  </div>
+
+
+  <div class="mb-3">
+    <label for="name">Banner (1024x256) </label>
+    <ul class="image-upload list-inline">
+      <input id="upload_image_banner" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImageAdvance(this.files, 'banner',  '4:1', 1024, 256, 512)">
+      <li id="thumb_image_banner" class="pickfile-container" style="width: 512px; height: 128px;" onclick="browseFile(event, 'banner')" >
+        <% if (data.seller.banner != 'undefined' ) { %>
+          <img class="preview" width="512" style="vertical-align: baseline;" src="<%=  data.seller.banner %>">
+        <% } %>
+      </li>
+
+      <input type="hidden" id="image_ori_banner" name="image_ori_banner">
+    </ul>
+  </div>
+
+	<div class="mb-3">
+      <label for="description" class="form-label">Deskripsi </label>
+      <textarea class="form-control" rows="3" id="description" name="description"><%= data.seller.description %></textarea>
+      <div class="invalid-feedback"></div>
+  </div>
+
+    <div class="mb-3">
+      <%- include ("profile_address.html") %>
+    </div>
+
+  <div class="mb-3 btn-form-wrapper">
+    <button type="submit" class="btn btn-default">Submit</button>
+  </div>
+</form>
+
+
+</div>
+
+<%- include ("dashboard_footer.html") %>

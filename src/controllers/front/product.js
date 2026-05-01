@@ -1,38 +1,114 @@
 
 
 const router = express.Router()
+const URI = require("urijs");
+const { Op } = require("sequelize");
+
+
+const { PRODUCT_SORT } = require('../../constant');
+const cloudinaryTransformation = require('../../helpers/cloudinaryTransformation');
+const { isArray, drop } = require("underscore");
 
 router.get('/', async (req, res, next) => {
+  let pageLimit = 20;
+
   let obj = {
     error: null,
+    js: ['product_list_new'],
     data: {
+      breadcrumb: [
+        {link: '#', text: 'products'}
+      ],
+      pageTitle: 'Product',
+      pageBanner: '',
+      categories: req.app.locals.categories,
       products: [],
       pagination: {
-        limit: 20,
-        page: 1,
-        total_page: 10
-      }
+        limit: pageLimit,
+        page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+        total_page: 1,
+        total: 0,
+        list: []
+      },
+      uri: {
+        path: '',
+        params: '',
+        query: {}
+      },
+      sort: PRODUCT_SORT,
+      sizes: req.app.locals.sizes
     }
   }
 
-  var query = {
+  var url = new URI(req.originalUrl);
+
+  obj.data.uri.query = url.query();
+  const maxLinkPagination = 5 // maximal number of link pagination
+
+  if (req.query.band) {
+    obj.data.pageTitle = `${(req.query.band).trim().replace('-', ' ')} - Official Merchandise`
+    obj.data.pageBanner =  req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
+  }
+
+  let query = {
     prod_is_visible: 1
   }
 
-  var options = { sort: { created_at: 'desc' } }
+  // Price filter logic
+  if (req.query.price_min && parseInt(req.query.price_min) > 0 && (!req.query.price_max || parseInt(req.query.price_max) <= 0)) {
+    // Only price_min exists and > 0
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min)
+    };
+  } else if (req.query.price_max && parseInt(req.query.price_max) > 0 && (!req.query.price_min || parseInt(req.query.price_min) <= 0)) {
+    // Only price_max exists and > 0
+    query.prod_price = {
+      [Op.lte]: parseInt(req.query.price_max)
+    };
+  } else if (
+    req.query.price_min && parseInt(req.query.price_min) > 0 &&
+    req.query.price_max && parseInt(req.query.price_max) > 0
+  ) {
+    // Both price_min and price_max exist and > 0
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min),
+      [Op.lte]: parseInt(req.query.price_max)
+    };
+  }
 
-  let doc
+  _filtering(req, obj, query)
+
+  var options = { 
+    sort: [['prod_total_sold', 'DESC']],
+    page: obj.data.pagination.page,
+    limit: obj.data.pagination.limit
+  }
+
+  if (req.query.sort) {
+    options.sort = _sorting(req.query.sort);
+  }
+
   try {
-    doc = await res.locals.productModel.find(query, options)
+    const prodTotal = await res.locals.productModel.count(query);
 
-    if (doc.length > 0) {
+    obj.data.pagination.total = prodTotal;
+    obj.data.pagination = _pagination(obj.data.pagination, req, maxLinkPagination);
+
+    if (prodTotal > 0) {
+      const doc = await res.locals.productModel.find(query, options);
+
+      if (req.query.collection) {
+        obj.data.pageTitle = `${doc[0]["collection.col_name"]} - Collection`;
+      }
+
       obj.data.products = doc.map(val => {
-        const pathThumb = `${config.file_host}/product/thumbnail`
-        let thumbnail = `${pathThumb}/${val.prod_thumbnails}`
-
-        if (val.prod_thumbnails.includes(',')) {
-          let thumbArr = val.prod_thumbnails.split(',')
-          thumbnail = `${pathThumb}/${thumbArr[0]}`
+        let thumbnail = '/image/no-image-180x180.png'
+        if (val.prod_images != null) {
+          let thumbArr = val.prod_images.split(',');
+          thumbnail = req.app.locals.cloudinary.url(thumbArr[0], {
+            width: 220, height: 220, crop: 'thumb',
+            ...cloudinaryTransformation.watermark,
+          });
         }
 
         const datum = Object.assign({}, val, { thumbnail: thumbnail })
@@ -42,24 +118,109 @@ router.get('/', async (req, res, next) => {
         return datum
       })
     }
+
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+
+    //return res.render('front/product_list', obj)
+    return res.render('front/product_list_new', obj)
   } catch (err) {
     console.error(err)
     obj.error = 'An Error occured while load your product'
-  }
 
-  // return res.json(obj)
-  return res.render('front/product_list', obj)
+    if (req.query.json == '1') {
+      return res.json(obj);
+    }
+
+    //return res.render('front/product_list', obj)
+    return res.render('front/product_list_new', obj)
+  }
 })
 
-router.get('/:id/:slug', async (req, res, next) => {
-  // var userId = req.session.user.id
+router.get('/:id/:slug', async (req, res) => {
+  const prodId = parseInt(req.params.id); // prodId
+  const product = await res.locals.productModel.findOne({prod_id: prodId})
+
+  const imageArr = req.app.locals.strToArr(product.prod_images, ',');
+
+  let images = [];
+
+  if (imageArr.length > 0) {
+      for (let img of imageArr) {
+        //obj.data.product.thumbnails.push(req.app.locals.cloudinary.url(img, {width: 100, height: 100, crop: 'thumb'}));
+        images.push(req.app.locals.cloudinary.url(img, {
+          width: 475,
+          ...cloudinaryTransformation.watermark,
+        }))
+      }
+  }
+
+
+  const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+
+  // Map your existing fields into the template shape
+  const data = {
+    data: {
+      breadcrumb: [
+        { text: product['category.cat_name'], link: `/products?kategori=${product['category.cat_slug']}` },
+        { text: product.prod_name, link: '' }
+      ],
+      waHref: `https://wa.me/${product['user.user_hp']}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}` 
+    },
+    product: {
+      id: product.prod_id,
+      title: product.prod_name,
+      band: product['band.band_name'],
+      images: images,        
+      price: product.prod_price,
+      description: product.prod_desc,
+      inStock: product.prod_stock > 0,
+      shippingNote: '',
+      sizes: product.prod_sizes
+    },
+    sizes: [
+      { value:'xs', label:'XS' },
+      { value:'s',  label:'S'  },
+      { value:'m',  label:'M'  },
+      { value:'l',  label:'L'  },
+      { value:'xl', label:'XL' },
+      { value:'xxl', label:'XXL' },
+      { value:'3xl', label:'3XL' },
+      { value:'4xl', label:'4XL' },
+    ],
+    seller: { 
+      name: product['user.user_name'], 
+      slug: slug((product['user.user_name']).toLowerCase(), '-'),
+      avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
+      hp: product['user.user_hp']
+    },
+    marketplaces: [
+      { name:'Tokopedia', url: product.tokopediaUrl || 'https://tokopedia.com/', icon:'/img/marketplaces/tokopedia.svg' }
+    ]
+    // related: await getRelatedProducts(product.id)
+  }
+
+  if (req.query.json == '1') {
+    return res.json(data)
+  }
+
+  res.render('front/product_detail_new', data);
+});
+
+/*router.get('/:id/:slug', async (req, res, next) => {
   const prodId = parseInt(req.params.id)
 
   let obj = {
     error: null,
     data: {
+      breadcrumb: [
+        {link: '', text: ''},
+        {link: '', text: ''}
+      ],
       product: null,
-      user: null
+      user: null,
+      sizes: req.app.locals.sizes
     }
   }
 
@@ -67,34 +228,28 @@ router.get('/:id/:slug', async (req, res, next) => {
     const product = await res.locals.productModel.findOne({prod_id: prodId})
 
     if (product) {
+      obj.data.breadcrumb[0].link = `/products?kategori=${product['category.cat_slug']}`;
+      obj.data.breadcrumb[0].text = product['category.cat_name'];
+
+      obj.data.breadcrumb[1].text = product.prod_name;
+
       obj.data.product = Object.assign({}, product, {
         images: [],
         thumbnails: [],
-        sizes: req.app.locals.strToArr(product.prod_sizes_available, ',')
+        sizes: req.app.locals.strToArr(product.prod_sizes, ',')
       })
 
       obj.data.user = {
         name: product['user.user_name'],
-        avatar: product['user.user_avatar']
+        avatar: product['user.user_avatar'] != null ? req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 100, height: 100, crop: 'thumb'}) : '/image/logo-ugmarket.jpg'
       };
 
-      console.log('obj.data', obj.data)
-
-      const pathThumb = `${config.file_host}/product/thumbnail`
-      const pathLarge = `${config.file_host}/product/large`
-
-      const imageThumbs = req.app.locals.strToArr(product.prod_thumbnails)
-      const images = req.app.locals.strToArr(product.prod_images)
-
-      if (imageThumbs.length > 0) {
-        for (let i in imageThumbs) {
-          obj.data.product.thumbnails.push(`${pathThumb}/${imageThumbs[i]}`)
-        }
-      }
+      const images = req.app.locals.strToArr(product.prod_images, ',');
 
       if (images.length > 0) {
-        for (let j in images) {
-          obj.data.product.images.push(`${pathLarge}/${images[j]}`)
+        for (let img of images) {
+          obj.data.product.thumbnails.push(req.app.locals.cloudinary.url(img, {width: 100, height: 100, crop: 'thumb'}));
+          obj.data.product.images.push(req.app.locals.cloudinary.url(img, {width: 475}))
         }
       }
 
@@ -105,9 +260,245 @@ router.get('/:id/:slug', async (req, res, next) => {
     obj.error = 'An Error occured while load your product'
   }
 
-  //return res.json(obj)
+  if (req.query.json == '1') {
+    return res.json(obj);
+  }
 
   return res.render('front/product_detail', obj)
-})
+})*/
 
 module.exports = router
+
+function _filtering(req, obj, query) {
+  if (req.query.kategori) {
+    let catSlug = '';
+    if (isArray(req.query.kategori)) {
+      catSlug = (req.query.kategori)[0]
+    } else {
+      catSlug = (req.query.kategori).trim()
+    }
+    const findCat = req.app.locals.categoryList.find(cat => {
+      return cat.cat_slug == catSlug
+    });
+
+    obj.data.breadcrumb = [{
+      link: '#', text: findCat.cat_name
+    }]
+
+    obj.data.pageTitle = findCat.cat_name;
+
+    if (findCat != null) {
+      const catChild = req.app.locals.categoryList.filter(cat => {
+        return cat.cat_parent_id == findCat.cat_id
+      });
+
+      let catIds = [findCat.cat_id];
+
+      if (catChild != null) {
+        catIds = catIds.concat(_.pluck(catChild, 'cat_id'));
+      }
+
+      query = Object.assign(query, { 
+        prod_cat_id: {
+          [Op.in]: catIds
+        }
+      });
+    }
+  }
+
+  if (req.query['lokal-band'] && ['1', '0'].includes(req.query['lokal-band'])) {
+    query['$band.band_is_local$'] = req.query['lokal-band'] == '1'
+    obj.data.pageTitle = 'Local Band'
+  }
+
+  var url = new URI(req.originalUrl);
+  url.removeQuery("page");
+
+  obj.data.uri.query = url.search(true)
+
+  if (obj.data.uri.query.condition != undefined) {
+    obj.data.uri.query.condition = (obj.data.uri.query.condition).split(',')
+  }
+
+  if (obj.data.uri.query.categories != undefined) {
+    const catSlugParams = ((obj.data.uri.query.categories).trim()).split(',');
+
+    let catIds = [];
+    for(cat of req.app.locals.categoryList) {
+      if (catSlugParams.includes(cat.cat_slug)) {
+        catIds.push(cat.cat_id);
+      }
+    }
+    query.prod_cat_id = catIds;
+  }
+  
+  if (req.query.page) {
+    obj.data.pagination.baseUrl = url.toString();
+  }
+
+  if (req.query.search && req.query.search.length > 2) {
+    const regexStr = /[^a-zA-Z0-9 ]/g;
+    const searchInput = `%${((decodeURIComponent(req.query.search)).trim()).replace(regexStr, '')}%`;
+    console.log('searchInput: ', searchInput);
+
+    query[Op.or] = [
+      {
+        '$band.band_name$': {
+          [Op.like]: searchInput
+        },
+      },
+      {
+        prod_name: {
+          [Op.like]: searchInput
+        }
+      }
+    ];
+
+    obj.data.breadcrumb.push({ path: '', name: req.query.search});
+  }
+
+  if (req.query.condition) {
+    const conditionTr = (req.query.condition).trim();
+    const conditions = conditionTr.split('')
+    if (conditions.indexOf('b') > -1 || conditions.indexOf('s') > -1) {
+      query.prod_condition = {
+        [Op.or]: conditionTr.split(',')
+      }
+    }
+  }
+
+  let catChilds;
+  if (req.query.categories) {
+    let filterCategories = [];
+    const reqCategories = req.query.categories.split(',');
+    const filterCatParent = req.app.locals.categoryList.filter(cat => {
+      return cat.cat_parent_id === 0
+    })
+    const filterCatChild = req.app.locals.categoryList.filter(cat => {
+      return cat.cat_parent_id > 0
+    })
+
+
+    for (let i = 0; i < reqCategories.length; i++) {
+      if (!isNaN(parseInt(reqCategories[i]))) {
+        if ((_.pluck(filterCatParent, 'cat_id')).includes(parseInt(reqCategories[i]))) {
+          catChilds = req.app.locals.categoryList.filter(cat => {
+            return cat.cat_parent_id === parseInt(reqCategories[i])
+          })
+          const catChildIds = _.pluck(catChilds, 'cat_id')
+          filterCategories.push(catChildIds)
+        }
+        filterCategories.push(parseInt(reqCategories[i]));
+      }
+    }
+
+    if (filterCategories.length > 0) {
+      query.prod_cat_id = {
+        [Op.or]: filterCategories
+      }
+    }
+  }
+
+  if (req.query.price_min) {
+    query.prod_price = {
+      [Op.gte]: parseInt(req.query.price_min)
+    }
+
+    if (req.query.price_max) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.lte]: parseInt(req.query.price_max)
+      })
+    }
+  }
+
+
+  if (req.query.price_max) {
+    query.prod_price = {
+      [Op.lte]: parseInt(req.query.price_max)
+    }
+
+    if (req.query.price_min) {
+      query.prod_price = Object.assign(query.prod_price, {
+        [Op.gte]: parseInt(req.query.price_min)
+      })
+    }
+  }
+
+  if (req.query.band) {
+    query['$band.band_slug$'] = req.query.band.trim();
+  }
+
+  if (req.query.collection) { 
+    query['$collection.col_slug$'] = req.query.collection.trim();
+  }
+}
+
+function _sorting(sortParamText) {
+  const sortParam = (sortParamText).trim();
+  const prodSortSlugs = _.pluck(PRODUCT_SORT, 'slug');
+
+  let sortResult = [];
+
+  if (prodSortSlugs.includes(sortParam)) {
+    switch (sortParam) {
+      case PRODUCT_SORT.PRICE_HIGH.slug:
+        sortResult = [['prod_price', 'DESC']];
+        break;
+      case PRODUCT_SORT.PRICE_LOW.slug:
+        sortResult = [['prod_price', 'ASC']];
+        break;
+      case PRODUCT_SORT.NEW_PRODUCT.slug:
+        sortResult = [['prod_id', 'DESC']];
+        break;
+      default:
+        sortResult = [['prod_total_sold', 'DESC']];
+    }
+  }
+
+
+  return sortResult;
+}
+
+function _pagination(objPagination, req, maxLinkPagination = 5) {
+  const total = objPagination.total;
+
+  if (total <= objPagination.limit) {
+    objPagination.total_page =  1;
+    objPagination.list.push({
+      link: `#`,
+      no: 1,
+      active: true
+    });
+  } else {
+    objPagination.total_page =  Math.ceil(objPagination.total / objPagination.limit);
+    
+    const totalPage = objPagination.total_page;
+    
+    let urlParams; 
+    
+    if (req.query) {
+      urlParams = new URLSearchParams(req.query);
+    } else {
+      urlParams = new URLSearchParams();
+    }
+
+    let countLinkPage = maxLinkPagination;
+    if (totalPage < maxLinkPagination) {
+      countLinkPage = totalPage;
+    }
+
+    const pageList  = [];
+    for (let i = 1; i <= totalPage; i++) {
+      urlParams.set('page', i);
+      pageList.push({
+        link: `/products?${urlParams}`,
+        no: i,
+        active: objPagination.page === i
+      })
+    }
+
+    objPagination.list = pageList;
+  }
+
+  return objPagination;
+}

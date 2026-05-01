@@ -1,0 +1,51 @@
+<%- include ("../front/template/head.html") %>
+<%- include ("../front/template/header.html") %>
+
+<main class="login-container container">
+  <div class="login-card">
+    <h1 class="login-title"> Register</h1>
+    <a href="/auth/login/facebook">
+      <img src="https://static-id.zacdn.com/next-assets/static-assets/images/logo/fb-logo-rounded.svg"
+        alt="facebook login" loading="lazy" width="37" height="37">
+    </a>
+    <div class="or-separator">
+      <span class="line"></span>
+      <span class="text">or</span>
+      <span class="line"></span>
+    </div>
+    <div class="alert alert-danger <%= error ? '' : 'd-none' %>" id="alert" role="alert">
+      <%= error %>
+    </div>
+    <form class="login-form" id="register-form">
+      <div class="login-form-group form-group">
+        <label for="name">Nama</label>
+        <input type="text" id="name" name="name">
+        <div class="invalid-feedback" id="nameFeedback"></div>
+      </div>  
+      <div class="login-form-group form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email">
+        <div class="invalid-feedback" id="emailFeedback"></div>
+      </div>
+      <div class="login-form-group form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" maxlength="20">
+        <div class="invalid-feedback" id="passwordFeedback"></div>
+      </div>
+
+        <div class="login-form-group form-group">
+          <label for="auth_confirm_password" class="control-label">Confirm Password:</label>
+          <input type="password" class="form-control" name="confirm_password" id="auth_confirm_password" maxlength="20">
+          <div class="invalid-feedback" id="confirmPasswordFeedback"></div>
+        </div>
+          <button type="submit" class="submit-button" id="btn-register">Daftar</button>
+    </form>
+    
+    <div class="register-link">
+        Sudah punya akun? <a href="/auth/login">Login</a>
+    </div>
+
+  </div>
+</main>
+
+<%- include ("../front/template/footer.html") %>

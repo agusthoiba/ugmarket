@@ -1,0 +1,116 @@
+<aside class="desktop-filters">
+
+  <!-- Kategori Filter -->
+  <div class="filter-section">
+    <h3 class="filter-title">Kategori</h3>
+    <div class="filter-options">
+      <label class="filter-option">
+        <input type="checkbox" name="kategori" value="pakaian" <%=data.uri.query.kategori==='pakaian' ? 'checked' : ''
+          %>>
+        <span class="checkmark"></span>
+        Pakaian
+      </label>
+      <label class="filter-option">
+        <input type="checkbox" name="kategori" value="aksesoris">
+        <span class="checkmark"></span>
+        Aksesoris
+      </label>
+      <label class="filter-option">
+        <input type="checkbox" name="kategori" value="merchandise">
+        <span class="checkmark"></span>
+        Merchandise
+      </label>
+    </div>
+  </div>
+
+  <!-- Size Filter -->
+  <!--div class="filter-section">
+    <h3 class="filter-title">Ukuran</h3>
+    <div class="filter-options">
+      <label class="filter-option">
+        <input type="checkbox" name="size" value="s">
+        <span class="checkmark"></span>
+        S
+      </label>
+      <label class="filter-option">
+        <input type="checkbox" name="size" value="m">
+        <span class="checkmark"></span>
+        M
+      </label>
+      <label class="filter-option">
+        <input type="checkbox" name="size" value="l">
+        <span class="checkmark"></span>
+        L
+      </label>
+      <label class="filter-option">
+        <input type="checkbox" name="size" value="xl">
+        <span class="checkmark"></span>
+        XL
+      </label>
+    </div>
+  </div-->
+
+  <!-- Condition Filter -->
+  <div class="filter-section group condition">
+    <h3 class="filter-title">Kondisi</h3>
+    <div id="condition" class="accordion-content">
+
+      <label class="filter-option">
+        <input type="checkbox" name="condition" value="b" id="flexCheckChecked"
+            <%= data.uri.query.condition?.includes('b') ? 'checked' : '' %>>
+        <span class="checkmark"></span>
+        Baru
+      </label>
+
+      <label class="filter-option">
+        <input type="checkbox" name="condition" value="s" id="flexCheckChecked"
+            <%= data.uri.query.condition?.includes('s') ? 'checked' : '' %>>
+        <span class="checkmark"></span>
+        Bekas
+      </label>
+    </div>
+  </div>
+
+  <!-- Price Filter -->
+  <!-- oninput="validatePrice(this)" -->
+  <!-- onkeypress="return onlyNumberKey(event)" 
+  pattern="[0-9]*" inputmode="numeric"  
+  -->
+  <div class="filter-section">
+    <h3 class="filter-title">Harga</h3>
+    <div class="filter-options">
+      <form class="row g-3 needs-validation" novalidate>
+        <div class="col-md-5" style="padding-right: 0;">
+
+          <input 
+            type="text" 
+            placeholder="0" class="form-control range-min" 
+            data-type="min" min="0" name="price" id="price-min" 
+            value="<%= data.uri.query.price_min %>" 
+            
+          >
+          <div class="invalid-feedback invalid-feedback-price" id="alert-price-min" ></div>
+        </div>
+
+        <div class="col-md-2 price-separator">
+          <span>-</span>
+        </div>
+
+        <div class="col-md-5" style="padding-left: 0;">
+          <input type="text" 
+            placeholder="199000" class="form-control range-max" 
+            data-type="max" min="0" name="price" id="price-max" 
+            value="<%= data.uri.query.price_max %>" style="margin-left: 8px;"
+            
+          >
+          <div class="invalid-feedback" id="alert-price-max" ></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="filter-footer">
+    <button id="clear-filters-btn" class="clear-filters-btn">Hapus Semua</button>
+    <button id="apply-filters-btn" class="apply-filters-btn">Terapkan</button>
+  </div>
+
+</aside>

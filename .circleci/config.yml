@@ -8,7 +8,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10
+      - image: circleci/node:16
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -24,9 +24,16 @@ jobs:
       - checkout
 
       - run:
+          name: Get commit SHA from git
+          command: |
+            echo "export COMMIT_ID=$(git rev-parse --short HEAD)" >> $BASH_ENV
+
+      - run:
           name: Setup Env
           command: |
             echo 'export IMAGE_NAME=ugmarket' >> $BASH_ENV
+            source $BASH_ENV
+            echo $COMMIT_ID
             npm install
 
       - setup_remote_docker:
@@ -35,16 +42,32 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $DOCKER_USERNAME/$IMAGE_NAME .
+            docker build --build-arg=SERVICE_NAME=$IMAGE_NAME --platform linux/amd64 -t $DOCKER_USERNAME/$IMAGE_NAME .
+            docker tag $DOCKER_USERNAME/$IMAGE_NAME  $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
 
       - run:
           name: Push Docker Image
           command: |
             echo "$DOCKER_PWD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push $DOCKER_USERNAME/$IMAGE_NAME
+            docker push $DOCKER_USERNAME/$IMAGE_NAME:$COMMIT_ID
+
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:xbZ+lXdLpdvcoYj8X8X6huA/Z71TBVg+DErTqiooB4w"
+
+      - run:
+          name: Debug SSH
+          command: |
+            ssh -vvv -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "echo 'Testing connection'"
 
       - run:
           name: Deploy Code
           command: |
-            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP "/bin/bash ./do_deploy.sh"
+            ssh -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "
+              cd app && 
+              export MYSQL_HOST=$MYSQL_HOST &&
+              export IMAGE_TAG=$COMMIT_ID &&
+              export IMAGE_NAME=$IMAGE_NAME &&
+              ./do_deploy.sh
+            "
  

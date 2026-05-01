@@ -11,7 +11,7 @@ class Category {
       cat_slug: { type: Sequelize.STRING, allowNull: false },
       cat_name: { type: Sequelize.STRING, allowNull: false },
       cat_parent_id: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0 },
-      cat_parent_rank: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0 },
+      cat_rank: { type: Sequelize.INTEGER(11).UNSIGNED, allowNull: false, defaultValue: 0 },
       cat_image: { type: Sequelize.STRING, allowNull: true },
       cat_icon: { type: Sequelize.STRING, allowNull: true },
 
@@ -36,7 +36,9 @@ class Category {
   find (query) {
     return new Promise((resolve, reject) => {
       this.schema.findAll({
-        where: query
+        where: query,
+        sort: {cat_parent_rank: 'as'},
+        raw: true
       }).then(result => {
         resolve(result)
       }, (err) => {
