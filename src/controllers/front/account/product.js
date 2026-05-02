@@ -24,6 +24,7 @@ router.get('/', async (req, res, next) => {
 	let option = {
 		limit: pageLimit,
 		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+		sort: [['prod_id', 'DESC']],
 	};
 
   const prodCount = await res.locals.productModel.count(query);

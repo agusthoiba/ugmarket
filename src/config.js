@@ -29,6 +29,13 @@ const config = {
     google: {
         apiKey: env.GOOGLE_API_KEY,
         mapsUrl: env.GOOGLE_MAPS_URL
+    },
+    cloudflare: {
+        siteKey: env.CLOUDFLARE_SITE_KEY
+    },
+    resend: {
+        apiKey: env.RESEND_API_KEY,
+        from: env.RESEND_FROM || 'noreply@undergroundsync.com'
     }
 }
 

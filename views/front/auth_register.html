@@ -38,7 +38,16 @@
           <input type="password" class="form-control" name="confirm_password" id="auth_confirm_password" maxlength="20">
           <div class="invalid-feedback" id="confirmPasswordFeedback"></div>
         </div>
-          <button type="submit" class="submit-button" id="btn-register">Daftar</button>
+
+        <div class="form-group" style="margin-bottom: 12px; font-size: 13px; color: #555; text-align: center;">
+            Dengan mendaftar, Anda menyetujui <a href="/tnc" target="_blank">Syarat &amp; Ketentuan</a>.
+        </div>
+
+        <div class="" style="text-align: center;" >
+          <div class="cf-turnstile"data-sitekey="<%= data.cfKey %>"></div>
+        </div>
+
+        <button type="submit" class="submit-button" id="btn-register">Daftar</button>
     </form>
     
     <div class="register-link">

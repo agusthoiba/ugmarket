@@ -6,6 +6,7 @@ const validate = require("../../middleware/validate");
 const { getFbAccessToken, graphApiGet } = require('../../helpers/facebookApi');
 
 const { registerSchema } = require("../../models/schema");
+const Email = require('../../connectors/email');
 
 router.get('/login', function (req, res, next) {
   const objView = {
@@ -13,7 +14,8 @@ router.get('/login', function (req, res, next) {
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
-      action: '/auth/login'
+      action: '/auth/login',
+      cfKey: req.app.locals.config.cloudflare.siteKey
     },
     message: null
   };
@@ -31,10 +33,12 @@ router.get('/register', function (req, res, next) {
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
-      action: '/auth/register'
+      action: '/auth/register',
+      cfKey: req.app.locals.config.cloudflare.siteKey
     },
     js: ['auth_register']
   };
+  
   return res.render('front/auth_register', objView);
 });
 
@@ -94,7 +98,8 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
-      action: '/auth/register'
+      action: '/auth/register',
+      cfKey: req.app.locals.config.cloudflare.siteKey
     }
   };
 
@@ -114,14 +119,40 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
     return res.status(409).json(obj)
   }
 
+  const verifyToken = crypto.randomBytes(32).toString('hex');
+
   const payload = {
     user_name: (req.body.name).trim(),
     user_email: req.body.email,
     user_password: crypto.createHash('sha512').update(req.body.password).digest("hex"),
+    user_verify_token: verifyToken,
     user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
   }
 
   const docCreate = await res.locals.userModel.create(payload)
+
+  const appConfig = req.app.locals.config;
+  const verifyUrl = `${appConfig.protocol}://${appConfig.host}:${appConfig.port}/auth/verify/${verifyToken}`;
+  const emailClient = new Email(appConfig.resend.apiKey);
+
+  emailClient.send({
+    from: appConfig.resend.from,
+    to: docCreate.user_email,
+    subject: 'Verifikasi Email Kamu - UG Market',
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2>Selamat Datang di UG Market, ${docCreate.user_name}! 🤘</h2>
+        <p>Terima kasih sudah mendaftar. Satu langkah lagi — verifikasi email kamu untuk mulai berjualan dan berbelanja.</p>
+        <p style="margin:32px 0">
+          <a href="${verifyUrl}"
+             style="background:#000;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold">
+            Verifikasi Email
+          </a>
+        </p>
+        <p style="color:#666;font-size:13px">Link ini hanya berlaku selama 24 jam. Jika kamu tidak mendaftar di UG Market, abaikan email ini.</p>
+      </div>
+    `
+  }).catch(err => console.error('Email verification send error:', err));
 
   var userData = {
     id: docCreate.user_id,
@@ -129,7 +160,23 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   }
 
   authSession(req, userData);
-  return res.redirect('/auth/login');
+  return res.redirect('/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.');
+});
+
+
+router.get('/verify/:token', async (req, res, next) => {
+  const findUser = await res.locals.userModel.findOne({ user_verify_token: req.params.token });
+
+  if (!findUser) {
+    return res.redirect('/auth/login?message=Link verifikasi tidak valid atau sudah kadaluarsa.');
+  }
+
+  await res.locals.userModel.update(
+    { user_id: findUser.user_id },
+    { user_is_verified: 1, user_verify_token: null }
+  );
+
+  return res.redirect('/auth/login?message=Email berhasil diverifikasi! Silakan login.');
 });
 
 

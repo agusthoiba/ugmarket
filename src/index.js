@@ -176,6 +176,7 @@ app.use(cors());
 app.use('/', require('./controllers/front/index'))
 app.use('/about', require('./controllers/front/about'))
 app.use('/contact', require('./controllers/front/contact'))
+app.use('/tnc', require('./controllers/front/tnc'))
 app.use('/products', require('./controllers/front/product'))
 app.use('/bands', require('./controllers/front/band'))
 app.use('/auth', require('./controllers/front/auth'))
@@ -191,7 +192,7 @@ app.use('/admin/collections', require('./controllers/admin/collections'))
 app.use('/idn', require('./controllers/idn'))
 
 // Add 404 handler - this should come after all other routes
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   console.log('404 handler')
   let obj = {
     data: {
@@ -203,7 +204,7 @@ app.use((req, res, next) => {
     }
   }
   return res.status(404).render('front/template/error', obj);
-});
+});*/
 
 app.use(function(err, req, res, next){
   if (res.headersSent) {
