@@ -37,7 +37,10 @@
         </div>
     </div>
 
-    <div class="band-list">
+    <% var products = data.products %>
+
+    <!-- Desktop: table layout -->
+    <div class="band-list d-none d-md-block">
         <table class="table">
             <thead>
                 <tr>
@@ -51,7 +54,6 @@
                 </tr>
             </thead>
             <tbody>
-                <% var products = data.products %>
                 <% for(var i in products) { %>
                     <tr>
                         <td><%= products[i].prod_name %></td>
@@ -65,6 +67,29 @@
                 <% } %>
             </tbody>
         </table>
+    </div>
+
+    <!-- Mobile: card layout -->
+    <div class="d-block d-lg-none">
+        <% data.products.forEach(function(p) { %>
+        <div class="product-mobile-card">
+            <img src="<%= p.thumbnail %>" class="product-mobile-img" alt="<%= p.prod_name %>">
+            <div class="product-mobile-info">
+                <div class="product-mobile-band"><%- p['band.band_name'] %></div>
+                <div class="product-mobile-name"><%= p.prod_name %></div>
+                <div class="product-mobile-meta">
+                    <span class="product-mobile-badge"><%- p['category.cat_name'] %></span>
+                    <span class="product-mobile-badge"><%= p.prod_condition == 'b' ? 'Baru' : 'Bekas' %></span>
+                    <span class="product-mobile-badge product-mobile-badge--<%= p.is_visible ? 'publish' : 'draft' %>">
+                        <%= p.is_visible ? 'Published' : 'Draft' %>
+                    </span>
+                </div>
+            </div>
+            <a href="/account/product/edit/<%= p.prod_id %>" class="product-mobile-edit">
+                <i class="far fa-edit"></i>
+            </a>
+        </div>
+        <% }) %>
     </div>
 
     <div class="row">

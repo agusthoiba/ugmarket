@@ -1914,6 +1914,93 @@ OWL carousel
   animation: none;
 }
 
+/* Account product list — mobile card */
+.product-mobile-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.product-mobile-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.product-mobile-info {
+  flex: 1;
+  min-width: 0;
+  padding-right: 40px;
+}
+
+.product-mobile-band {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 2px;
+}
+
+.product-mobile-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
+}
+
+.product-mobile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.product-mobile-badge {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.product-mobile-badge--publish {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.product-mobile-badge--draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.product-mobile-edit {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 13px;
+  text-decoration: none;
+}
+.product-mobile-edit:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
 /*@media only screen and (min-width: 769px) */
 /* .skrim__link {
   border-radius: var(--buttonRadius);
