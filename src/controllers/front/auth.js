@@ -91,8 +91,6 @@ router.get('/login/callback', async (req, res, next) => {
 
 
 router.post('/register', validate(registerSchema), async (req, res, next) => {
-  console.log('req.body: ', req.body)
-
   var obj = { 
     error: null, 
     data: {
@@ -132,16 +130,16 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   const docCreate = await res.locals.userModel.create(payload)
 
   const appConfig = req.app.locals.config;
-  const verifyUrl = `${appConfig.protocol}://${appConfig.host}:${appConfig.port}/auth/verify/${verifyToken}`;
+  const verifyUrl = `${appConfig.protocol}://${appConfig.domain}/auth/verify/${verifyToken}`;
   const emailClient = new Email(appConfig.resend.apiKey);
 
   emailClient.send({
     from: appConfig.resend.from,
     to: docCreate.user_email,
-    subject: 'Verifikasi Email Kamu - UG Market',
+    subject: 'Verifikasi Email Kamu - Lapak Undergroundsync',
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-        <h2>Selamat Datang di UG Market, ${docCreate.user_name}! 🤘</h2>
+        <h2>Selamat Datang di Lapak Undergroundsync, ${docCreate.user_name}! 🤘</h2>
         <p>Terima kasih sudah mendaftar. Satu langkah lagi — verifikasi email kamu untuk mulai berjualan dan berbelanja.</p>
         <p style="margin:32px 0">
           <a href="${verifyUrl}"
@@ -149,7 +147,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
             Verifikasi Email
           </a>
         </p>
-        <p style="color:#666;font-size:13px">Link ini hanya berlaku selama 24 jam. Jika kamu tidak mendaftar di UG Market, abaikan email ini.</p>
+        <p style="color:#666;font-size:13px">Link ini hanya berlaku selama 24 jam. Jika kamu tidak mendaftar di Lapak Undergroundsync, abaikan email ini.</p>
       </div>
     `
   }).catch(err => console.error('Email verification send error:', err));
@@ -202,12 +200,23 @@ router.post('/login', async function (req, res, next) {
     // return res.json(obj);
   }
 
+  if (!findUser.user_is_verified) {
+    obj.error = 'Akun kamu belum diverifikasi. Cek email untuk link verifikasi.';
+    obj.data = {
+      urlActive: req.path,
+      isUrlActive: req.path === '/login',
+      action: '/auth/login'
+    }
+
+    return res.render('front/auth_login', obj);
+  }
+
   const userData = {
     id: findUser.user_id,
     email: findUser.user_email,
-    avatar: req.app.locals.cloudinary.url(findUser.user_avatar, {
+    avatar: findUser.user_avatar ? req.app.locals.cloudinary.url(findUser.user_avatar, {
       width: 50, height: 50, crop: 'thumb'
-    })
+    }) : null
   }
 
   authSession(req, userData);

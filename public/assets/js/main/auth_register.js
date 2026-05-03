@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (isValid) {
       try {
         const reg = await register(payload)
-        window.location.assign('/auth/login?message=Registrasi berhasil. Silakan login.')
+        window.location.assign('/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.')
 
       } catch (error) {
         console.error(error)

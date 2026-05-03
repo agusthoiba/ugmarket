@@ -6,6 +6,7 @@ const config = {
     protocol: env.APP_PROTOCOL,
     host: env.APP_HOST,
     port: env.PORT,
+    domain: env.APP_DOMAIN,
     db: {
         mysql: {
             url: env.DB_MYSQL_URL,

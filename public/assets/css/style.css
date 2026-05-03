@@ -1811,6 +1811,13 @@ Pagination
   border-radius: 50%;
 }
 
+.avatar-image-header {
+  width: 35px;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 
 /*--------------
 OWL carousel

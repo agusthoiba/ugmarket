@@ -14,10 +14,14 @@
 
       <!-- Avatar Mobile -->    
       <div class="d-flex d-lg-none">
+        
         <% if (session != undefined && session.user != undefined) { %>
             <a href="/account/profile" title="Profile" class="d-block">
-              <img src="<%= session.user.avatar %>" class="rounded-circle" alt="Profile" 
-                style="width: 35px; height: 35px; object-fit: cover;">
+              <% if (session.user.avatar) { %>
+                <img src="<%= session.user.avatar %>" class="avatar-image-header" alt="Profile">
+              <% } else { %>
+                <img src="/image/prof-pic-empty.png" class="avatar-image-header" alt="Profile">
+              <% } %>  
             </a>
           <% } else { %>
             <a href="/auth/login" title="Masuk" class="d-block">
@@ -63,8 +67,12 @@
       <div class="d-flex d-md-none">
         <% if (session != undefined && session.user != undefined) { %>
             <a href="/account/profile" title="Profile" class="d-block">
-              <img src="<%= session.user.avatar %>" class="rounded-circle" alt="Profile" 
-                style="width: 35px; height: 35px; object-fit: cover;">
+              <% if (session.user.avatar) { %>
+              <img src="<%= session.user.avatar %>" class="avatar-image-header" alt="Profile" 
+                >
+              <% } else { %>
+              <img src="/image/prof-pic-empty.png" class="avatar-image-header" alt="Profile" >
+              <% } %>
             </a>
           <% } else { %>
             <a href="/auth/login" title="Masuk" class="d-block">
