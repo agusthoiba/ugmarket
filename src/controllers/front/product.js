@@ -46,7 +46,7 @@ router.get('/', async (req, res, next) => {
   const maxLinkPagination = 5 // maximal number of link pagination
 
   if (req.query.band) {
-    obj.data.pageTitle = `${(req.query.band).trim().replace('-', ' ')} - Official Merchandise`
+    obj.data.pageTitle = `${(req.query.band).trim().replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} - Official Merchandise`
     obj.data.pageBanner =  req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
   }
 

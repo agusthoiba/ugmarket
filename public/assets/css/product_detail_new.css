@@ -23,10 +23,14 @@ body{
 @media (max-width: 960px){ .product{grid-template-columns:1fr} }
 
 /* Breadcrumb */
-.breadcrumb ol{display:flex; flex-wrap:wrap; gap:8px 12px; list-style:none; margin:8px 0 20px; padding:0}
-.breadcrumb a{color:var(--muted); text-decoration:none}
-.breadcrumb a:hover{color:var(--brand)}
-.breadcrumb span{color:var(--text)}
+.breadcrumb-nav{margin:16px 0 20px}
+.breadcrumb-list{display:flex; flex-wrap:wrap; align-items:center; list-style:none; margin:0; padding:0; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em}
+.breadcrumb-list__item{display:flex; align-items:center; color:var(--muted)}
+.breadcrumb-list__item + .breadcrumb-list__item::before{content:"/"; margin:0 8px; color:var(--line)}
+.breadcrumb-list__item a{text-decoration:none; color:var(--muted); transition:color 0.2s}
+.breadcrumb-list__item a:hover{color:var(--brand)}
+.breadcrumb-list__item--active span{color:var(--text); font-weight:500}
+@media(max-width:576px){.breadcrumb-nav{margin:12px 0 16px} .breadcrumb-list{font-size:0.75rem}}
 
 /* Gallery */
 .gallery{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px}
@@ -35,6 +39,17 @@ body{
 .badge{position:absolute; left:14px; top:14px; background:var(--brand);
   color:#fff; font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px}
 .gallery__thumbs{display:flex; gap:10px; margin-top:12px; overflow-x:auto}
+.gallery__nav{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(0,0,0,.45); color:#fff; border:none; border-radius:50%;
+  width:36px; height:36px; font-size:22px; line-height:1;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; z-index:2; transition:background .15s;
+  padding:0;
+}
+.gallery__nav:hover{background:rgba(0,0,0,.7)}
+.gallery__nav--prev{left:10px}
+.gallery__nav--next{right:10px}
 .thumb{border:1px solid var(--line); background:#fff; border-radius:8px; cursor:pointer}
 .thumb img{width:70px; height:70px; object-fit:cover; border-radius:8px; display:block}
 .thumb:hover{border-color:var(--brand)}
