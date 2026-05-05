@@ -1,16 +1,58 @@
 <%- include ("dashboard_header.html") %>
-<a href="/account/product/add" class="btn btn-success">Tambah Produk</a>
 
 <div class="container">
-    <h1 class="page-title">
-        <h2> Produk List </h1>
-    </h1>
-
-    <div class="row band-list-toolbox">
-        <div class="bands-sort-wrapper">
-        </div>
+    <div class="product-list-header">
+        <h2 class="product-list-title">Produk Saya</h2>
+        <a href="/account/product/add" class="btn btn-success btn-sm">+ Tambah Produk</a>
     </div>
-    
+
+    <!-- Filter bar -->
+    <div class="product-filter-bar">
+        <form method="GET" action="/account/product" class="product-filter-form">
+            <div class="product-filter-search">
+                <input type="text" name="search" value="<%= data.filters.search %>" placeholder="Cari nama produk..." class="form-control form-control-sm">
+            </div>
+            <div class="product-filter-selects">
+                <select name="category" class="form-select form-select-sm">
+                    <option value="">Semua Kategori</option>
+                    <% data.categoryGroups.forEach(function(group) { %>
+                        <% if (group.children.length > 0) { %>
+                            <% if (group.parent) { %><optgroup label="<%= group.parent.cat_name %>"><% } %>
+                                <% group.children.forEach(function(cat) { %>
+                                    <option value="<%= cat.cat_id %>" <%= data.filters.category == cat.cat_id ? 'selected' : '' %>><%= cat.cat_name %></option>
+                                <% }) %>
+                            <% if (group.parent) { %></optgroup><% } %>
+                        <% } else { %>
+                            <option value="<%= group.parent.cat_id %>" <%= data.filters.category == group.parent.cat_id ? 'selected' : '' %>><%= group.parent.cat_name %></option>
+                        <% } %>
+                    <% }) %>
+                </select>
+                <select name="condition" class="form-select form-select-sm">
+                    <option value=""  <%= data.filters.condition == ''  ? 'selected' : '' %>>Semua Kondisi</option>
+                    <option value="b" <%= data.filters.condition == 'b' ? 'selected' : '' %>>Baru</option>
+                    <option value="s" <%= data.filters.condition == 's' ? 'selected' : '' %>>Bekas</option>
+                </select>
+                <select name="status" class="form-select form-select-sm">
+                    <option value=""       <%= data.filters.status == ''        ? 'selected' : '' %>>Semua Status</option>
+                    <option value="publish" <%= data.filters.status == 'publish' ? 'selected' : '' %>>Publish</option>
+                    <option value="draft"   <%= data.filters.status == 'draft'   ? 'selected' : '' %>>Draft</option>
+                </select>
+                <select name="sort" class="form-select form-select-sm">
+                    <option value="newest"     <%= data.filters.sort == 'newest'     ? 'selected' : '' %>>Terbaru</option>
+                    <option value="oldest"     <%= data.filters.sort == 'oldest'     ? 'selected' : '' %>>Terlama</option>
+                    <option value="price_asc"  <%= data.filters.sort == 'price_asc'  ? 'selected' : '' %>>Harga &uarr;</option>
+                    <option value="price_desc" <%= data.filters.sort == 'price_desc' ? 'selected' : '' %>>Harga &darr;</option>
+                    <option value="name_asc"   <%= data.filters.sort == 'name_asc'   ? 'selected' : '' %>>Nama A&ndash;Z</option>
+                    <option value="name_desc"  <%= data.filters.sort == 'name_desc'  ? 'selected' : '' %>>Nama Z&ndash;A</option>
+                </select>
+            </div>
+            <div class="product-filter-actions">
+                <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+                <a href="/account/product" class="btn btn-outline-secondary btn-sm">Reset</a>
+            </div>
+        </form>
+    </div>
+
     <div class="row">
         <div class="col-lg-12">
             <nav aria-label="Page navigation example">
@@ -40,14 +82,14 @@
     <% var products = data.products %>
 
     <!-- Desktop: table layout -->
-    <div class="band-list d-none d-md-block">
+    <div class="band-list d-none d-lg-block">
         <table class="table">
             <thead>
                 <tr>
-                    <th> Nama </th>
-                    <th> Kategori </th>
-                    <th> Band </th>
                     <th> Image </th>
+                    <th> Band & Nama Produk </th>
+                    <th> Kategori </th>
+                    <th> Harga </th>
                     <th> Kondisi </th>
                     <th> Status </th>
                     <th> Action </th>
@@ -56,10 +98,10 @@
             <tbody>
                 <% for(var i in products) { %>
                     <tr>
-                        <td><%= products[i].prod_name %></td>
-                        <td><%- products[i]['category.cat_name'] %></td>
-                        <td><%- products[i]['band.band_name'] %></td>
                         <td><img width="100" height="100" src="<%= products[i].thumbnail %>"></td>
+                        <td><%- products[i]['band.band_name'] %> <br/> <%= products[i].prod_name %></td>
+                        <td><%- products[i]['category.cat_name'] %></td>
+                        <td>Rp <%= parseInt(products[i].prod_price).toLocaleString('id-ID') %></td>
                         <td><%= products[i].prod_condition == 'b' ? 'baru': 'bekas' %></td>
                         <td><%= products[i].is_visible ? 'publish' : 'draft' %></td>
                         <td><a href="/account/product/edit/<%= products[i].prod_id %>"> <i class="fa fa-pencil" aria-hidden="true"></i> Edit </a> </td>
@@ -77,6 +119,7 @@
             <div class="product-mobile-info">
                 <div class="product-mobile-band"><%- p['band.band_name'] %></div>
                 <div class="product-mobile-name"><%= p.prod_name %></div>
+                <div class="product-mobile-price">Rp <%= parseInt(p.prod_price).toLocaleString('id-ID') %></div>
                 <div class="product-mobile-meta">
                     <span class="product-mobile-badge"><%- p['category.cat_name'] %></span>
                     <span class="product-mobile-badge"><%= p.prod_condition == 'b' ? 'Baru' : 'Bekas' %></span>

@@ -148,7 +148,13 @@ const connMysql = async() => {
     })
 
     categoriesNested[i] = Object.assign(categoriesNested[i], {
-      childs: catChilds
+      childs: catChilds.sort((a, b) => {
+        const aIsOther = a.cat_name.toLowerCase() === 'others';
+        const bIsOther = b.cat_name.toLowerCase() === 'others';
+        if (aIsOther) return 1;
+        if (bIsOther) return -1;
+        return a.cat_name.localeCompare(b.cat_name);
+      })
     })
   }
 

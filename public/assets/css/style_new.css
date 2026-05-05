@@ -892,3 +892,10 @@ body {
   border-color: #333;
   color: #fff;
 }
+
+.avatar-image-header {
+  width: 35px;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}

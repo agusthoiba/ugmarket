@@ -1,6 +1,7 @@
 var router = express.Router()
 
 const URI = require("urijs");
+const { Op } = require('sequelize');
 
 var Band = require('../../../models/band')
 
@@ -9,46 +10,76 @@ const pagination = require('../../../helpers/pagination');
 const { SIZES } = require('../../../constant');
 const { collect } = require("underscore");
 
+const SORT_MAP = {
+  newest:     [['prod_id',    'DESC']],
+  oldest:     [['prod_id',    'ASC']],
+  price_asc:  [['prod_price', 'ASC']],
+  price_desc: [['prod_price', 'DESC']],
+  name_asc:   [['prod_name',  'ASC']],
+  name_desc:  [['prod_name',  'DESC']],
+};
+
 router.get('/', async (req, res, next) => {
-  var userId = parseInt(req.session.user.id)
+  const userId = parseInt(req.session.user.id)
 
-  var obj = {
-    error: null,
-    data: {
-      products: []
-    }
-  }
+  const search        = (req.query.search    || '').trim();
+  const categoryFilter = req.query.category && !isNaN(parseInt(req.query.category)) ? parseInt(req.query.category) : null;
+  const conditionFilter = ['b', 's'].includes(req.query.condition) ? req.query.condition : '';
+  const statusFilter   = ['publish', 'draft'].includes(req.query.status) ? req.query.status : '';
+  const sortFilter     = SORT_MAP[req.query.sort] ? req.query.sort : 'newest';
 
-  var query = { prod_user_id: userId, prod_is_deleted: 0 }
+  const query = { prod_user_id: userId, prod_is_deleted: 0 };
+  if (search)          query[Op.or] = [
+    { prod_name:          { [Op.like]: `%${search}%` } },
+    { '$band.band_name$': { [Op.like]: `%${search}%` } },
+  ];
+  if (categoryFilter)  query.prod_cat_id     = categoryFilter;
+  if (conditionFilter) query.prod_condition  = conditionFilter;
+  if (statusFilter === 'publish') query.prod_is_visible = 1;
+  if (statusFilter === 'draft')   query.prod_is_visible = 0;
+
   const pageLimit = 20;
-	let option = {
-		limit: pageLimit,
-		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
-		sort: [['prod_id', 'DESC']],
-	};
+  const option = {
+    limit: pageLimit,
+    page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
+    sort: SORT_MAP[sortFilter],
+  };
 
   const prodCount = await res.locals.productModel.count(query);
-  const doc = await res.locals.productModel.find(query, option);
-  const basePath = '/account/product';
-  
+  const doc       = await res.locals.productModel.find(query, option);
+
+  const filterParams = new URLSearchParams();
+  if (search)          filterParams.set('search',    search);
+  if (categoryFilter)  filterParams.set('category',  categoryFilter);
+  if (conditionFilter) filterParams.set('condition', conditionFilter);
+  if (statusFilter)    filterParams.set('status',    statusFilter);
+  if (sortFilter !== 'newest') filterParams.set('sort', sortFilter);
+  const filterStr = filterParams.toString();
+  const basePath = filterStr ? `/account/product?${filterStr}` : '/account/product';
+
+  const obj = {
+    error: null,
+    data: {
+      products: [],
+      categoryGroups: buildCategoryGroups(await res.locals.categoryModel.find()),
+      filters: { search, category: categoryFilter, condition: conditionFilter, status: statusFilter, sort: sortFilter }
+    }
+  };
+
   if (doc.length > 0) {
     obj.data.products = doc.map(val => {
-        val.is_visible = val.prod_is_visible == 1
-        const imgs = val.prod_images.split(',');
-        val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {width: 100, height: 100, crop: "thumb"});
-
-        return val
+      val.is_visible = val.prod_is_visible == 1;
+      const imgs = val.prod_images.split(',');
+      val.thumbnail = req.app.locals.cloudinary.url(imgs[0], { width: 100, height: 100, crop: 'thumb' });
+      return val;
     });
   }
 
   const paginate = pagination(pageLimit, option.page, prodCount, basePath);
   Object.assign(obj, paginate);
 
-  if (req.query.json == '1') {
-    return res.json(obj);
-  }
-
-  return res.render('front/account/product_list', obj)
+  if (req.query.json == '1') return res.json(obj);
+  return res.render('front/account/product_list', obj);
 })
 
 router.get('/edit/:id', async (req, res, next) => {
@@ -138,7 +169,8 @@ router.post('/update/:id', async function (req, res, next) {
   var obj = { error: null, data: null };
 
   try {
-    const payload = await cleanPost(req.body, res, 'update');
+    const findBand = await res.locals.bandModel.findOne({ band_id: req.body.band });
+    const payload = await cleanPost(req.body, findBand, 'update');
 
     await res.locals.productModel.update(query, payload);
     return res.redirect('/account/product');
@@ -181,6 +213,7 @@ router.post('/create', async (req, res) => {
 
   req.body.user_id = req.session.user.id;
 
+  console.log("body.band: ", req.body.band);
   try {
     const findBand = await res.locals.bandModel.findOne({
       band_id: req.body.band
@@ -211,6 +244,23 @@ router.post('/create', async (req, res) => {
 })
 
 module.exports = router;
+
+function buildCategoryGroups(categories) {
+  const parents  = categories.filter(c => c.cat_parent_id === 0);
+  const children = categories.filter(c => c.cat_parent_id !== 0);
+  const parentIds = new Set(parents.map(p => p.cat_id));
+
+  const groups = parents.map(p => ({
+    parent:   p,
+    children: children.filter(c => c.cat_parent_id === p.cat_id),
+  }));
+
+  // categories whose parent isn't in the list — treat as standalone
+  const orphans = children.filter(c => !parentIds.has(c.cat_parent_id));
+  if (orphans.length) groups.push({ parent: null, children: orphans });
+
+  return groups;
+}
 
 function itemData() {
   return {
@@ -252,6 +302,7 @@ function itemData() {
 
 async function cleanPost(body, findBand, tipe = 'create') {
   const prodSlug = slug(`${findBand.band_slug}-${body.name.trim().toLowerCase()}`)
+  console.log("prodSlug", prodSlug) 
 
   var payload = {
     prod_name: body.name.trim(),
