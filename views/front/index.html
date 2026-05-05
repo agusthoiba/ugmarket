@@ -40,8 +40,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h3 class="title">Product Baru</h3>
-        <div class="owl-carousel">
+        <h3 class="title">Product Baru </h3>
+        <div class="owl-carousel owl-carousel-products">
 
           <% var products=data.products %>
   
@@ -60,7 +60,7 @@
                   <h5 class="product-list-item-carousel-subtitle">
                     <%= products[i].prod_name %>
                   </h5>
-                  <p class="product-list-item-carousel-text">Rp. <%= products[i].prod_price %></p>
+                  <p class="product-list-item-carousel-text">Rp <%= Number(products[i].prod_price).toLocaleString('id-ID') %></p>
                 </a>
               </div>
           <% } %>
@@ -78,14 +78,14 @@
     <div class="row">
       <div class="col-md-12">
         <h3 class="title">Popular Bands</h3>
-        <div class="owl-carousel">
+        <div class="band-list-inline">
 
           <% const bands = data.bands %>
-  
+
           <% if (bands != undefined && bands.length==0) { %>
             No bands found
           <% } else {
-              for(var i in bands) { 
+              for(var i in bands) {
                 %>
               <div class="logo-item" >
                 <div class="band-img" >
@@ -93,6 +93,7 @@
                     <img src="<%= bands[i].band_image %>" class="img-responsive">
                   </a>
                 </div>
+                <p class="band-name"><a href="/products/?band=<%= bands[i].band_slug %>"><%= bands[i].band_name %></a></p>
               </div>
           <% } %>
         <% } %>
@@ -101,7 +102,7 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <a class="btn-see-more" href="/bands"> See More Bands > </a>
+        <a class="btn-see-more" href="/bands"> All Bands > </a>
       </div>
     </div>
   </div>
