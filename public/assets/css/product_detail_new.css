@@ -41,13 +41,13 @@ body{
 .gallery__thumbs{display:flex; gap:10px; margin-top:12px; overflow-x:auto}
 .gallery__nav{
   position:absolute; top:50%; transform:translateY(-50%);
-  background:rgba(0,0,0,.45); color:#fff; border:none; border-radius:50%;
+  background:rgba(0,0,0,.10); color:#fff; border:none; border-radius:50%;
   width:36px; height:36px; font-size:22px; line-height:1;
   display:flex; align-items:center; justify-content:center;
   cursor:pointer; z-index:2; transition:background .15s;
   padding:0;
 }
-.gallery__nav:hover{background:rgba(0,0,0,.7)}
+.gallery__nav:hover{background:rgba(0,0,0,.20)}
 .gallery__nav--prev{left:10px}
 .gallery__nav--next{right:10px}
 .thumb{border:1px solid var(--line); background:#fff; border-radius:8px; cursor:pointer}

@@ -15,7 +15,10 @@
         <div class="gallery__stage">
           <img src="<%= (product.images && product.images[0]) || '/img/placeholder.png' %>"
                alt="<%= product.title %>" class="gallery__hero" loading="eager">
-
+          <% if ((product.images || []).length > 1) { %>
+            <button class="gallery__nav gallery__nav--prev" aria-label="Sebelumnya">&#8249;</button>
+            <button class="gallery__nav gallery__nav--next" aria-label="Berikutnya">&#8250;</button>
+          <% } %>
         </div>
         <% if ((product.images || []).length > 1) { %>
           <div class="gallery__thumbs" role="list">
@@ -126,14 +129,35 @@
   <script>
     const hero = document.querySelector('.gallery__hero');
     const images = <%- JSON.stringify(product.images || []) %>;
-    document.querySelectorAll('.thumb').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var src = images[+btn.dataset.index];
-        if (src) hero.src = src;
-        document.querySelectorAll('.thumb').forEach(function (b) { b.classList.remove('thumb--active'); });
-        btn.classList.add('thumb--active');
-      });
+    const thumbs = document.querySelectorAll('.thumb');
+    let current = 0;
+
+    function goTo(idx) {
+      if (!images.length) return;
+      current = (idx + images.length) % images.length;
+      hero.src = images[current];
+      thumbs.forEach(function (b) { b.classList.remove('thumb--active'); });
+      if (thumbs[current]) thumbs[current].classList.add('thumb--active');
+    }
+
+    thumbs.forEach(function (btn) {
+      btn.addEventListener('click', function () { goTo(+btn.dataset.index); });
     });
+
+    var prevBtn = document.querySelector('.gallery__nav--prev');
+    var nextBtn = document.querySelector('.gallery__nav--next');
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    // Swipe support
+    var stage = document.querySelector('.gallery__stage');
+    var touchStartX = 0;
+    stage.addEventListener('touchstart', function (e) { touchStartX = e.changedTouches[0].clientX; }, {passive: true});
+    stage.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+    }, {passive: true});
+
     const add = document.getElementById('addToCart');
     const stickyAdd = document.getElementById('stickyAdd');
     if (add && stickyAdd) stickyAdd.addEventListener('click', function () { add.click(); });
