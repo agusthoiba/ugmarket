@@ -17,13 +17,23 @@ const registerSchema = Joi.object({
 
 
 const profileSchema = Joi.object({
+  username: Joi.string().regex(/^[a-zA-Z0-9_.-]{3,30}$/).required().messages({
+    'string.pattern.base': 'Gunakan 3-30 karakter: huruf, angka, simbol (-, _, .)',
+    'any.required': 'Username wajib diisi',
+    'string.empty': 'Username wajib diisi',
+  }),
   name: Joi.string().required(),
   hp: Joi.string().regex(/^(\+62|62|0)[0-9]{9,12}$/).required(),
   image_ori_avatar: Joi.string().allow(''),
-  gender: Joi.string().valid('1', '2').required(),
+  gender: Joi.string().valid('m', 'f').allow('').optional(),
   bio: Joi.string().max(255).allow(''),
   address: Joi.string().allow(''),
   zipcode: Joi.string().max(5).allow(''),
+  province: Joi.string().allow(''),
+  city: Joi.string().allow(''),
+  district: Joi.string().allow(''),
+  village: Joi.string().allow(''),
+  street: Joi.string().allow(''),
 });
 
 const sellerSchema = Joi.object({

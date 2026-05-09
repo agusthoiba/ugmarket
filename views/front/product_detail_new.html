@@ -77,10 +77,15 @@
           <% if (marketplaces && marketplaces.length) { %>
             <div class="marketplaces">
               <% marketplaces.forEach(m => { %>
-                <a class="btn btn-ghost" href="<%= m.url %>" target="_blank" rel="noopener" aria-label="Buka di <%= m.name %>">
-                  <!--img src="<%= m.icon %>" alt="" class="ico"> <span><%= m.name %></span-->
-                  <img width="auto" height="25" src="/marketplace/tokopedia.png">
-                </a>
+                <% if (m.url != null) { %>
+                  <a class="btn btn-ghost" href="<%= m.url %>" target="_blank" rel="noopener" aria-label="Buka di <%= m.name %>">
+                    <img width="auto" height="25" src="<%= m.icon %>">
+                  </a>
+                <% } else { %>
+                  <button class="btn btn-ghost" disabled style="opacity:0.35;cursor:not-allowed;">
+                    <img width="auto" height="25" src="<%= m.icon %>">
+                  </button>
+                <% } %>
               <% }) %>
             </div>
           <% } %>
@@ -95,10 +100,16 @@
 
         <!-- SELLER -->
         <div class="seller">
-          <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
+          <a class="seller__name seller__link" href="/products?seller=<%= seller.username %>">
+            <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
+          </a>
           <div>
-            <div class="seller__name"><%= seller.name %></div>
-            <!--a class="seller__link" href="/seller/<%= seller.slug %>">Lihat lapak</a-->
+            <% const sellerHandle = seller.username || seller.slug; %>
+            <% if (sellerHandle) { %>
+              <a class="seller__name seller__link" href="/products?seller=<%= sellerHandle %>"><%= seller.name %></a>
+            <% } else { %>
+              <div class="seller__name"><%= seller.name %></div>
+            <% } %>
           </div>
         </div>
 

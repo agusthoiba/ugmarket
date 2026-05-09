@@ -108,9 +108,13 @@ class Product {
       raw: true,
       include: [
         {
+          model: this.user.schema,
+          as: 'user'
+        },
+        {
           model: this.category.schema,
           as: 'category'
-         
+
         },
         {
           model: this.band.schema,
@@ -206,6 +210,10 @@ class Product {
       const productAmount = await this.schema.count({
         where: filter,
         include: [
+          {
+            model: this.user.schema,
+            as: 'user'
+          },
           {
             model: this.band.schema,
             as: 'band',

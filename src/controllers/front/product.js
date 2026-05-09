@@ -40,46 +40,21 @@ router.get('/', async (req, res, next) => {
     }
   }
 
-  var url = new URI(req.originalUrl);
-
-  obj.data.uri.query = url.query();
-  const maxLinkPagination = 5 // maximal number of link pagination
+  const maxLinkPagination = 5
 
   if (req.query.band) {
     obj.data.pageTitle = `${(req.query.band).trim().replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} - Official Merchandise`
-    obj.data.pageBanner =  req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
+    obj.data.pageBanner = req.app.locals.cloudinary.url(`bands/${req.query.band}-banner.jpg`)
   }
 
   let query = {
     prod_is_visible: 1
   }
 
-  // Price filter logic
-  if (req.query.price_min && parseInt(req.query.price_min) > 0 && (!req.query.price_max || parseInt(req.query.price_max) <= 0)) {
-    // Only price_min exists and > 0
-    query.prod_price = {
-      [Op.gte]: parseInt(req.query.price_min)
-    };
-  } else if (req.query.price_max && parseInt(req.query.price_max) > 0 && (!req.query.price_min || parseInt(req.query.price_min) <= 0)) {
-    // Only price_max exists and > 0
-    query.prod_price = {
-      [Op.lte]: parseInt(req.query.price_max)
-    };
-  } else if (
-    req.query.price_min && parseInt(req.query.price_min) > 0 &&
-    req.query.price_max && parseInt(req.query.price_max) > 0
-  ) {
-    // Both price_min and price_max exist and > 0
-    query.prod_price = {
-      [Op.gte]: parseInt(req.query.price_min),
-      [Op.lte]: parseInt(req.query.price_max)
-    };
-  }
-
   _filtering(req, obj, query)
 
   var options = { 
-    sort: [['prod_total_sold', 'DESC']],
+    sort: [['prod_id', 'DESC']],
     page: obj.data.pagination.page,
     limit: obj.data.pagination.limit
   }
@@ -88,11 +63,29 @@ router.get('/', async (req, res, next) => {
     options.sort = _sorting(req.query.sort);
   }
 
+
   try {
-    const prodTotal = await res.locals.productModel.count(query);
+    const [prodTotal, sellerUser] = await Promise.all([
+      res.locals.productModel.count(query),
+      req.query.seller
+        ? res.locals.userModel.findOne({ user_username: req.query.seller.trim() })
+        : Promise.resolve(null)
+    ]);
+
+    if (sellerUser) {
+      obj.data.seller = {
+        name: sellerUser.user_name,
+        username: sellerUser.user_username,
+        avatar: sellerUser.user_avatar
+          ? req.app.locals.cloudinary.url(sellerUser.user_avatar, { width: 100, height: 100, crop: 'thumb' })
+          : null,
+        total: prodTotal
+      }
+    }
 
     obj.data.pagination.total = prodTotal;
     obj.data.pagination = _pagination(obj.data.pagination, req, maxLinkPagination);
+
 
     if (prodTotal > 0) {
       const doc = await res.locals.productModel.find(query, options);
@@ -159,6 +152,10 @@ router.get('/:id/:slug', async (req, res) => {
 
   const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 
+  const prodMarketPlace = {
+    tokopedia: product.prod_marketplace_tokopedia_path,
+    shopee: product.prod_marketplace_shoope_path
+  }
   // Map your existing fields into the template shape
   const data = {
     data: {
@@ -189,14 +186,16 @@ router.get('/:id/:slug', async (req, res) => {
       { value:'3xl', label:'3XL' },
       { value:'4xl', label:'4XL' },
     ],
-    seller: { 
-      name: product['user.user_name'], 
+    seller: {
+      name: product['user.user_name'],
+      username: product['user.user_username'] || null,
       slug: slug((product['user.user_name']).toLowerCase(), '-'),
       avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
       hp: product['user.user_hp']
     },
     marketplaces: [
-      { name:'Tokopedia', url: product.tokopediaUrl || 'https://tokopedia.com/', icon:'/img/marketplaces/tokopedia.svg' }
+      { name:'Tokopedia', url: prodMarketPlace.tokopedia ? 'https://tokopedia.com/' +  prodMarketPlace.tokopedia : null, icon:'/marketplace/tokopedia.png' },
+      { name:'Shopee', url: prodMarketPlace.shopee ? 'https://shopee.com/' + prodMarketPlace.shopee : null, icon:'/marketplace/shopee.png' }
     ]
     // related: await getRelatedProducts(product.id)
   }
@@ -399,33 +398,21 @@ function _filtering(req, obj, query) {
     }
   }
 
-  if (req.query.price_min) {
-    query.prod_price = {
-      [Op.gte]: parseInt(req.query.price_min)
-    }
-
-    if (req.query.price_max) {
-      query.prod_price = Object.assign(query.prod_price, {
-        [Op.lte]: parseInt(req.query.price_max)
-      })
-    }
-  }
-
-
-  if (req.query.price_max) {
-    query.prod_price = {
-      [Op.lte]: parseInt(req.query.price_max)
-    }
-
-    if (req.query.price_min) {
-      query.prod_price = Object.assign(query.prod_price, {
-        [Op.gte]: parseInt(req.query.price_min)
-      })
-    }
+  const priceMin = req.query.price_min ? parseInt(req.query.price_min) : 0;
+  const priceMax = req.query.price_max ? parseInt(req.query.price_max) : 0;
+  if (priceMin > 0 || priceMax > 0) {
+    query.prod_price = {};
+    if (priceMin > 0) query.prod_price[Op.gte] = priceMin;
+    if (priceMax > 0) query.prod_price[Op.lte] = priceMax;
   }
 
   if (req.query.band) {
     query['$band.band_slug$'] = req.query.band.trim();
+  }
+
+  if (req.query.seller) {
+    query['$user.user_username$'] = req.query.seller.trim();
+    obj.data.pageTitle = `Produk dari ${req.query.seller.trim()}`;
   }
 
   if (req.query.collection) { 

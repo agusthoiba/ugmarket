@@ -44,10 +44,31 @@ router.get('/', async function (req, res, next) {
 
 });
 
-// validate(profileSchema), 
 router.post('/update', async function (req, res, next) {
   var obj = { error: null, data: null, ok: false, message: null };
   var userId = req.session.user.id
+
+  async function renderWithError(message) {
+    const user = await res.locals.userModel.findOne({ user_id: userId });
+    user.user_avatar = req.app.locals.cloudinary.url(user.user_avatar, { width: 100, height: 100, crop: 'thumb' });
+    delete user.user_password;
+    obj.error = message;
+    obj.data = { user };
+    return res.render('front/account/profile', obj);
+  }
+
+  const newUsername = req.body.username ? req.body.username.trim() : '';
+  if (!newUsername) {
+    return renderWithError('Username wajib diisi');
+  }
+  if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(newUsername)) {
+    return renderWithError('Gunakan 3-30 karakter: huruf, angka, simbol (-, _, .)');
+  }
+
+  const existing = await res.locals.userModel.findOne({ user_username: newUsername });
+  if (existing && existing.user_id !== userId) {
+    return renderWithError('Username sudah digunakan, silakan pilih yang lain');
+  }
 
   const payload = await cleanPost(req.body, userId);
 
@@ -56,7 +77,7 @@ router.post('/update', async function (req, res, next) {
       width: 50, height: 50, crop: 'thumb'
     });
   }
-  
+
   try {
     await res.locals.userModel.update({ user_id: userId }, payload);
 
@@ -83,6 +104,7 @@ async function cleanPost(body, userId) {
   }
 
   var payload = {
+    user_username: body.username.trim(),
     user_name: body.name.trim(),
     user_hp: formattedPhone,
     user_gender: body.gender
