@@ -15,6 +15,10 @@ module.exports = {
         NEW_PRODUCT: {
             slug: 'produk-baru',
             label: 'Produk Baru',
+        },
+        OLD_PRODUCT: {
+            slug: 'produk-lama',
+            label: 'Produk Lama',
         }
     },
     SIZES: ['xs','s', 'm', 'l', 'xl', 'xxl', '3xl', '4xl']

@@ -130,7 +130,7 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   const docCreate = await res.locals.userModel.create(payload)
 
   const appConfig = req.app.locals.config;
-  const verifyUrl = `${appConfig.protocol}://${appConfig.domain}/auth/verify/${verifyToken}`;
+  const verifyUrl = `${appConfig.domain}/auth/verify/${verifyToken}`;
   const emailClient = new Email(appConfig.resend.apiKey);
 
   emailClient.send({

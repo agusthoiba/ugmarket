@@ -437,6 +437,9 @@ function _sorting(sortParamText) {
       case PRODUCT_SORT.NEW_PRODUCT.slug:
         sortResult = [['prod_id', 'DESC']];
         break;
+      case PRODUCT_SORT.OLD_PRODUCT.slug:
+        sortResult = [['prod_id', 'ASC']];
+        break;
       default:
         sortResult = [['prod_total_sold', 'DESC']];
     }
