@@ -151,6 +151,7 @@ router.get('/:id/:slug', async (req, res) => {
 
 
   const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  const isLoggedIn = !!(req.session && req.session.user);
 
   const prodMarketPlace = {
     tokopedia: product.prod_marketplace_tokopedia_path,
@@ -158,18 +159,21 @@ router.get('/:id/:slug', async (req, res) => {
   }
   // Map your existing fields into the template shape
   const data = {
+    isLoggedIn,
     data: {
       breadcrumb: [
         { text: product['category.cat_name'], link: `/products?kategori=${product['category.cat_slug']}` },
         { text: product.prod_name, link: '' }
       ],
-      waHref: `https://wa.me/${product['user.user_hp']}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}` 
+      waHref: isLoggedIn
+        ? `https://wa.me/${product['user.user_hp']}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}`
+        : null
     },
     product: {
       id: product.prod_id,
       title: product.prod_name,
       band: product['band.band_name'],
-      images: images,        
+      images: images,
       price: product.prod_price,
       description: product.prod_desc,
       inStock: product.prod_stock > 0,
@@ -191,7 +195,7 @@ router.get('/:id/:slug', async (req, res) => {
       username: product['user.user_username'] || null,
       slug: slug((product['user.user_name']).toLowerCase(), '-'),
       avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
-      hp: product['user.user_hp']
+      hp: isLoggedIn ? product['user.user_hp'] : null
     },
     marketplaces: [
       { name:'Tokopedia', url: prodMarketPlace.tokopedia ? 'https://tokopedia.com/' +  prodMarketPlace.tokopedia : null, icon:'/marketplace/tokopedia.png' },
