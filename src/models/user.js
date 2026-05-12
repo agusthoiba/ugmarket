@@ -15,10 +15,11 @@ class User {
       user_username: { type: Sequelize.STRING(100)},
       user_name: { type: Sequelize.STRING },
       user_gender: { type: Sequelize.ENUM('m', 'f', ''), defaultValue: '' },
-      user_password: { type: Sequelize.STRING, allowNull: false },
+      user_password: { type: Sequelize.STRING, allowNull: true },
       user_hp: { type: Sequelize.STRING(20) },
       user_avatar: { type: Sequelize.STRING },
       user_facebook_id: { type: Sequelize.STRING },
+      user_google_id: { type: Sequelize.STRING },
 
       user_address_street: { 
         type: Sequelize.TEXT, 

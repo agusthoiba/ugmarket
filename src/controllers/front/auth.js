@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const validate = require("../../middleware/validate");
 const { getFbAccessToken, graphApiGet } = require('../../helpers/facebookApi');
+const { getGoogleAccessToken, getGoogleUserInfo } = require('../../helpers/googleApi');
 
 const { registerSchema } = require("../../models/schema");
 const Email = require('../../connectors/email');
@@ -89,6 +90,52 @@ router.get('/login/callback', async (req, res, next) => {
   return res.redirect('/');
 });
 
+
+router.get('/login/google', function (req, res, next) {
+  const gConfig = req.app.locals.config.google.oauth;
+  const params = new URLSearchParams({
+    client_id: gConfig.clientId,
+    redirect_uri: gConfig.redirectUri,
+    response_type: 'code',
+    scope: 'email profile',
+    access_type: 'online'
+  });
+  return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+});
+
+router.get('/login/google/callback', async (req, res, next) => {
+  const gConfig = req.app.locals.config.google.oauth;
+  const client = { id: gConfig.clientId, secret: gConfig.clientSecret };
+
+  const tokenResponse = await getGoogleAccessToken(client, gConfig.redirectUri, req.query.code);
+  const userInfo = await getGoogleUserInfo(tokenResponse.data.access_token);
+  const profile = userInfo.data;
+
+  let findUser = await res.locals.userModel.findOne({ user_google_id: profile.sub });
+
+  if (!findUser && profile.email) {
+    findUser = await res.locals.userModel.findOne({ user_email: profile.email });
+    if (findUser) {
+      await res.locals.userModel.update({ user_id: findUser.user_id }, { user_google_id: profile.sub });
+    }
+  }
+
+  if (!findUser) {
+    const payload = {
+      user_google_id: profile.sub,
+      user_name: profile.name,
+      user_is_verified: 1,
+      user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+    };
+    if (profile.email) payload.user_email = profile.email;
+
+    const createUser = await res.locals.userModel.create(payload);
+    findUser = createUser.get({ plain: true });
+  }
+
+  authSession(req, { id: findUser.user_id });
+  return res.redirect('/');
+});
 
 router.post('/register', validate(registerSchema), async (req, res, next) => {
   var obj = { 

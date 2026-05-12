@@ -29,7 +29,12 @@ const config = {
     },
     google: {
         apiKey: env.GOOGLE_API_KEY,
-        mapsUrl: env.GOOGLE_MAPS_URL
+        mapsUrl: env.GOOGLE_MAPS_URL,
+        oauth: {
+            clientId: env.GOOGLE_OAUTH_CLIENT_ID,
+            clientSecret: env.GOOGLE_OAUTH_CLIENT_SECRET,
+            redirectUri: env.GOOGLE_OAUTH_REDIRECT_URI
+        }
     },
     cloudflare: {
         siteKey: env.CLOUDFLARE_SITE_KEY

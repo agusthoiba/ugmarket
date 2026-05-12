@@ -2441,6 +2441,40 @@ OWL carousel
   text-decoration: underline;
 }
 
+.social-login {
+  margin-bottom: 20px;
+}
+
+.google-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 20px;
+  background-color: #fff;
+  color: #3c4043;
+  border: 1.5px solid #c0c0c0;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.google-login-btn:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  color: #3c4043;
+  text-decoration: none;
+}
+
+.google-login-btn img {
+  flex-shrink: 0;
+}
+
 .collections {
   background: var(--bg);
   color: var(--fg);
