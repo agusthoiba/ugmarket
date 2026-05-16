@@ -1,76 +1,160 @@
 <%- include ("./header.html") %>
 
-  <h1>Manage Collections</h1>
+<h1>Manage Collections</h1>
 
-  <!-- Button to Open the Modal -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#collectionModal" onclick="resetForm()">
+<!-- Button to Open the Modal -->
+<button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#collectionModal"
+    onclick="resetForm()"
+>
     Add New Collection
-  </button>
+</button>
 
-  <!-- Modal -->
-  <div class="modal fade" id="collectionModal" tabindex="-1" aria-labelledby="collectionModalLabel" aria-hidden="true">
+<!-- Modal -->
+<div
+    class="modal fade"
+    id="collectionModal"
+    tabindex="-1"
+    aria-labelledby="collectionModalLabel"
+    aria-hidden="true"
+>
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="collectionModalLabel">Manage Collection</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="collectionModalLabel">
+                    Manage Collection
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div
+                    id="error-alert"
+                    class="alert alert-danger <%= error ? '': 'd-none' %>"
+                    role="alert"
+                >
+                    <%= error %>
+                </div>
+                <form id="collection-form" enctype="multipart/form-data">
+                    <input type="hidden" id="col_id" name="col_id" />
+                    <div class="mb-3">
+                        <label for="col_name">Collection Name</label>
+                        <input
+                            type="text"
+                            id="col_name"
+                            name="col_name"
+                            class="form-control"
+                            placeholder="Collection Name"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="col_desc">Description</label>
+                        <textarea
+                            id="col_desc"
+                            name="col_desc"
+                            class="form-control"
+                            placeholder="Description"
+                        ></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="col_thumbnail_file"
+                            >Thumbnail (360x360)</label
+                        >
+                        <input
+                            type="file"
+                            id="col_thumbnail_file"
+                            name="col_thumbnail_file"
+                            class="form-control"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="col_banner_desktop"
+                            >Banner Desktop (1350x450)</label
+                        >
+                        <input
+                            type="file"
+                            id="col_banner_desktop_file"
+                            name="col_banner_desktop"
+                            class="form-control"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="col_banner_mobile"
+                            >Banner Mobile (400x500)</label
+                        >
+                        <input
+                            type="file"
+                            id="col_banner_mobile_file"
+                            name="col_banner_mobile"
+                            class="form-control"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="col_banner_isdisplay_home"
+                            >Display on Home</label
+                        >
+                        <input
+                            type="checkbox"
+                            id="col_banner_isdisplay_home"
+                            name="col_banner_isdisplay_home"
+                            class="form-check-input"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="col_is_visible">Is Visible</label>
+                        <input
+                            type="checkbox"
+                            id="col_is_visible"
+                            name="col_is_visible"
+                            class="form-check-input"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="col_sort">Sort Order</label>
+                        <input
+                            type="number"
+                            id="col_sort"
+                            name="col_sort"
+                            class="form-control"
+                            placeholder="Sort Order"
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="col_total_products">Total Products</label>
+                        <input
+                            type="text"
+                            id="col_total_products"
+                            name="col_total_products"
+                            class="form-control"
+                            disabled
+                        />
+                    </div>
+                    <button
+                        id="btn-submit"
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Save Collection
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="modal-body">
-          <div id="error-alert" class="alert alert-danger <%= error ? '': 'd-none' %>" role="alert">
-            <%= error %>
-          </div>
-          <form id="collection-form" enctype="multipart/form-data">
-            <input type="hidden" id="col_id" name="col_id">
-            <div class="mb-3">
-              <label for="col_name">Collection Name</label>
-              <input type="text" id="col_name" name="col_name" class="form-control" placeholder="Collection Name"
-                required>
-            </div>
-
-            <div class="mb-3">
-              <label for="col_desc">Description</label>
-              <textarea id="col_desc" name="col_desc" class="form-control" placeholder="Description"></textarea>
-            </div>
-
-            <div class="mb-3">
-              <label for="col_thumbnail">Thumbnail (360x360)</label>
-              <input type="file" id="col_thumbnail_file" name="col_thumbnail" class="form-control">
-            </div>
-
-            <div class="mb-3">
-              <label for="col_banner_desktop">Banner Desktop (1444x555)</label>
-              <input type="file" id="col_banner_desktop_file" name="col_banner_desktop" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label for="col_banner_mobile">Banner Mobile (360x500)</label>
-              <input type="file" id="col_banner_mobile_file" name="col_banner_mobile" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label for="col_banner_isdisplay_home">Display on Home</label>
-              <input type="checkbox" id="col_banner_isdisplay_home" name="col_banner_isdisplay_home"
-                class="form-check-input">
-            </div>
-            <div class="mb-3">
-              <label for="col_is_visible">Is Visible</label>
-              <input type="checkbox" id="col_is_visible" name="col_is_visible" class="form-check-input">
-            </div>
-            <div class="mb-3">
-              <label for="col_sort">Sort Order</label>
-              <input type="number" id="col_sort" name="col_sort" class="form-control" placeholder="Sort Order">
-            </div>
-            <div class="mb-3">
-              <label for="col_total_products">Total Products</label>
-              <input type="text" id="col_total_products" name="col_total_products" class="form-control" disabled>
-            </div>
-            <button id="btn-submit" type="submit" class="btn btn-primary">Save Collection</button>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <h3>Collections</h3>
-  <table class="table">
+<h3>Collections</h3>
+<table class="table">
     <thead>
         <tr>
             <th>ID</th>
@@ -84,157 +168,184 @@
         </tr>
     </thead>
     <tbody id="collection-list"></tbody>
-  </table>
+</table>
 
-  <script>
-    const form = document.getElementById('collection-form');
-    const collectionList = document.getElementById('collection-list');
+<script>
+    const form = document.getElementById("collection-form");
+    const collectionList = document.getElementById("collection-list");
 
     // Function to reset the form fields
     function resetForm() {
         form.reset(); // Reset the form fields
-        document.getElementById('col_id').value = ''; // Clear the hidden ID field
+        document.getElementById("col_id").value = ""; // Clear the hidden ID field
     }
 
     // Fetch collections
     async function fetchCollections() {
-        const response = await fetch('/admin/collections?json=1');
+        const response = await fetch("/admin/collections?json=1");
         const collections = await response.json();
-        collectionList.innerHTML = collections.map(collection => `
+        collectionList.innerHTML = collections
+            .map(
+                (collection) => `
             <tr>
                 <td>${collection.col_id}</td>
                 <td>${collection.col_name}</td>
                 <td>${collection.col_slug}</td>
                 <td><img src="${collection.col_thumbnail}" alt="Thumbnail" style="width: 70px; height: auto;"></td>
-                <td>${collection.col_banner_isdisplay_home ? 'Yes' : 'No'}</td>
-                <td>${collection.col_is_visible ? 'Yes' : 'No'}</td>
+                <td>${collection.col_banner_isdisplay_home ? "Yes" : "No"}</td>
+                <td>${collection.col_is_visible ? "Yes" : "No"}</td>
                 <td>${collection.col_total_products}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" onclick="editCollection(${collection.col_id})"> <i class="far fa-edit"></i> </button>
                     <button class="btn btn-danger btn-sm" onclick="deleteCollection(${collection.col_id})"> <i class="fas fa-trash"></i> </button>
                 </td>
             </tr>
-        `).join('');
+        `,
+            )
+            .join("");
     }
 
-  
     // Create or update collection
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      const id = document.getElementById('col_id').value;
-      const method = id ? 'PUT' : 'POST';
-      const url = id ? `/admin/collections/${id}` : '/admin/collections';
-     
-      const colThumbnailFile = form.elements['col_thumbnail_file'];
-  
-      const data = {
-        col_name: form.elements['col_name'].value,
-        col_desc: form.elements['col_desc'].value,
-        col_banner_isdisplay_home: form.elements['col_banner_isdisplay_home'].checked,
-        col_is_visible: form.elements['col_is_visible'].checked,
-        col_sort: form.elements['col_sort'].value,
-      };
+        const id = document.getElementById("col_id").value;
+        const method = id ? "PUT" : "POST";
+        const url = id ? `/admin/collections/${id}` : "/admin/collections";
 
-      const formData = new FormData()
-      formData.append('col_name', data.col_name);
-      formData.append('col_desc', data.col_desc);
-      formData.append('col_banner_isdisplay_home', data.col_banner_isdisplay_home ? ' 1' : '0');
-      formData.append('col_is_visible', data.col_is_visible ? '1' : '0');
-      formData.append('col_sort', data.col_sort);
+        const colThumbnailFile = form.elements["col_thumbnail_file"];
+        const colBannerDesktopFile = form.elements["col_banner_desktop_file"];
+        const colBannerMobileFile = form.elements["col_banner_mobile_file"];
 
-      if (colThumbnailFile.files.length > 0) {
-        formData.append('col_thumbnail_file', colThumbnailFile.files[0])
-      }
- 
-      const response = await fetch(url, {
-        method: method,
-        body: formData
-       
-      });
+        const data = {
+            col_name: form.elements["col_name"].value,
+            col_desc: form.elements["col_desc"].value,
+            col_banner_isdisplay_home:
+                form.elements["col_banner_isdisplay_home"].checked,
+            col_is_visible: form.elements["col_is_visible"].checked,
+            col_sort: form.elements["col_sort"].value,
+        };
 
-      if (response.ok) {
-        fetchCollections();
-        form.reset();
-        // Close the modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('collectionModal'));
-        modal.hide();
-      } else {
-        const errorData = await response.json();
-        const errorAlert = document.getElementById('error-alert');
-        errorAlert.textContent = errorData.error || 'An error occurred';
-        errorAlert.classList.remove('d-none');
-      }
+        const formData = new FormData();
+        formData.append("col_name", data.col_name);
+        formData.append("col_desc", data.col_desc);
+        formData.append(
+            "col_banner_isdisplay_home",
+            data.col_banner_isdisplay_home ? " 1" : "0",
+        );
+        formData.append("col_is_visible", data.col_is_visible ? "1" : "0");
+        formData.append("col_sort", data.col_sort);
+
+        if (colThumbnailFile.files.length > 0) {
+            formData.append("col_thumbnail_file", colThumbnailFile.files[0]);
+        }
+        if (colBannerDesktopFile && colBannerDesktopFile.files.length > 0) {
+            formData.append(
+                "col_banner_desktop",
+                colBannerDesktopFile.files[0],
+            );
+        }
+        if (colBannerMobileFile && colBannerMobileFile.files.length > 0) {
+            formData.append("col_banner_mobile", colBannerMobileFile.files[0]);
+        }
+
+        const response = await fetch(url, {
+            method: method,
+            body: formData,
+        });
+
+        if (response.ok) {
+            fetchCollections();
+            form.reset();
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById("collectionModal"),
+            );
+            modal.hide();
+        } else {
+            const errorData = await response.json();
+            const errorAlert = document.getElementById("error-alert");
+            errorAlert.textContent = errorData.error || "An error occurred";
+            errorAlert.classList.remove("d-none");
+        }
     });
 
     // Edit collection
     function editCollection(id) {
-      fetch(`/admin/collections/${id}`)
-        .then(response => response.json())
-        .then(collection => {
-          document.getElementById('col_id').value = collection.col_id;
-          document.getElementById('col_name').value = collection.col_name;
-          document.getElementById('col_desc').value = collection.col_desc;
-          document.getElementById('col_banner_isdisplay_home').checked = collection.col_banner_isdisplay_home;
-          document.getElementById('col_is_visible').checked = collection.col_is_visible;
-          document.getElementById('col_sort').value = collection.col_sort;
-          document.getElementById('col_total_products').value = collection.col_total_products; // Assuming this is fetched
+        fetch(`/admin/collections/${id}`)
+            .then((response) => response.json())
+            .then((collection) => {
+                document.getElementById("col_id").value = collection.col_id;
+                document.getElementById("col_name").value = collection.col_name;
+                document.getElementById("col_desc").value = collection.col_desc;
+                document.getElementById("col_banner_isdisplay_home").checked =
+                    collection.col_banner_isdisplay_home;
+                document.getElementById("col_is_visible").checked =
+                    collection.col_is_visible;
+                document.getElementById("col_sort").value = collection.col_sort;
+                document.getElementById("col_total_products").value =
+                    collection.col_total_products; // Assuming this is fetched
 
-          // Show the modal
-          const modal = new bootstrap.Modal(document.getElementById('collectionModal'));
-          modal.show();
-        });
+                // Show the modal
+                const modal = new bootstrap.Modal(
+                    document.getElementById("collectionModal"),
+                );
+                modal.show();
+            });
     }
 
     // Delete collection
     async function deleteCollection(id) {
-      await fetch(`/admin/collections/${id}`, { method: 'DELETE' });
-      fetchCollections();
+        await fetch(`/admin/collections/${id}`, { method: "DELETE" });
+        fetchCollections();
     }
 
     // Initial fetch
     fetchCollections();
 
     function disableBtnSubmit(txt) {
-      const btnSubmit = document.getElementById('btn-submit');
-      if (txt != '') {
-        btnSubmit.innerHTML = txt;
-      }
-      btnSubmit.classList.add('disabled'); // Add disabled class
-      btnSubmit.disabled = true; // Disable the button
-      btnSubmit.style.opacity = 0.6; // 
+        const btnSubmit = document.getElementById("btn-submit");
+        if (txt != "") {
+            btnSubmit.innerHTML = txt;
+        }
+        btnSubmit.classList.add("disabled"); // Add disabled class
+        btnSubmit.disabled = true; // Disable the button
+        btnSubmit.style.opacity = 0.6; //
     }
 
     function enableBtnSubmit(txt) {
-      const btnSubmit = document.getElementById('btn-submit');
-      btnSubmit.classList.remove('disabled');
-      btnSubmit.disabled = false;
-      btnSubmit.style.opacity = 1;
-      if (txt != '') {
-        btnSubmit.innerHTML = txt;
-      }
+        const btnSubmit = document.getElementById("btn-submit");
+        btnSubmit.classList.remove("disabled");
+        btnSubmit.disabled = false;
+        btnSubmit.style.opacity = 1;
+        if (txt != "") {
+            btnSubmit.innerHTML = txt;
+        }
     }
 
-    async function uploadImage(file)  {
-      console.log("uploading image...")
-      let fileName = '';
-      const formData = new FormData();
-      formData.append('image', file.files[0]);
+    async function uploadImage(file) {
+        console.log("uploading image...");
+        let fileName = "";
+        const formData = new FormData();
+        formData.append("image", file.files[0]);
 
-      const uploadResponse = await fetch('/cloudinary/upload', {
-        method: 'POST',
-        body: formData
-      });
+        const uploadResponse = await fetch("/cloudinary/upload", {
+            method: "POST",
+            body: formData,
+        });
 
-      if (uploadResponse.ok) {
-          const uploadResult = await uploadResponse.json();
-          let nameSplit = uploadResult.url.split("/");
-          return nameSplit[nameSplit.length - 1];
-      } else {
-          console.error('Error uploading image', uploadResponse.statusText, uploadResponse.error);
-          return null;
-      }
+        if (uploadResponse.ok) {
+            const uploadResult = await uploadResponse.json();
+            let nameSplit = uploadResult.url.split("/");
+            return nameSplit[nameSplit.length - 1];
+        } else {
+            console.error(
+                "Error uploading image",
+                uploadResponse.statusText,
+                uploadResponse.error,
+            );
+            return null;
+        }
     }
-
-  </script>
-  <%- include ("./footer.html") %>
+</script>
+<%- include ("./footer.html") %>
