@@ -28,11 +28,12 @@ async function cleanPayload(body) {
     result.col_desc = body.col_desc.trim();
   }
   if (body.col_banner_isdisplay_home != null) {
-    result.col_banner_isdisplay_home =
-      body.col_banner_isdisplay_home != null ? 1 : 0;
+    result.col_banner_isdisplay_home = Number(body.col_banner_isdisplay_home)
+      ? 1
+      : 0;
   }
   if (body.col_is_visible != null) {
-    result.col_is_visible = body.col_is_visible != null ? 1 : 0;
+    result.col_is_visible = Number(body.col_is_visible) ? 1 : 0;
   }
   if (body.col_sort) {
     result.col_sort = parseInt(body.col_sort);
@@ -141,7 +142,6 @@ router.get("/", authCheckSession, async (req, res) => {
   };
   try {
     const collections = await req.app.locals.collectionModel.find({});
-    console.log("collections:", collections);
 
     collections.map((col) => {
       if (col.col_thumbnail) {
