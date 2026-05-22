@@ -58,11 +58,13 @@ router.get("/", async (req, res, next) => {
     } else {
       col.thumbnailUrl = "https://via.placeholder.com/320x320?text=No+Image";
     }
-    carouselSlides.push({
-      desktop: col.col_banner_desktop,
-      mobile: col.col_banner_mobile,
-      alt: col.col_name,
-    });
+    if (col.col_banner_isdisplay_home == 1) {
+      carouselSlides.push({
+        desktop: col.col_banner_desktop,
+        mobile: col.col_banner_mobile,
+        alt: col.col_name,
+      });
+    }
     return col;
   });
 
