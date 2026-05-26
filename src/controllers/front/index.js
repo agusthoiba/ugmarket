@@ -47,6 +47,7 @@ router.get("/", async (req, res, next) => {
 
   const carouselSlides = [];
   obj.data.collections = obj.data.collections.map((col) => {
+    col.href = `/products?collection=${col.col_slug}`;
     if (col.col_thumbnail) {
       col.thumbnailUrl = req.app.locals.cloudinary.url(col.col_thumbnail, {
         width: 320,
