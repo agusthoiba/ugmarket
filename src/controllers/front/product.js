@@ -65,10 +65,13 @@ router.get('/', async (req, res, next) => {
 
 
   try {
-    const [prodTotal, sellerUser] = await Promise.all([
+    const [prodTotal, sellerUser, bandData] = await Promise.all([
       res.locals.productModel.count(query),
       req.query.seller
         ? res.locals.userModel.findOne({ user_username: req.query.seller.trim() })
+        : Promise.resolve(null),
+      req.query.band
+        ? res.locals.bandModel.findOne({ band_slug: req.query.band.trim() })
         : Promise.resolve(null)
     ]);
 
@@ -79,6 +82,21 @@ router.get('/', async (req, res, next) => {
         avatar: sellerUser.user_avatar
           ? req.app.locals.cloudinary.url(sellerUser.user_avatar, { width: 100, height: 100, crop: 'thumb' })
           : null,
+        total: prodTotal
+      }
+    }
+
+    if (bandData) {
+      const { getCountryFlag } = require('../../helpers/countryFlag');
+      obj.data.band = {
+        name: bandData.band_name,
+        slug: bandData.band_slug,
+        image: bandData.band_image
+          ? req.app.locals.cloudinary.url(bandData.band_image, { width: 200, height: 200, crop: 'thumb' })
+          : null,
+        genre: bandData.band_genre || '',
+        country: bandData.band_country || '',
+        countryFlag: getCountryFlag(bandData.band_country),
         total: prodTotal
       }
     }
@@ -173,6 +191,7 @@ router.get('/:id/:slug', async (req, res) => {
       id: product.prod_id,
       title: product.prod_name,
       band: product['band.band_name'],
+      bandSlug: product['band.band_slug'],
       images: images,
       price: product.prod_price,
       description: product.prod_desc,

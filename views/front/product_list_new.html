@@ -7,22 +7,13 @@
         <div class="mb-8">
           <div class="d-flex justify-content-between align-items-center">
 
-            <% if (!data.seller) { %>
+            <% if (!data.seller && !data.band) { %>
             <div id="product-title-top">
               <h1 class="text-2xl font-bold mb-2"><%= data.pageTitle %></h1>
               <p class="text-muted-foreground"><%= data.pagination.total %> Products</p>
             </div>
             <% } %>
 
-            <div class="sort-dropdown">
-              <select class="form-select" name="sort" id="sort-select-desktop">
-                <% for (const key in data.sort) { %>
-                  <option value="<%= data.sort[key].slug %>" <%= data.uri.query?.sort == data.sort[key].slug ? 'selected' : '' %>>
-                    <%= data.sort[key].label %>
-                  </option>
-                <% } %>
-              </select>
-            </div>
           </div>
         </div>
 
@@ -46,6 +37,42 @@
           </div>
         </div>
         <% } %>
+
+        <% if (data.band) { %>
+        <div class="band-profile">
+          <% if (data.band.image) { %>
+            <img src="<%= data.band.image %>" alt="<%= data.band.name %>" class="band-profile-image">
+          <% } else { %>
+            <div class="band-profile-placeholder">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#adb5bd" stroke-width="1.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                <path d="M2 17l10 5 10-5"></path>
+                <path d="M2 12l10 5 10-5"></path>
+              </svg>
+            </div>
+          <% } %>
+          <div class="band-profile-right">
+            <div class="band-profile-header">
+              <div class="band-profile-name"><%= data.band.name %></div>
+              <div class="band-profile-total-mobile"><%= data.band.total %> Product</div>
+            </div>
+            <% if (data.band.genre || data.band.country) { %>
+            <div class="band-profile-meta">
+              <% if (data.band.genre) { %>
+              <span class="band-profile-genre"><%= data.band.genre %></span>
+              <% } %>
+              <% if (data.band.country) { %>
+              <span class="band-profile-country"><%= data.band.countryFlag %> <%= data.band.country %></span>
+              <% } %>
+            </div>
+            <% } %>
+            <div class="band-profile-total"><%= data.band.total %> Product</div>
+          </div>
+        </div>
+        <% } %>
+
+
+
 
         <!-- Mobile Filter Button -->
         <div class="mobile-filter-header">
@@ -93,6 +120,31 @@
           </div>
           <div class="col-lg-9 col-md-8 col-12">
             <div class="row main-content">
+
+              <div class="band-sort-pagination">
+                <div class="sort-dropdown band-sort">
+                  <select class="form-select" name="sort" id="sort-select-desktop">
+                    <% for (const key in data.sort) { %>
+                      <option value="<%= data.sort[key].slug %>" <%= data.uri.query?.sort == data.sort[key].slug ? 'selected' : '' %>>
+                        <%= data.sort[key].label %>
+                      </option>
+                    <% } %>
+                  </select>
+                </div>
+
+                <% if (data.pagination.total_page > 1) { %>
+                <nav aria-label="Product pagination" class="band-pagination">
+                  <ul class="pagination justify-content-center">
+                    <% data.pagination.list.forEach(function(p) { %>
+                    <li class="page-item <%= p.active ? 'active' : '' %>">
+                      <a class="page-link" href="<%= p.link %>"><%= p.no %></a>
+                    </li>
+                    <% }) %>
+                  </ul>
+                </nav>
+                <% } %>
+              </div>
+
               <!-- Products Grid -->
               <main class="products-section">
 
@@ -107,7 +159,7 @@
                               <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
                             </div>
                             <div class="product-info">
-                              <h3 class="product-band"><%= product["band.band_name"] %></h3>
+                              <h3 class="product-band"><a href="/products?band=<%= product["band.band_slug"] %>" style="color:inherit;text-decoration:none;"><%= product["band.band_name"] %></a></h3>
                               <div class="product-name">
                                 <p>
                                   <% 

@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<div class="band-overlay"><span class="band-genre">' + escapeHtml(genre) + "</span></div>" +
         "</div>" +
         '<div class="band-content">' +
-        '<h3 class="band-name">' + escapeHtml(band.band_name) + "</h3>" +
+        '<h3 class="band-name"><a href="/products?band=' + escapeHtml(slug) + '" style="color:inherit;text-decoration:none;">' + escapeHtml(band.band_name) + "</a></h3>" +
         '<div class="band-meta"><div class="band-country">' +
         '<span class="country-flag">' + countryFlag + "</span>" +
         "<span>" + escapeHtml(countryName) + "</span>" +

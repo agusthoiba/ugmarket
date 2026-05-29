@@ -914,6 +914,9 @@ body {
 
   .desktop-filters {
     display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
   }
 
   /* Make sidebar narrower on tablet */
@@ -1063,6 +1066,9 @@ body {
 
   .desktop-filters {
     display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
   }
 
   .products-grid {
@@ -1143,4 +1149,147 @@ body {
   height: auto;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* Band Profile */
+.band-profile {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.band-profile-image {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.band-profile-placeholder {
+  width: 300px;
+  height: 200px;
+  background: #dee2e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.band-profile-right {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.band-profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.band-profile-name {
+  font-weight: bold;
+  font-size: 1.75rem;
+}
+
+.band-profile-total-mobile {
+  display: none;
+  font-size: 0.875rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.band-profile-total {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-top: 10px;
+}
+
+.band-profile-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.band-profile-genre {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #e9ecef;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.band-profile-country {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.band-sort-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.band-sort {
+  margin: 0;
+}
+
+.band-sort select {
+  width: auto;
+  min-width: 140px;
+}
+
+.band-pagination {
+  margin: 0;
+}
+
+.band-pagination .pagination {
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .band-profile {
+    flex-direction: column;
+  }
+
+  .band-profile-image,
+  .band-profile-placeholder {
+    width: 100% !important;
+    height: 200px !important;
+  }
+
+  .band-profile-right {
+    padding: 16px;
+  }
+
+  .band-profile-name {
+    font-size: 1.25rem;
+  }
+
+  .band-profile-total-mobile {
+    display: block;
+  }
+
+  .band-profile-total {
+    display: none;
+  }
+
+  .band-profile-meta {
+    display: none;
+  }
+
+  .band-sort-pagination {
+    display: none;
+  }
 }

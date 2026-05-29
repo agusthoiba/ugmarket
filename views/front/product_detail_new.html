@@ -33,7 +33,7 @@
 
       <!-- RIGHT: DETAILS -->
       <div class="details">
-        <h1 class="band"><%= product.band %></h1>
+        <h1 class="band"><a href="/products?band=<%= product.bandSlug %>" style="color:inherit;text-decoration:none;"><%= product.band %></a></h1>
         <h2 class="product-title"><%= product.title %></h2>
 
         <div class="price-row">
