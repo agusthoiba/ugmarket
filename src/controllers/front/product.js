@@ -1,5 +1,4 @@
 
-
 const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
@@ -8,6 +7,7 @@ const { Op } = require("sequelize");
 const { PRODUCT_SORT } = require('../../constant');
 const cloudinaryTransformation = require('../../helpers/cloudinaryTransformation');
 const { isArray, drop } = require("underscore");
+const territoryIndonesia = require('territory-indonesia');
 
 router.get('/', async (req, res, next) => {
   let pageLimit = 20;
@@ -65,7 +65,7 @@ router.get('/', async (req, res, next) => {
 
 
   try {
-    const [prodTotal, sellerUser, bandData, collectionData] = await Promise.all([
+    const [prodTotal, sellerUser, bandData, collectionData, allCities] = await Promise.all([
       res.locals.productModel.count(query),
       req.query.seller
         ? res.locals.userModel.findOne({ user_username: req.query.seller.trim() })
@@ -75,8 +75,13 @@ router.get('/', async (req, res, next) => {
         : Promise.resolve(null),
       req.query.collection
         ? req.app.locals.collectionModel.findOne({ col_slug: req.query.collection.trim() })
-        : Promise.resolve(null)
+        : Promise.resolve(null),
+      territoryIndonesia.getAllRegencies()
     ]);
+
+    // Build city lookup map
+    const cityMap = {};
+    allCities.forEach(c => { cityMap[parseInt(c.id)] = c.name; });
 
 
     if (sellerUser) {
@@ -141,6 +146,11 @@ router.get('/', async (req, res, next) => {
         const datum = Object.assign({}, val, { thumbnail: thumbnail })
 
         datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
+
+        // Add seller city name (strip "Kabupaten " or "Kota " prefix)
+        const cityId = datum['user.user_address_city_id'];
+        let rawCity = cityId && cityMap[cityId] ? cityMap[cityId] : '';
+        datum.seller_city = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
 
         return datum
       })

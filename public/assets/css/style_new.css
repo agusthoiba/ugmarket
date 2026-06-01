@@ -432,7 +432,16 @@ body {
   font-size: 12px !important;
 }
 
+.product-city {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
 .product-name {
+
   font-size: 12px;
   font-weight: 400;
   color: #111;
