@@ -65,15 +65,19 @@ router.get('/', async (req, res, next) => {
 
 
   try {
-    const [prodTotal, sellerUser, bandData] = await Promise.all([
+    const [prodTotal, sellerUser, bandData, collectionData] = await Promise.all([
       res.locals.productModel.count(query),
       req.query.seller
         ? res.locals.userModel.findOne({ user_username: req.query.seller.trim() })
         : Promise.resolve(null),
       req.query.band
         ? res.locals.bandModel.findOne({ band_slug: req.query.band.trim() })
+        : Promise.resolve(null),
+      req.query.collection
+        ? req.app.locals.collectionModel.findOne({ col_slug: req.query.collection.trim() })
         : Promise.resolve(null)
     ]);
+
 
     if (sellerUser) {
       obj.data.seller = {
@@ -101,7 +105,19 @@ router.get('/', async (req, res, next) => {
       }
     }
 
+    if (collectionData) {
+      obj.data.collection = {
+        name: collectionData.col_name,
+        slug: collectionData.col_slug,
+        bannerDesktop: collectionData.col_banner_desktop
+          ? req.app.locals.cloudinary.url(collectionData.col_banner_desktop)
+          : null,
+        total: prodTotal
+      }
+    }
+
     obj.data.pagination.total = prodTotal;
+
     obj.data.pagination = _pagination(obj.data.pagination, req, maxLinkPagination);
 
 

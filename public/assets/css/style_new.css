@@ -1293,3 +1293,63 @@ body {
     display: none;
   }
 }
+
+/* Collection Profile */
+.collection-profile {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.collection-banner {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.collection-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 28px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.collection-name {
+  font-weight: bold;
+  font-size: 1.75rem;
+  color: #fff;
+}
+
+.collection-total {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .collection-banner {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: cover;
+  }
+
+  .collection-overlay {
+    padding: 16px;
+  }
+
+  .collection-name {
+    font-size: 1.25rem;
+  }
+
+  .collection-total {
+    font-size: 0.875rem;
+  }
+}
