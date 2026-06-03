@@ -195,6 +195,7 @@ app.use("/auth", require("./controllers/front/auth"));
 app.use("/account/product", require("./controllers/front/account/product"));
 app.use("/account/profile", require("./controllers/front/account/profile"));
 app.use("/account/seller", require("./controllers/front/account/seller"));
+app.use("/account/favorite", require("./controllers/front/account/favorite"));
 app.use("/account/upload", require("./controllers/upload"));
 
 app.use("/admin/auth", require("./controllers/admin/auth"));

@@ -164,41 +164,46 @@
                     <% data.products.forEach(product=> { %>
                       <div class="col-lg-3 col-md-4 col-6">
 
-                        <a href="/products/<%= product.prod_id %>/<%= product.prod_slug %>" class="product-card-link">
-                          <div class="product-card">
-                            <div class="product-image">
-                              <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                              <h3 class="product-band"><a href="/products?band=<%= product["band.band_slug"] %>" style="color:inherit;text-decoration:none;"><%= product["band.band_name"] %></a></h3>
-                              <div class="product-name">
-                                <p>
-                                  <% 
-                                    let name = product.prod_name.toLowerCase();
-                                    name = name.replace(/\b\w/g, c => c.toUpperCase());
-                                    name = name.length > 50 ? name.substring(0, 50) + '...' : name;
-                                  %>
-                                  <%= name %>
+                        <div class="product-card-wrapper">
+                          <a href="/products/<%= product.prod_id %>/<%= product.prod_slug %>" class="product-card-link">
+                            <div class="product-card">
+                              <div class="product-image">
+                                <img src="<%= product.thumbnail %>" alt="<%= product.prod_name %>" loading="lazy">
+                                <button class="product-card-fav" data-prod-id="<%= product.prod_id %>" title="Tambahkan ke Wishlist">
+                                  <i class="far fa-heart"></i>
+                                </button>
+                              </div>
+                              <div class="product-info">
+                                <h3 class="product-band"><a href="/products?band=<%= product["band.band_slug"] %>" style="color:inherit;text-decoration:none;"><%= product["band.band_name"] %></a></h3>
+                                <div class="product-name">
+                                  <p>
+                                    <% 
+                                      let name = product.prod_name.toLowerCase();
+                                      name = name.replace(/\b\w/g, c => c.toUpperCase());
+                                      name = name.length > 50 ? name.substring(0, 50) + '...' : name;
+                                    %>
+                                    <%= name %>
+                                  </p>
+                                </div>
+
+
+
+                                <p class="product-price">
+                                  <%= product.prod_price.toLocaleString('id-ID') %>
                                 </p>
+                                <% if (product.seller_city) { %>
+                                <div class="product-city">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:-2px;">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                  </svg>
+                                  <%= product.seller_city %>
+                                </div>
+                                <% } %>
                               </div>
-
-
-
-                              <p class="product-price">
-                                <%= product.prod_price.toLocaleString('id-ID') %>
-                              </p>
-                              <% if (product.seller_city) { %>
-                              <div class="product-city">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:-2px;">
-                                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                  <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                                <%= product.seller_city %>
-                              </div>
-                              <% } %>
                             </div>
-                          </div>
-                        </a>
+                          </a>
+                        </div>
                       </div>
 
                       <% }) %>
@@ -222,5 +227,77 @@
           <%- include ("./product_list_sidebar_new.html") %>
         </div>
       </div>
+
+      <!-- LOGIN MODAL -->
+      <div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLoginModal()">
+        <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+          <div style="font-size:2rem;margin-bottom:12px;">&#128274;</div>
+          <p style="margin:0 0 20px;font-size:1rem;font-weight:600;color:#222;">Login untuk bisa order</p>
+          <a href="/auth/login" class="btn btn-dark" style="display:block;width:100%;margin-bottom:10px;">Login</a>
+          <button type="button" onclick="closeLoginModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Tutup</button>
+        </div>
+      </div>
+
+      <script>
+        function openLoginModal() {
+          document.getElementById('loginModal').style.display = 'flex';
+        }
+        function closeLoginModal() {
+          document.getElementById('loginModal').style.display = 'none';
+        }
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeLoginModal();
+        });
+
+        // --- FAVORITE / WISHLIST TOGGLE FOR PRODUCT CARDS ---
+        (function() {
+          var loggedIn = <%= !!(session && session.user) %>;
+
+          document.querySelectorAll('.product-card-fav').forEach(function(btn) {
+            var prodId = btn.getAttribute('data-prod-id');
+            var icon = btn.querySelector('i');
+
+            if (loggedIn) {
+              // Check initial state
+              fetch('/account/favorite/check/' + prodId)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  if (data.favorited) {
+                    icon.className = 'fas fa-heart';
+                    btn.classList.add('is-favorited');
+                  }
+                })
+                .catch(function() { /* ignore */ });
+            }
+
+            // Toggle on click
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!loggedIn) {
+                openLoginModal();
+                return;
+              }
+
+              fetch('/account/favorite/toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prod_id: prodId })
+              })
+              .then(function(r) { return r.json(); })
+              .then(function(data) {
+                if (data.favorited) {
+                  icon.className = 'fas fa-heart';
+                  btn.classList.add('is-favorited');
+                } else {
+                  icon.className = 'far fa-heart';
+                  btn.classList.remove('is-favorited');
+                }
+              })
+              .catch(function() { alert('Gagal menyimpan. Silakan coba lagi.'); });
+            });
+          });
+        })();
+      </script>
 
       <%- include ("../front/template/footer.html") %>

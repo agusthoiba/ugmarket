@@ -38,6 +38,9 @@
 
         <div class="price-row">
           <div class="price">Rp <%= product.price.toLocaleString('id-ID') %></div>
+          <button class="btn-favorite" id="btnFavorite" data-prod-id="<%= product.id %>" title="Tambahkan ke Wishlist">
+            <i class="far fa-heart"></i>
+          </button>
         </div>
 
         <% if (product.shippingNote) { %>
@@ -194,6 +197,55 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeLoginModal();
     });
+
+    // --- FAVORITE / WISHLIST TOGGLE ---
+    (function() {
+      var btn = document.getElementById('btnFavorite');
+      if (!btn) return;
+
+      var prodId = btn.getAttribute('data-prod-id');
+      var icon = btn.querySelector('i');
+      var loggedIn = <%= isLoggedIn %>;
+
+      if (loggedIn) {
+        // Check initial state
+        fetch('/account/favorite/check/' + prodId)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.favorited) {
+              icon.className = 'fas fa-heart';
+              btn.classList.add('is-favorited');
+            }
+          })
+          .catch(function() { /* ignore */ });
+      }
+
+      // Toggle on click
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!loggedIn) {
+          openLoginModal();
+          return;
+        }
+
+        fetch('/account/favorite/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prod_id: prodId })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.favorited) {
+            icon.className = 'fas fa-heart';
+            btn.classList.add('is-favorited');
+          } else {
+            icon.className = 'far fa-heart';
+            btn.classList.remove('is-favorited');
+          }
+        })
+        .catch(function() { alert('Gagal menyimpan. Silakan coba lagi.'); });
+      });
+    })();
   </script>
 
   <!-- LOGIN MODAL -->

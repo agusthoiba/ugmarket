@@ -60,8 +60,39 @@ body{
 .band{margin:0 0 4px; font-size:14px; color:var(--brand-2); letter-spacing:.3px; text-transform:uppercase}
 .product-title{margin:0 0 14px; font-size:26px; font-weight:600}
 .price-row{display:flex; align-items:center; gap:14px; margin:10px 0}
-.price{font-size:24px; font-weight:800; color:var(--brand)}
+.price{font-size:24px; font-weight:800; color:var(--brand); flex:1}
 .installment{font-size:12px; color:var(--muted); border:1px dashed var(--line); padding:4px 8px; border-radius:999px}
+
+/* Favorite / Wishlist button */
+.btn-favorite {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: #999;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.btn-favorite:hover {
+  border-color: #ff5d6c;
+  color: #ff5d6c;
+  background: #fff5f6;
+}
+.btn-favorite.is-favorited {
+  border-color: #ff5d6c;
+  color: #ff5d6c;
+  background: #fff5f6;
+}
+.btn-favorite.is-favorited i {
+  color: #ff5d6c;
+}
 .note{margin:6px 0 16px; color:var(--muted)}
 
 /* Size picker */

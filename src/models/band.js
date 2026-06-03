@@ -22,6 +22,7 @@ class Band {
         band_icon: { type: Sequelize.STRING, allowNull: true },
         band_genre: { type: Sequelize.STRING, allowNull: true },
         band_country: { type: Sequelize.STRING, allowNull: true },
+        band_year: { type: Sequelize.INTEGER(4).UNSIGNED, allowNull: true },
 
         band_enabled: { type: Sequelize.TINYINT, allowNull: false, default: 0 },
         band_total_product: {

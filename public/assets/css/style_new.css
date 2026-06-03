@@ -405,6 +405,7 @@ body {
 }
 
 .product-image {
+  position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
@@ -421,6 +422,40 @@ body {
   transform: scale(1.05);
 }
 
+/* Favorite / Wishlist button on product cards */
+.product-card-fav {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  appearance: none;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+  transition: all 0.2s ease;
+  z-index: 2;
+  padding: 0;
+}
+.product-card-fav:hover {
+  border-color: #ff5d6c;
+  color: #ff5d6c;
+  background: #fff5f6;
+}
+.product-card-fav.is-favorited {
+  border-color: #ff5d6c;
+  color: #ff5d6c;
+  background: #fff5f6;
+}
+.product-card-fav.is-favorited i {
+  color: #ff5d6c;
+}
 
 .product-info {
   padding: 10px;

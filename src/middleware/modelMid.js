@@ -9,6 +9,7 @@ const {
   UserAdmin,
   Collections,
   Seller,
+  Favorite,
 } = require("../models");
 
 const Upload = require("../helpers/uploadCloudinary");
@@ -55,6 +56,13 @@ const modelMiddleware = (req, res, next) => {
   req.app.locals.sellerModel = new Seller({
     db: req.app.locals.db,
     user: res.locals.userModel,
+  });
+
+  req.app.locals.favoriteModel = new Favorite({
+    db: req.app.locals.db,
+    user: res.locals.userModel,
+    product: res.locals.productModel,
+    band: res.locals.bandModel,
   });
 
   res.locals.uploadCloudinary = new Upload();
