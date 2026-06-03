@@ -201,6 +201,15 @@ router.get('/:id/:slug', async (req, res) => {
     tokopedia: product.prod_marketplace_tokopedia_path,
     shopee: product.prod_marketplace_shoope_path
   }
+
+  // Resolve seller city name
+  const allCities = await territoryIndonesia.getAllRegencies();
+  const cityMap = {};
+  allCities.forEach(c => { cityMap[parseInt(c.id)] = c.name; });
+  const cityId = product['user.user_address_city_id'];
+  let rawCity = cityId && cityMap[cityId] ? cityMap[cityId] : '';
+  const sellerCity = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
+
   // Map your existing fields into the template shape
   const data = {
     isLoggedIn,
@@ -240,7 +249,8 @@ router.get('/:id/:slug', async (req, res) => {
       username: product['user.user_username'] || null,
       slug: slug((product['user.user_name']).toLowerCase(), '-'),
       avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
-      hp: isLoggedIn ? product['user.user_hp'] : null
+      hp: isLoggedIn ? product['user.user_hp'] : null,
+      city: sellerCity
     },
     marketplaces: [
       { name:'Tokopedia', url: prodMarketPlace.tokopedia ? 'https://tokopedia.com/' +  prodMarketPlace.tokopedia : null, icon:'/marketplace/tokopedia.png' },

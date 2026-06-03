@@ -119,6 +119,9 @@
             <% } else { %>
               <div class="seller__name"><%= seller.name %></div>
             <% } %>
+            <% if (seller.city) { %>
+              <div class="seller__city"><%= seller.city %></div>
+            <% } %>
           </div>
         </div>
 
