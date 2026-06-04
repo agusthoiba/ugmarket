@@ -33,8 +33,7 @@
                 <th> Id </th>
                 <th> Nama </th>
                 <th> Slug </th>
-                <th> Logo </th>
-                <th> Thumbnail </th>
+                <th> Image </th>
                 <th> Total Product </th>
                 <th> Enabled </th>
             </tr>
@@ -46,8 +45,8 @@
                     <td><%= bands[i].band_id %></td>
                     <td><a href="/admin/band/edit/<%= bands[i].band_id %>"><%= bands[i].band_name %></a></td>
                     <td><%= bands[i].band_slug %></td>
-                    <td><%- bands[i].logo %></td>
-                    <td><%- bands[i].thumbnail %> </td>
+                    <!--td><%- bands[i].band_logo %></td-->
+                    <td><img src="<%= bands[i].band_image %>" alt="Thumbnail" style="width: 70px; height: auto;"></td>
                     <td><%= bands[i].band_total_product %></td>
                     <td>
                         <% if (bands[i].band_enabled == 1)  { %>

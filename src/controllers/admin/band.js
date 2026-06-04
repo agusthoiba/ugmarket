@@ -1,5 +1,6 @@
 const pagination = require('../../helpers/pagination');
 const Upload = require('../../helpers/uploadCloudinary');
+const { getAllCountryFlags } = require('../../helpers/countryFlag');
 
 var router = express.Router();
 
@@ -93,14 +94,14 @@ router.get('/add', authCheckSession, async function (req, res, next) {
 				band_slug: '',
 				band_thumbnail: '',
 				logo: '',
-				thumbnail: '',
-				banner: '',
+				image: '',
 				band_genre: '',
 				band_desc: '',
 				band_is_local: false,
 				band_enabled: false
 			},
 			genres: await res.locals.genreModel.find(),
+			countries: getAllCountryFlags(),
 		},
 		action: '/admin/band'
 	};
@@ -116,6 +117,7 @@ router.get('/edit/:id', authCheckSession, async function (req, res, next) {
 		data: {
 			band: {},
 			genres: await res.locals.genreModel.find(),
+			countries: getAllCountryFlags(),
 		},
 		action: `/admin/band/update/${bandId}`
 	};
@@ -170,6 +172,7 @@ async function cleanPost(body) {
 		band_slug: '',
 		band_genre: body.genre,
 		band_desc: (body.desc).trim(),
+		band_country: body.country || '',
 		band_is_local: body.is_local != null ? parseInt(body.is_local, 10) : 0,
 		band_enabled: body.enabled != null ? parseInt(body.enabled, 10): 0
 	}
@@ -189,12 +192,47 @@ async function cleanPost(body) {
 		if (body.logo != '' && body.image_ori_logo) {
 			images.logo = await upload.uploadToCloud(body.image_ori_logo, prefix, `${payload.band_slug}-logo`);
 		}
-		if (body.thumbnail != '' && body.image_ori_thumbnail) {
-			images.thumbnail = await upload.uploadToCloud(body.image_ori_thumbnail, prefix, `${payload.band_slug}-thumbnail`);
+		
+		// Handle thumbnail: support both file upload (via Cloudinary) and direct URL input
+		if (body.image_ori_thumbnail && body.image_ori_thumbnail != '') {
+			const thumbnailValue = body.image_ori_thumbnail.trim();
+			
+			if (thumbnailValue.startsWith('data:')) {
+				// Base64 data from file upload - upload to Cloudinary
+				images.thumbnail = await upload.uploadToCloud(thumbnailValue, prefix, `${payload.band_slug}-thumbnail`);
+			} else if (thumbnailValue.startsWith('https://') || thumbnailValue.startsWith('http://')) {
+				// Direct URL input - validate it's a secure HTTPS URL
+				try {
+					const parsedUrl = new URL(thumbnailValue);
+					
+					// Security: Only allow HTTPS URLs (reject plain HTTP)
+					if (parsedUrl.protocol !== 'https:') {
+						console.log('[WARN] Rejected non-HTTPS thumbnail URL:', parsedUrl.protocol);
+					} else {
+						// Validate it looks like an image URL (common image extensions)
+						const imageExtensions = /\.(jpg|jpeg|png|webp|gif|bmp|heic|heif)(\?.*)?$/i;
+						if (imageExtensions.test(parsedUrl.pathname)) {
+							images.thumbnail = thumbnailValue;
+						} else {
+							console.log('[WARN] Thumbnail URL does not have a recognized image extension:', parsedUrl.pathname);
+							// Still accept it - user confirmed on frontend
+							images.thumbnail = thumbnailValue;
+						}
+					}
+				} catch (e) {
+					console.log('[ERROR] Invalid thumbnail URL:', e.message);
+				}
+			}
 		}
+		
 		if (body.image_banner != '' && body.image_ori_banner) {
 			images.banner = await upload.uploadToCloud(body.image_ori_banner, prefix, `${payload.band_slug}-banner`);
 		}
+
+		// Assign images to payload if they exist
+		if (images.logo) payload.band_logo = images.logo;
+		if (images.thumbnail) payload.band_image = images.thumbnail;
+		if (images.banner) payload.banner = images.banner;
 
 		return {
 			payload, images

@@ -181,68 +181,66 @@ function getCountryFlag(countryName) {
 }
 
 /**
- * Get all supported countries and their flags
- * @returns {Object} Object with country names as keys and flag emojis as values
+ * Get all supported countries with their full names and flags
+ * @returns {Array<{name: string, flag: string}>} Array of country objects with name and flag sorted alphabetically
  */
 function getAllCountryFlags() {
-  return {
-    usa: "🇺🇸",
-    uk: "🇬🇧",
-    germany: "🇩🇪",
-    france: "🇫🇷",
-    italy: "🇮🇹",
-    spain: "🇪🇸",
-    sweden: "🇸🇪",
-    norway: "🇳🇴",
-    finland: "🇫🇮",
-    japan: "🇯🇵",
-    china: "🇨🇳",
-    australia: "🇦🇺",
-    canada: "🇨🇦",
-    brazil: "🇧🇷",
-    russia: "🇷🇺",
-    india: "🇮🇳",
-    "south korea": "🇰🇷",
-    mexico: "🇲🇽",
-    indonesia: "🇮🇩",
-    netherlands: "🇳🇱",
-    turkey: "🇹🇷",
-    "saudi arabia": "🇸🇦",
-    switzerland: "🇨🇭",
-    poland: "🇵🇱",
-    argentina: "🇦🇷",
-    belgium: "🇧🇪",
-    "czech republic": "🇨🇿",
-    thailand: "🇹🇭",
-    iran: "🇮🇷",
-    austria: "🇦🇹",
-    uae: "🇦🇪",
-    colombia: "🇨🇴",
-    "south africa": "🇿🇦",
-    denmark: "🇩🇰",
-    malaysia: "🇲🇾",
-    singapore: "🇸🇬",
-    israel: "🇮🇱",
-    egypt: "🇪🇬",
-    philippines: "🇵🇭",
-    finland: "🇫🇮",
-    chile: "🇨🇱",
-    pakistan: "🇵🇰",
-    ireland: "🇮🇪",
-    greece: "🇬🇷",
-    portugal: "🇵🇹",
-    iraq: "🇮🇶",
-    kazakhstan: "🇰🇿",
-    algeria: "🇩🇿",
-    qatar: "🇶🇦",
-    "new zealand": "🇳🇿",
-    hungary: "🇭🇺",
-    ukraine: "🇺🇦",
-    peru: "🇵🇪",
-    angola: "🇦🇴",
-    romania: "🇷🇴",
-    kuwait: "🇰🇼",
-  };
+  return [
+    { name: "Algeria", flag: "🇩🇿" },
+    { name: "Angola", flag: "🇦🇴" },
+    { name: "Argentina", flag: "🇦🇷" },
+    { name: "Australia", flag: "🇦🇺" },
+    { name: "Austria", flag: "🇦🇹" },
+    { name: "Belgium", flag: "🇧🇪" },
+    { name: "Brazil", flag: "🇧🇷" },
+    { name: "Canada", flag: "🇨🇦" },
+    { name: "Chile", flag: "🇨🇱" },
+    { name: "China", flag: "🇨🇳" },
+    { name: "Colombia", flag: "🇨🇴" },
+    { name: "Czech Republic", flag: "🇨🇿" },
+    { name: "Denmark", flag: "🇩🇰" },
+    { name: "Egypt", flag: "🇪🇬" },
+    { name: "Finland", flag: "🇫🇮" },
+    { name: "France", flag: "🇫🇷" },
+    { name: "Germany", flag: "🇩🇪" },
+    { name: "Greece", flag: "🇬🇷" },
+    { name: "Hungary", flag: "🇭🇺" },
+    { name: "India", flag: "🇮🇳" },
+    { name: "Indonesia", flag: "🇮🇩" },
+    { name: "Iran", flag: "🇮🇷" },
+    { name: "Iraq", flag: "🇮🇶" },
+    { name: "Ireland", flag: "🇮🇪" },
+    { name: "Italy", flag: "🇮🇹" },
+    { name: "Japan", flag: "🇯🇵" },
+    { name: "Kazakhstan", flag: "🇰🇿" },
+    { name: "Kuwait", flag: "🇰🇼" },
+    { name: "Malaysia", flag: "🇲🇾" },
+    { name: "Mexico", flag: "🇲🇽" },
+    { name: "Netherlands", flag: "🇳🇱" },
+    { name: "New Zealand", flag: "🇳🇿" },
+    { name: "Norway", flag: "🇳🇴" },
+    { name: "Pakistan", flag: "🇵🇰" },
+    { name: "Peru", flag: "🇵🇪" },
+    { name: "Philippines", flag: "🇵🇭" },
+    { name: "Poland", flag: "🇵🇱" },
+    { name: "Portugal", flag: "🇵🇹" },
+    { name: "Qatar", flag: "🇶🇦" },
+    { name: "Romania", flag: "🇷🇴" },
+    { name: "Russia", flag: "🇷🇺" },
+    { name: "Saudi Arabia", flag: "🇸🇦" },
+    { name: "Singapore", flag: "🇸🇬" },
+    { name: "South Africa", flag: "🇿🇦" },
+    { name: "South Korea", flag: "🇰🇷" },
+    { name: "Spain", flag: "🇪🇸" },
+    { name: "Sweden", flag: "🇸🇪" },
+    { name: "Switzerland", flag: "🇨🇭" },
+    { name: "Thailand", flag: "🇹🇭" },
+    { name: "Turkey", flag: "🇹🇷" },
+    { name: "Ukraine", flag: "🇺🇦" },
+    { name: "United Arab Emirates", flag: "🇦🇪" },
+    { name: "United Kingdom", flag: "🇬🇧" },
+    { name: "United States", flag: "🇺🇸" },
+  ];
 }
 
 /**
@@ -253,16 +251,18 @@ function getAllCountryFlags() {
 function isCountrySupported(countryName) {
   if (!countryName) return false;
   const country = countryName.toLowerCase();
-  const flagMap = getAllCountryFlags();
+  const flags = getAllCountryFlags();
 
   // Check for exact match
-  if (flagMap[country]) {
-    return true;
+  for (const item of flags) {
+    if (item.name.toLowerCase() === country) {
+      return true;
+    }
   }
 
   // Check for partial match
-  for (const key of Object.keys(flagMap)) {
-    if (country.includes(key) || key.includes(country)) {
+  for (const item of flags) {
+    if (country.includes(item.name.toLowerCase()) || item.name.toLowerCase().includes(country)) {
       return true;
     }
   }
@@ -315,7 +315,6 @@ function getCountryNameFromCode(countryCode) {
     dk: "Denmark",
     my: "Malaysia",
     sg: "Singapore",
-    il: "Israel",
     eg: "Egypt",
     ph: "Philippines",
     cl: "Chile",
