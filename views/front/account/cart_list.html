@@ -1,0 +1,148 @@
+<%- include ("dashboard_header.html") %>
+
+<div class="product-form">
+  <h3>Keranjang Belanja</h3>
+  <% if (data.cartItems.length > 0 && data.cartItems[0].product) { %>
+    <p>Produk yang kamu pilih dari <strong><%= data.cartItems[0].product.user_name %></strong></p>
+  <% } else { %>
+    <p>Produk yang kamu pilih</p>
+  <% } %>
+
+  <% if (error) { %>
+    <div class="alert alert-danger" role="alert">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <% if (data.cartItems.length === 0) { %>
+    <div class="empty-state" style="text-align:center;padding:60px 20px;">
+      <div style="font-size:4rem;margin-bottom:16px;">&#128722;</div>
+      <h4>Keranjang masih kosong</h4>
+      <p style="color:#888;margin-bottom:20px;">Belum ada produk di keranjangmu.</p>
+      <a href="/products" class="btn btn-dark">Mulai Belanja</a>
+    </div>
+  <% } else { %>
+    <div class="cart-items">
+      <% data.cartItems.forEach(function(item) { %>
+        <% if (item.product) { %>
+          <div class="cart-card" data-cart-id="<%= item.cart_id %>">
+            <a href="/products/<%= item.product.id %>/<%= item.product.slug %>" class="cart-card__link">
+              <div class="cart-card__image">
+                <img src="<%= item.thumbnail %>" alt="<%= item.product.name %>" loading="lazy">
+              </div>
+              <div class="cart-card__info">
+                <div class="cart-card__band"><%= item.product.band_name %></div>
+                <div class="cart-card__name"><%= item.product.name %></div>
+                <% if (item.cart_size) { %>
+                  <div class="cart-card__size">Ukuran: <strong><%= item.cart_size.toUpperCase() %></strong></div>
+                <% } %>
+                <div class="cart-card__price">Rp <%= (item.product.price * item.cart_qty).toLocaleString('id-ID') %></div>
+                <div class="cart-card__seller">Penjual: <%= item.product.user_name %></div>
+              </div>
+            </a>
+            <div class="cart-card__actions">
+              <div class="cart-card__qty">
+                <button type="button" class="qty-btn qty-minus" data-cart-id="<%= item.cart_id %>">-</button>
+                <input type="number" class="qty-input" value="<%= item.cart_qty %>" min="1" max="<%= item.product.stock %>" data-cart-id="<%= item.cart_id %>" readonly>
+                <button type="button" class="qty-btn qty-plus" data-cart-id="<%= item.cart_id %>">+</button>
+              </div>
+              <form method="POST" action="/account/cart/remove/<%= item.cart_id %>" class="cart-card__remove-form">
+                <button type="submit" class="cart-card__remove" title="Hapus dari keranjang">&times;</button>
+              </form>
+            </div>
+          </div>
+        <% } %>
+      <% }) %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (locals.pagination && pagination.list.length > 1) { %>
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <% if (locals.pagination.prev_page) { %>
+            <li class="page-item">
+              <a class="page-link" href="/account/cart?page=<%= pagination.prev_page %>" aria-label="Previous">&laquo;</a>
+            </li>
+          <% } %>
+          <% pagination.list.forEach(function(p) { %>
+            <li class="page-item <%= p.active ? 'active' : '' %>">
+              <a class="page-link" href="<%= p.link %>"><%= p.no %></a>
+            </li>
+          <% }) %>
+          <% if (locals.pagination.next_page) { %>
+            <li class="page-item">
+              <a class="page-link" href="/account/cart?page=<%= pagination.next_page %>" aria-label="Next">&raquo;</a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    <% } %>
+  <% } %>
+</div>
+
+<!-- Cart Summary - Sticky on mobile -->
+<div class="cart-summary">
+  <div class="cart-summary__row">
+    <span>Total Harga</span>
+    <div class="cart-summary__total">Rp <%= data.totalPrice.toLocaleString('id-ID') %></div>
+  </div>
+  <div class="cart-summary__actions">
+    <% if (locals.data && data.waHref) { %>
+      <a href="<%= data.waHref %>" class="btn btn-wa" target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i> Hubungi Penjual
+      </a>
+    <% } %>
+    <!--button type="button" class="btn btn-beli" id="btnBeli">Beli</button-->
+  </div>
+</div>
+
+<%- include ("dashboard_footer.html") %>
+<script>
+(function() {
+  // Quantity minus
+  document.querySelectorAll('.qty-minus').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cartId = this.getAttribute('data-cart-id');
+      var input = document.querySelector('.qty-input[data-cart-id="' + cartId + '"]');
+      var val = parseInt(input.value);
+      if (val > 1) {
+        updateQty(cartId, val - 1);
+      }
+    });
+  });
+
+  // Quantity plus
+  document.querySelectorAll('.qty-plus').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cartId = this.getAttribute('data-cart-id');
+      var input = document.querySelector('.qty-input[data-cart-id="' + cartId + '"]');
+      var val = parseInt(input.value);
+      var max = parseInt(input.getAttribute('max'));
+      if (val < max) {
+        updateQty(cartId, val + 1);
+      } else {
+        alert('Stok tidak mencukupi');
+      }
+    });
+  });
+
+  function updateQty(cartId, qty) {
+    fetch('/account/cart/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cart_id: cartId, qty: qty })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'updated') {
+        location.reload();
+      } else {
+        alert('Gagal mengupdate jumlah. Silakan coba lagi.');
+      }
+    })
+    .catch(function() {
+      alert('Terjadi kesalahan. Silakan coba lagi.');
+    });
+  }
+})();
+</script>

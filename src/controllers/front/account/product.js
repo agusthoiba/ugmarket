@@ -87,6 +87,7 @@ router.get("/", async (req, res, next) => {
         sort: sortFilter,
       },
     },
+    isShowMenu: true,
   };
 
   if (doc.length > 0) {

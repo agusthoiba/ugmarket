@@ -9,6 +9,7 @@ const UserAdmin = require('./userAdmin');
 const Collections = require('./collections');
 const Seller = require('./seller');
 const Favorite = require('./favorite');
+const Cart = require('./cart');
 
 module.exports = {
     Genre,
@@ -20,5 +21,6 @@ module.exports = {
     UserAdmin,
     Collections,
     Seller,
-    Favorite
+    Favorite,
+    Cart
 }

@@ -16,7 +16,8 @@ router.get('/login', function (req, res, next) {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
       action: '/auth/login',
-      cfKey: req.app.locals.config.cloudflare.siteKey
+      cfKey: req.app.locals.config.cloudflare.siteKey,
+      redirect: req.query.redirect || ''
     },
     message: null
   };
@@ -269,7 +270,10 @@ router.post('/login', async function (req, res, next) {
   authSession(req, userData);
 
   obj.data = findUser;
-  return res.redirect('/account/product');
+
+  // Redirect to the specified page if provided, otherwise go to account
+  const redirectUrl = req.body.redirect || '/account/product';
+  return res.redirect(redirectUrl);
 });
 
 router.get('/logout', function (req, res, next) {

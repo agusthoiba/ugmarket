@@ -12,7 +12,8 @@ router.get('/', async function (req, res, next) {
     error: null,
     data: null,
     js: ['account_profile'],
-    message: null
+    message: null,
+    isShowMenu: true
   };
   var userId = req.session.user.id;
 

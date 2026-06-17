@@ -32,6 +32,9 @@
     <% } %>
 
     <form action="/auth/login" method="POST" class="login-form">
+      <% if (data.redirect && data.redirect !== '') { %>
+        <input type="hidden" name="redirect" value="<%= data.redirect %>">
+      <% } %>
       <div class="login-form-group form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>

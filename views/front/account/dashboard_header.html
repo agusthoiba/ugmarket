@@ -3,69 +3,64 @@
 
 <div class="container account">
   <div class="row">
-    <div class="col-lg-3 sidebar d-none d-lg-block desktop-nav">
-      
-      <!-- Personal -->
-      <!--ul class="list-unstyled">
-        <li  > <a href="/account/profile"><i class="far fa-user"></i>  Profile</a> </li>
-        <li  > <a href="#/account/inbox" onclick="underdev(event)"><i class="far fa-envelope"></i>  Inbox </a> </li>
-        <li > <a href="#/account/transaction" onclick="underdev(event)">  <i class="fas fa-receipt"></i>  Transaksi </a></li>
-      </ul-->
-      <%- include ("./dashboard_menu.html") %>
+    <% if (isShowMenu) { %>
+      <!-- Desktop sidebar (hidden on mobile) -->
+      <div class="col-lg-3 d-none d-lg-block">
+        <%- include ("./dashboard_menu.html") %>
+      </div>
+    <% } %>
 
-    </div>
-
-    <div class="sidebar d-block d-lg-none nav-user-mobile">
-      <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link  <%= uri.path == '/account/profile' ? 'active' : '' %>" aria-current="page" href="/account/profile"> 
-            <i class="far fa-user fa-2x"></i>
-            <div> Profile </div>
-          </a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/account/product"> 
-            <i class="fas fa-store fa-2x" aria-hidden="true"></i> 
-            <div> Lapak  </div>
-          </a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/account/favorite"> 
-            <i class="fas fa-heart fa-2x"></i>
-            <div> Favorit </div>
-          </a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="underdev(event)"> 
-            <i class="far fa-envelope fa-2x"></i>
-            <div> Inbox </div>
-          </a> 
-        </li>
-        
-       
-        <!-- <li class="nav-item"> 
-          <a class="nav-link" href="#" onclick="underdev(event)"> 
-            <i class="fas fa-receipt fa-2x"></i> 
-            <div> Transaksi </div>
-          </a> 
-        </li-->
-
-        <li class="nav-item"> 
-          <a class="nav-link" href="/auth/logout"> 
-            <i class="fas fa-sign-out-alt fa-2x"></i> 
-            <div> Keluar </div>
-          </a> 
-        </li>
-      </ul>
-
-    </div>
+    <% if (isShowMenu) { %>
+      <!-- Mobile nav (hidden on desktop) -->
+      <div class="col-12 d-block d-lg-none">
+        <div class="sidebar nav-user-mobile">
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link  <%= uri.path == '/account/profile' ? 'active' : '' %>" aria-current="page" href="/account/profile"> 
+                <i class="far fa-user fa-2x"></i>
+                <div> Profile </div>
+              </a> 
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/account/product"> 
+                <i class="fas fa-store fa-2x" aria-hidden="true"></i> 
+                <div> Lapak  </div>
+              </a> 
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/account/favorite"> 
+                <i class="fas fa-heart fa-2x"></i>
+                <div> Favorit </div>
+              </a> 
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" onclick="underdev(event)"> 
+                <i class="far fa-envelope fa-2x"></i>
+                <div> Inbox </div>
+              </a> 
+            </li>
+            <li class="nav-item"> 
+              <a class="nav-link" href="/auth/logout"> 
+                <i class="fas fa-sign-out-alt fa-2x"></i> 
+                <div> Keluar </div>
+              </a> 
+            </li>
+          </ul>
+        </div>
+      </div>
+    <% } %>
 
     <script>
+
       function underdev(event) {
         event.preventDefault();
         alert('Fitur dalam pengembangan');
       }
     </script>
 
-    <div class="col-12 col-lg-9" class="content">
-      <div class="" class="highlight">
+    <% if (isShowMenu) { %>
+      <div class="col-lg-9">
+    <% } else { %>
+      <div class="col-12">
+    <% } %>
+      <div class="highlight">

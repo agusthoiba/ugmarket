@@ -70,16 +70,20 @@
         <!-- CTA -->
         <div class="cta">
           <% if (product.inStock) { %>
-            <!--button class="btn btn-dark" id="addToCart">Tambah ke Keranjang</button-->
-            <% if (isLoggedIn) { %>
-              <a href="<%= data.waHref %>" class="btn btn-success d-lg-block d-none" target="_blank" rel="noopener" style="width: 170px;">
-                <i class="fab fa-whatsapp"></i> Pesan sekarang
-              </a>
-            <% } else { %>
-              <button type="button" class="btn btn-success d-lg-block d-none" style="width: 170px;" onclick="openLoginModal()">
-                <i class="fab fa-whatsapp"></i> Pesan sekarang
+            <div class="d-lg-flex d-none" style="gap: 8px;">
+              <% if (isLoggedIn) { %>
+                <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
+                  <i class="fab fa-whatsapp"></i> Hubungi Penjual
+                </a>
+              <% } else { %>
+                <button type="button" class="btn btn-success" onclick="openLoginModal()">
+                  <i class="fab fa-whatsapp"></i> Hubungi Penjual
+                </button>
+              <% } %>
+              <button class="btn btn-dark" id="addToCartBtn">
+                <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
               </button>
-            <% } %>
+            </div>
           <% } else { %>
             <button class="btn btn-disabled" disabled>Stok Habis</button>
           <% } %>
@@ -140,18 +144,18 @@
 
   <!-- STICKY BAR (MOBILE) -->
   <div class="sticky-bar">
-    <div class="sticky-bar__price">Rp <%= product.price.toLocaleString('id-ID') %></div>
-
-    <!--button class="btn btn-primary" id="stickyAdd">Beli Sekarang</button-->
     <% if (isLoggedIn) { %>
       <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
-        <i class="fab fa-whatsapp"></i> Pesan sekarang
+        <i class="fab fa-whatsapp"></i> Hubungi Penjual
       </a>
     <% } else { %>
       <button type="button" class="btn btn-success" onclick="openLoginModal()">
-        <i class="fab fa-whatsapp"></i> Pesan sekarang
+        <i class="fab fa-whatsapp"></i> Hubungi Penjual
       </button>
     <% } %>
+    <button class="btn btn-dark btn-sm" id="stickyAddToCart" style="font-size:0.8rem;">
+      <i class="fas fa-shopping-cart"></i> Keranjang
+    </button>
   </div>
 
   <!-- Optional: tiny no-framework JS just to switch gallery image and forward sticky CTA -->
@@ -190,16 +194,6 @@
     const add = document.getElementById('addToCart');
     const stickyAdd = document.getElementById('stickyAdd');
     if (add && stickyAdd) stickyAdd.addEventListener('click', function () { add.click(); });
-
-    function openLoginModal() {
-      document.getElementById('loginModal').style.display = 'flex';
-    }
-    function closeLoginModal() {
-      document.getElementById('loginModal').style.display = 'none';
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeLoginModal();
-    });
 
     // --- FAVORITE / WISHLIST TOGGLE ---
     (function() {
@@ -249,16 +243,93 @@
         .catch(function() { alert('Gagal menyimpan. Silakan coba lagi.'); });
       });
     })();
-  </script>
 
-  <!-- LOGIN MODAL -->
-  <div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLoginModal()">
-    <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
-      <div style="font-size:2rem;margin-bottom:12px;">&#128274;</div>
-      <p style="margin:0 0 20px;font-size:1rem;font-weight:600;color:#222;">Login untuk bisa order</p>
-      <a href="/auth/login" class="btn btn-dark" style="display:block;width:100%;margin-bottom:10px;">Login</a>
-      <button type="button" onclick="closeLoginModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Tutup</button>
-    </div>
-  </div>
+    // --- ADD TO CART (shared logic) ---
+    (function() {
+      var prodId = <%= product.id %>;
+      var loggedIn = <%= isLoggedIn %>;
+
+      function addToCart(btn) {
+        if (!loggedIn) {
+          openLoginModal();
+          return;
+        }
+
+        // Get selected size
+        var selectedSize = document.querySelector('input[name="size"]:checked');
+        var size = selectedSize ? selectedSize.value : null;
+
+        var originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menambahkan...';
+
+        fetch('/account/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prod_id: prodId,
+            qty: 1,
+            size: size
+          })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.status === 'added' || data.status === 'updated') {
+            btn.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
+            setTimeout(function() {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 2000);
+            // Refresh cart badge count
+            var desktopBadge = document.getElementById('cartBadgeDesktop');
+            var mobileBadge = document.getElementById('cartBadgeMobile');
+            if (desktopBadge || mobileBadge) {
+              fetch('/account/cart/count')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  var count = data.count || 0;
+                  if (desktopBadge) {
+                    desktopBadge.style.display = count > 0 ? 'flex' : 'none';
+                    desktopBadge.textContent = count > 99 ? '99+' : count;
+                  }
+                  if (mobileBadge) {
+                    mobileBadge.style.display = count > 0 ? 'flex' : 'none';
+                    mobileBadge.textContent = count > 99 ? '99+' : count;
+                  }
+                })
+                .catch(function() {});
+            }
+          } else {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            alert(data.error || 'Gagal menambahkan ke keranjang');
+          }
+        })
+        .catch(function() {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+      }
+
+      // Desktop add to cart button
+      var addBtn = document.getElementById('addToCartBtn');
+      if (addBtn) {
+        addBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          addToCart(this);
+        });
+      }
+
+      // Sticky bar add to cart button
+      var stickyBtn = document.getElementById('stickyAddToCart');
+      if (stickyBtn) {
+        stickyBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          addToCart(this);
+        });
+      }
+    })();
+  </script>
 
 <%- include ("../front/template/footer.html") %>

@@ -27,6 +27,7 @@ router.get("/", async (req, res, next) => {
     data: {
       favorites: [],
     },
+    isShowMenu: true
   };
 
   if (doc.length > 0) {

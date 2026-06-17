@@ -166,6 +166,10 @@ const connMysql = async () => {
   app.locals.sizes = SIZES;
   app.locals.address = await address();
   app.locals.villages = await villages();
+
+  app.locals.logo = app.locals.cloudinary.url("logo-ugsync-new-white_czdjci.png", {
+    width: 200,
+  });
 };
 
 connMysql();
@@ -196,6 +200,7 @@ app.use("/account/product", require("./controllers/front/account/product"));
 app.use("/account/profile", require("./controllers/front/account/profile"));
 app.use("/account/seller", require("./controllers/front/account/seller"));
 app.use("/account/favorite", require("./controllers/front/account/favorite"));
+app.use("/account/cart", require("./controllers/front/account/cart"));
 app.use("/account/upload", require("./controllers/upload"));
 
 app.use("/admin/auth", require("./controllers/admin/auth"));

@@ -32,6 +32,28 @@
         </div>
     </div>
 
+    <!-- Country Section -->
+    <div class="filter-section">
+        <h3 class="filter-title">Negara</h3>
+        <div class="filter-options">
+            <div class="filter-group">
+                <div class="filter-group-body" style="max-height:200px;overflow-y:auto;">
+                    <% 
+                    const countryList = ['Indonesia', 'United States', 'United Kingdom', 'Germany', 'Sweden', 'Norway', 'Finland', 'Denmark', 'Netherlands', 'France', 'Italy', 'Spain', 'Australia', 'Canada', 'Japan', 'Brazil', 'Argentina', 'Mexico', 'Russia', 'Poland', 'Czech Republic', 'Greece', 'Turkey', 'Switzerland', 'Austria', 'Belgium', 'Ireland', 'Portugal', 'New Zealand', 'South Korea', 'China', 'India', 'Thailand', 'Philippines', 'Singapore', 'Malaysia'];
+                    %>
+                    <% countryList.forEach(country => { %>
+                        <label class="filter-option">
+                            <input class="form-check-input" type="checkbox" 
+                                name="country" value="<%= country %>" 
+                                <%= (data.uri && data.uri.query && data.uri.query.country && data.uri.query.country === country) ? 'checked' : '' %> >
+                            <span><%= country %></span>
+                        </label>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Condition Section -->
     <div class="filter-section">
         <h3 class="filter-title">Kondisi</h3>

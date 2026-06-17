@@ -39,7 +39,8 @@ router.get('/', async (req, res, next) => {
       }
     },
     //action: '/account/product/create',
-    js: ['account_seller', 'address']
+    js: ['account_seller', 'address'],
+    isShowMenu: true
   };
   console.log('heyyy!')
   

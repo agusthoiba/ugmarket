@@ -233,7 +233,7 @@
         <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
           <div style="font-size:2rem;margin-bottom:12px;">&#128274;</div>
           <p style="margin:0 0 20px;font-size:1rem;font-weight:600;color:#222;">Login untuk bisa order</p>
-          <a href="/auth/login" class="btn btn-dark" style="display:block;width:100%;margin-bottom:10px;">Login</a>
+          <a id="loginModalLink" href="/auth/login" class="btn btn-dark" style="display:block;width:100%;margin-bottom:10px;">Login</a>
           <button type="button" onclick="closeLoginModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Tutup</button>
         </div>
       </div>
@@ -241,6 +241,11 @@
       <script>
         function openLoginModal() {
           document.getElementById('loginModal').style.display = 'flex';
+          // Set the login link with current page as redirect
+          var loginLink = document.getElementById('loginModalLink');
+          if (loginLink) {
+            loginLink.href = '/auth/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+          }
         }
         function closeLoginModal() {
           document.getElementById('loginModal').style.display = 'none';

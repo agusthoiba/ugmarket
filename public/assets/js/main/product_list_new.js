@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let conditions = [];
     let categories = [];
     let kategori = ''; // kategori for parent category
+    let country = ''; // country filter
     
     checkboxes.forEach((checkbox) => {
       if (checkbox.name == "sizes") {
@@ -162,6 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
         categories.push(checkbox.value);
       } else if (checkbox.name == "kategori") {
         kategori = checkbox.value;
+      } else if (checkbox.name == "country") {
+        country = checkbox.value;
       }
     });
 
@@ -180,6 +183,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (categories.length > 0) { 
       params.append("categories", categories.join(','));
+    }
+
+    if (country !== '') { 
+      params.append("country", country);
     }
 
     // Check for sort from radio buttons or select dropdowns

@@ -125,6 +125,35 @@
                 </div>
             </div-->
 
+            <!-- Country Filter -->
+            <div class="mobile-filter-section">
+                <button class="mobile-accordion-trigger" data-target="country-mobile">
+                    <span>Negara</span>
+                    <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+
+                <div id="country-mobile" class="mobile-accordion-content">
+                    <div class="mobile-filter-options" style="max-height:200px;overflow-y:auto;">
+                        <% 
+                        const countryList = ['Indonesia', 'United States', 'United Kingdom', 'Germany', 'Sweden', 'Norway', 'Finland', 'Denmark', 'Netherlands', 'France', 'Italy', 'Spain', 'Australia', 'Canada', 'Japan', 'Brazil', 'Argentina', 'Mexico', 'Russia', 'Poland', 'Czech Republic', 'Greece', 'Turkey', 'Switzerland', 'Austria', 'Belgium', 'Ireland', 'Portugal', 'New Zealand', 'South Korea', 'China', 'India', 'Thailand', 'Philippines', 'Singapore', 'Malaysia'];
+                        %>
+                        <% countryList.forEach(country => { %>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" 
+                                    name="country" value="<%= country %>" id="country-<%= country.toLowerCase().replace(/\s+/g, '-') %>"
+                                    <%= data.uri.query.country === country ? 'checked' : '' %> >
+                                <label class="form-check-label" for="country-<%= country.toLowerCase().replace(/\s+/g, '-') %>">
+                                    <%= country %>
+                                </label>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+
             <!-- Condition Filter -->
             <div class="mobile-filter-section group condition">
                 <button class="mobile-accordion-trigger" data-target="condition-mobile">

@@ -8,15 +8,21 @@
 
       <!-- Brand -->
       <a class="navbar-brand p-0 me-0 me-lg-2" href="/">
-        <img class="img-fluid" src="/image/logo-UNDERGROUNDSYNC_0.75x.png" alt="Underground Sync">
+        <img class="img-fluid" src="<%= locals.logo %>" alt="Underground Sync">
       </a>
 
 
-      <!-- Avatar Mobile -->    
-      <div class="d-flex d-lg-none">
+      <!-- Cart & Avatar Mobile -->    
+      <div class="d-flex d-lg-none align-items-center" style="gap: 12px;">
         
+        <!-- Cart Icon Mobile (always visible) -->
+        <a href="javascript:void(0)" id="cartIconMobile" title="Keranjang" class="d-block position-relative">
+          <i class="fas fa-shopping-cart fa-lg" style="color: white;"></i>
+          <span class="cart-badge cart-badge-mobile" id="cartBadgeMobile" style="display:none;">0</span>
+        </a>
+
         <% if (session != undefined && session.user != undefined) { %>
-            <a href="/account/profile" title="Profile" class="d-block">
+            <a href="/account/product" title="Profile" class="d-block">
               <% if (session.user.avatar) { %>
                 <img src="<%= session.user.avatar %>" class="avatar-image-header" alt="Profile">
               <% } else { %>
@@ -55,7 +61,7 @@
 
         <!-- Search Form -->
         <form class="d-none d-lg-flex me-3" id="search-form" onsubmit="searchProduct(event)">
-          <input class="form-control" type="search" id="search-input" placeholder="Search" aria-label="Search" 
+          <input class="form-control" type="search" id="search-input" placeholder="Cari merchandise band favoritmu" aria-label="Search" 
             value="<%= uri.query.search %>">
         </form>
     
@@ -63,8 +69,15 @@
 
       </div>
 
-      <!-- Avatar Desktop -->
-      <div class="d-none d-lg-flex">
+      <!-- Cart & Avatar Desktop -->
+      <div class="d-none d-lg-flex align-items-center" style="gap: 16px;">
+        
+        <!-- Cart Icon Desktop (always visible) -->
+        <a href="javascript:void(0)" id="cartIconDesktop" title="Keranjang" class="d-block position-relative">
+          <i class="fas fa-shopping-cart fa-lg" style="color: white;"></i>
+          <span class="cart-badge" id="cartBadgeDesktop" style="display:none;">0</span>
+        </a>
+
         <% if (session != undefined && session.user != undefined) { %>
             <a href="/account/profile" title="Profile" class="d-block">
               <% if (session.user.avatar) { %>
@@ -87,7 +100,7 @@
   <nav class="navbar navbar-expand-lg bg-dark d-lg-none">
     <div class="container-fluid justify-content-center">
       <form class="d-flex d-md-flex" id="search-form" onsubmit="searchProduct(event)" style="width: 100%;margin-bottom: 8px;">
-        <input class="form-control" type="search" id="search-input"  placeholder="Search" aria-label="Search" value="<%= uri.query.search %>">
+        <input class="form-control" type="search" id="search-input"  placeholder="Cari merchandise band favoritmu" aria-label="Search" value="<%= uri.query.search %>">
           <!--button class="btn btn-outline-success" id="btn-search" type="submit">Search</button-->
       </form>
     </div>
@@ -115,4 +128,78 @@
   </nav>
 
 </header>
+
+<script>
+(function() {
+  var isLoggedIn = <%= (session != undefined && session.user != undefined) ? 'true' : 'false' %>;
+
+  // Fetch cart count and update badges
+  var desktopBadge = document.getElementById('cartBadgeDesktop');
+  var mobileBadge = document.getElementById('cartBadgeMobile');
+
+  if (desktopBadge || mobileBadge) {
+    fetch('/account/cart/count')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var count = data.count || 0;
+        if (count > 0) {
+          if (desktopBadge) {
+            desktopBadge.style.display = 'flex';
+            desktopBadge.textContent = count > 99 ? '99+' : count;
+          }
+          if (mobileBadge) {
+            mobileBadge.style.display = 'flex';
+            mobileBadge.textContent = count > 99 ? '99+' : count;
+          }
+        }
+      })
+      .catch(function() { /* ignore */ });
+  }
+
+  // Cart icon click handler - redirect to cart if logged in, else show login modal
+  function handleCartClick(e) {
+    e.preventDefault();
+    if (isLoggedIn) {
+      window.location.href = '/account/cart';
+    } else {
+      openLoginModal();
+    }
+  }
+
+  var cartDesktop = document.getElementById('cartIconDesktop');
+  var cartMobile = document.getElementById('cartIconMobile');
+  if (cartDesktop) cartDesktop.addEventListener('click', handleCartClick);
+  if (cartMobile) cartMobile.addEventListener('click', handleCartClick);
+
+  // Login modal functions
+  function openLoginModal() {
+    document.getElementById('loginModal').style.display = 'flex';
+    var loginLink = document.getElementById('loginModalLink');
+    if (loginLink) {
+      loginLink.href = '/auth/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+    }
+  }
+  function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLoginModal();
+  });
+
+  // Expose functions globally for other pages (e.g. product detail)
+  window.openLoginModal = openLoginModal;
+  window.closeLoginModal = closeLoginModal;
+})();
+</script>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)closeLoginModal()">
+  <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:320px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+    <div style="font-size:2rem;margin-bottom:12px;">&#128274;</div>
+    <p style="margin:0 0 20px;font-size:1rem;font-weight:600;color:#222;">Login untuk bisa order</p>
+    <a id="loginModalLink" href="/auth/login" class="btn btn-dark" style="display:block;width:100%;margin-bottom:10px;">Login</a>
+    <button type="button" onclick="closeLoginModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Tutup</button>
+  </div>
+</div>
+
 <main>

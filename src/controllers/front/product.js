@@ -469,6 +469,10 @@ function _filtering(req, obj, query) {
     query['$band.band_slug$'] = req.query.band.trim();
   }
 
+  if (req.query.country) {
+    query['$band.band_country$'] = req.query.country.trim();
+  }
+
   if (req.query.seller) {
     query['$user.user_username$'] = req.query.seller.trim();
     obj.data.pageTitle = `Produk dari ${req.query.seller.trim()}`;
