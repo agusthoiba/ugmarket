@@ -125,6 +125,7 @@ router.get("/edit/:id", async (req, res, next) => {
     },
     action: `/account/product/update/${prodId}`,
     js: ["account_product", "product_image_dropzone"],
+    isShowMenu: true
   };
 
   try {
@@ -235,6 +236,7 @@ router.get("/add", async (req, res, next) => {
     data: {},
     action: "/account/product/create",
     js: ["account_product", "product_image_dropzone"],
+    isShowMenu: true
   };
 
   obj.data = {
