@@ -38,6 +38,7 @@ const profileSchema = Joi.object({
 
 const sellerSchema = Joi.object({
   name: Joi.string().regex(/[a-zA-Z0-9_.]/).required(),
+  slug: Joi.string().regex(/^[a-z0-9-]+$/).max(100).allow('').optional(),
   hp: Joi.string().regex(/^(\+62|62|0)[0-9]{9,12}$/).required(),
   image_ori_avatar: Joi.string().allow(''),
   image_banner: Joi.string().allow(''),
@@ -49,5 +50,6 @@ const sellerSchema = Joi.object({
   street: Joi.string().allow(''),
   zipcode: Joi.string().regex(/[0-9]/).max(5).allow(''),
 });
+
 
 module.exports = { collectionsSchema, registerSchema, profileSchema, sellerSchema };

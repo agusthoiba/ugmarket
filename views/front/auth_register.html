@@ -19,6 +19,9 @@
       <%= error %>
     </div>
     <form class="login-form" id="register-form">
+      <% if (data.redirect && data.redirect !== '') { %>
+        <input type="hidden" name="redirect" value="<%= data.redirect %>">
+      <% } %>
       <div class="login-form-group form-group">
         <label for="name">Nama</label>
         <input type="text" id="name" name="name">

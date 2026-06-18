@@ -1,5 +1,31 @@
+// Slug generation helper
+function generateSlug(name) {
+  const slugInput = document.getElementById('slug');
+  if (!slugInput) return;
+  // Only auto-generate if slug field is empty or was previously auto-generated
+  if (slugInput.value && slugInput.dataset.userEdited !== 'true') return;
+  
+  const slug = name.toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  slugInput.value = slug;
+}
+
+// Mark slug as user-edited when user manually changes it
+document.addEventListener('DOMContentLoaded', function() {
+  const slugInput = document.getElementById('slug');
+  if (slugInput) {
+    slugInput.addEventListener('input', function() {
+      this.dataset.userEdited = 'true';
+    });
+  }
+});
+
 // Validation functions
   function validateSellerName(name) {
+
     if (!name || name.trim().length === 0) {
       return 'Nama toko harus diisi';
     }
@@ -110,6 +136,149 @@
       });
     }
 
+    // Toggle: use phone number from user profile
+    const useUserHpCheckbox = document.getElementById('useUserHp');
+    if (useUserHpCheckbox) {
+      const userHp = useUserHpCheckbox.dataset.userHp;
+      let previousHp = hpInput.value;
+
+      useUserHpCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          previousHp = hpInput.value;
+          hpInput.value = userHp;
+          // Trigger validation
+          const error = validatePhone(hpInput.value);
+          if (!error) {
+            clearError(hpInput);
+          }
+        } else {
+          hpInput.value = previousHp;
+          const error = validatePhone(hpInput.value);
+          if (!error) {
+            clearError(hpInput);
+          }
+        }
+      });
+    }
+
+    // Toggle: use address from user profile
+    const useProfileAddressCheckbox = document.getElementById('useProfileAddress');
+    if (useProfileAddressCheckbox) {
+      const provinceSelect = document.getElementById('province');
+      const citySelect = document.getElementById('city');
+      const districtSelect = document.getElementById('district');
+      const villageSelect = document.getElementById('village');
+      const streetInput = document.getElementById('street');
+      const zipcodeInput = document.getElementById('zipcode');
+
+      // Store previous seller address values before toggle
+      let previousAddress = {
+        province: provinceSelect.value,
+        city: citySelect.value,
+        district: districtSelect.value,
+        village: villageSelect.value,
+        street: streetInput.value,
+        zipcode: zipcodeInput.value
+      };
+
+      useProfileAddressCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          // Save current seller address values
+          previousAddress = {
+            province: provinceSelect.value,
+            city: citySelect.value,
+            district: districtSelect.value,
+            village: villageSelect.value,
+            street: streetInput.value,
+            zipcode: zipcodeInput.value
+          };
+
+          // Get user profile address values from hidden inputs
+          const userProvince = document.getElementById('user_address_province_id').value;
+          const userCity = document.getElementById('user_address_city_id').value;
+          const userDistrict = document.getElementById('user_address_district_id').value;
+          const userVillage = document.getElementById('user_address_village_id').value;
+          const userStreet = document.getElementById('user_address_street').value;
+          const userZipcode = document.getElementById('user_address_zipcode').value;
+
+          // Set street and zipcode
+          streetInput.value = userStreet;
+          zipcodeInput.value = userZipcode;
+
+          // Set province and cascade to city, district, village
+          if (userProvince) {
+            provinceSelect.value = userProvince;
+            // Trigger change event to cascade
+            const changeEvent = new Event('change');
+            provinceSelect.dispatchEvent(changeEvent);
+
+            // After cascade, set city, district, village
+            setTimeout(() => {
+              if (userCity) {
+                citySelect.value = userCity;
+                citySelect.dispatchEvent(changeEvent);
+              }
+              setTimeout(() => {
+                if (userDistrict) {
+                  districtSelect.value = userDistrict;
+                  districtSelect.dispatchEvent(changeEvent);
+                }
+                setTimeout(() => {
+                  if (userVillage) {
+                    villageSelect.value = userVillage;
+                  }
+                }, 300);
+              }, 300);
+            }, 300);
+          }
+
+          // Disable address fields
+          provinceSelect.disabled = true;
+          citySelect.disabled = true;
+          districtSelect.disabled = true;
+          villageSelect.disabled = true;
+          streetInput.disabled = true;
+          zipcodeInput.disabled = true;
+
+        } else {
+          // Restore previous seller address values
+          provinceSelect.disabled = false;
+          citySelect.disabled = false;
+          districtSelect.disabled = false;
+          villageSelect.disabled = false;
+          streetInput.disabled = false;
+          zipcodeInput.disabled = false;
+
+          streetInput.value = previousAddress.street;
+          zipcodeInput.value = previousAddress.zipcode;
+
+          if (previousAddress.province) {
+            provinceSelect.value = previousAddress.province;
+            const changeEvent = new Event('change');
+            provinceSelect.dispatchEvent(changeEvent);
+
+            setTimeout(() => {
+              if (previousAddress.city) {
+                citySelect.value = previousAddress.city;
+                citySelect.dispatchEvent(changeEvent);
+              }
+              setTimeout(() => {
+                if (previousAddress.district) {
+                  districtSelect.value = previousAddress.district;
+                  districtSelect.dispatchEvent(changeEvent);
+                }
+                setTimeout(() => {
+                  if (previousAddress.village) {
+                    villageSelect.value = previousAddress.village;
+                  }
+                }, 300);
+              }, 300);
+            }, 300);
+          }
+        }
+      });
+    }
+
     // Real-time validation for phone
     if (hpInput) {
       hpInput.addEventListener('blur', function() {
@@ -214,6 +383,16 @@
       console.log('Form validation result:', isValid);
 
       if (isValid) {
+        // Re-enable disabled fields before submit so their values are included
+        const useProfileAddressCheckbox = document.getElementById('useProfileAddress');
+        if (useProfileAddressCheckbox && useProfileAddressCheckbox.checked) {
+          document.getElementById('province').disabled = false;
+          document.getElementById('city').disabled = false;
+          document.getElementById('district').disabled = false;
+          document.getElementById('village').disabled = false;
+          document.getElementById('street').disabled = false;
+          document.getElementById('zipcode').disabled = false;
+        }
         // Submit via API
         submitSellerForm();
       }
@@ -232,6 +411,7 @@
 
         const payload = {
           name: nameInput.value.trim(),
+          slug: document.getElementById('slug')?.value.trim() || '',
           hp: hpInput.value.trim(),
           description: descriptionInput.value.trim(),
           street: document.getElementById('street')?.value || '',

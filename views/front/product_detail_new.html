@@ -113,13 +113,15 @@
 
         <!-- SELLER -->
         <div class="seller">
-          <a class="seller__name seller__link" href="/products?seller=<%= seller.username %>">
+          <% const sellerLink = seller.slug ? `/products?seller=${seller.slug}` : (seller.username ? `/products?seller=${seller.username}` : '#'); %>
+
+          <a class="seller__name seller__link" href="<%= sellerLink %>">
+
             <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
           </a>
           <div>
-            <% const sellerHandle = seller.username || seller.slug; %>
-            <% if (sellerHandle) { %>
-              <a class="seller__name seller__link" href="/products?seller=<%= sellerHandle %>"><%= seller.name %></a>
+            <% if (sellerLink !== '#') { %>
+              <a class="seller__name seller__link" href="<%= sellerLink %>"><%= seller.name %></a>
             <% } else { %>
               <div class="seller__name"><%= seller.name %></div>
             <% } %>
@@ -128,6 +130,7 @@
             <% } %>
           </div>
         </div>
+
 
         <% if (product.description) { %>
           <div class="desc">

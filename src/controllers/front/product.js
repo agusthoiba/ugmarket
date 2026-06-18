@@ -51,9 +51,12 @@ router.get('/', async (req, res, next) => {
     prod_is_visible: 1
   }
 
-  _filtering(req, obj, query)
+
+  await _filtering(req, obj, query)
+
 
   var options = { 
+
     sort: [['prod_id', 'DESC']],
     page: obj.data.pagination.page,
     limit: obj.data.pagination.limit
@@ -65,10 +68,21 @@ router.get('/', async (req, res, next) => {
 
 
   try {
-    const [prodTotal, sellerUser, bandData, collectionData, allCities] = await Promise.all([
+    const [prodTotal, sellerUser, sellerBySlug, bandData, collectionData, allCities] = await Promise.all([
       res.locals.productModel.count(query),
       req.query.seller
-        ? res.locals.userModel.findOne({ user_username: req.query.seller.trim() })
+        ? (async () => {
+            // First try to find seller by slug, then get user
+            const sellerRec = await req.app.locals.sellerModel.findOne({ sel_slug: req.query.seller.trim() });
+            if (sellerRec) {
+              return res.locals.userModel.findOne({ user_id: sellerRec.sel_user_id });
+            }
+            // Fall back to username lookup
+            return res.locals.userModel.findOne({ user_username: req.query.seller.trim() });
+          })()
+        : Promise.resolve(null),
+      req.query.seller_slug
+        ? req.app.locals.sellerModel.findOne({ sel_slug: req.query.seller_slug.trim() })
         : Promise.resolve(null),
       req.query.band
         ? res.locals.bandModel.findOne({ band_slug: req.query.band.trim() })
@@ -79,21 +93,72 @@ router.get('/', async (req, res, next) => {
       territoryIndonesia.getAllRegencies()
     ]);
 
+
+
     // Build city lookup map
     const cityMap = {};
     allCities.forEach(c => { cityMap[parseInt(c.id)] = c.name; });
 
 
+    // Handle seller by username (legacy) or by seller slug
+    let activeSeller = null;
     if (sellerUser) {
-      obj.data.seller = {
-        name: sellerUser.user_name,
-        username: sellerUser.user_username,
-        avatar: sellerUser.user_avatar
-          ? req.app.locals.cloudinary.url(sellerUser.user_avatar, { width: 100, height: 100, crop: 'thumb' })
+      // Look up seller record by user ID; prefer seller fields, fallback to user fields
+      let sellerRecord = null;
+      try {
+        sellerRecord = await req.app.locals.sellerModel.findOne({ sel_user_id: sellerUser.user_id });
+      } catch (e) {
+        // ignore seller lookup errors
+      }
+
+      const name = (sellerRecord && sellerRecord.sel_name) || sellerUser.user_name;
+      const username = sellerUser.user_username;
+      const avatar = (sellerRecord && sellerRecord.sel_avatar) || sellerUser.user_avatar;
+      const slug = (sellerRecord && sellerRecord.sel_slug) || '';
+      const sellerCityId = (sellerRecord && sellerRecord.sel_address_city_id) || sellerUser.user_address_city_id;
+      let rawCity = sellerCityId && cityMap[sellerCityId] ? cityMap[sellerCityId] : '';
+      const city = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
+      activeSeller = {
+        name: name,
+        username: username,
+        slug: slug,
+        avatar: avatar
+          ? req.app.locals.cloudinary.url(avatar, { width: 100, height: 100, crop: 'thumb' })
           : null,
+        city: city,
         total: prodTotal
       }
+      obj.data.seller = activeSeller;
+    } else if (sellerBySlug) {
+      // Seller found by slug - look up user for username
+      let userRecord = null;
+      try {
+        userRecord = await res.locals.userModel.findOne({ user_id: sellerBySlug.sel_user_id });
+      } catch (e) {
+        // ignore user lookup errors
+      }
+
+      const name = sellerBySlug.sel_name || (userRecord && userRecord.user_name) || '';
+      const username = (userRecord && userRecord.user_username) || '';
+      const avatar = sellerBySlug.sel_avatar || (userRecord && userRecord.user_avatar) || '';
+      const slug = sellerBySlug.sel_slug || '';
+      const sellerCityId = sellerBySlug.sel_address_city_id || (userRecord && userRecord.user_address_city_id) || 0;
+      let rawCity = sellerCityId && cityMap[sellerCityId] ? cityMap[sellerCityId] : '';
+      const city = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
+      activeSeller = {
+        name: name,
+        username: username,
+        slug: slug,
+        avatar: avatar
+          ? req.app.locals.cloudinary.url(avatar, { width: 100, height: 100, crop: 'thumb' })
+          : null,
+        city: city,
+        total: prodTotal
+      }
+
+      obj.data.seller = activeSeller;
     }
+
 
     if (bandData) {
       const { getCountryFlag } = require('../../helpers/countryFlag');
@@ -133,6 +198,18 @@ router.get('/', async (req, res, next) => {
         obj.data.pageTitle = `${doc[0]["collection.col_name"]} - Collection`;
       }
 
+      // Batch fetch seller records for all products to get city from sellers table
+      const sellerCityMap = {};
+      if (doc.length > 0) {
+        const userIds = [...new Set(doc.map(v => v.prod_user_id))];
+        const sellerRecords = await req.app.locals.sellerModel.findAll({
+          sel_user_id: { [Op.in]: userIds }
+        });
+        sellerRecords.forEach(s => {
+          sellerCityMap[s.sel_user_id] = s.sel_address_city_id;
+        });
+      }
+
       obj.data.products = doc.map(val => {
         let thumbnail = '/image/no-image-180x180.png'
         if (val.prod_images != null) {
@@ -147,13 +224,15 @@ router.get('/', async (req, res, next) => {
 
         datum.prod_price = req.app.locals.currency(datum.prod_price).format('$0,0')
 
-        // Add seller city name (strip "Kabupaten " or "Kota " prefix)
-        const cityId = datum['user.user_address_city_id'];
+        // Add seller city name from sellers table (sel_address_city_id)
+        const sellerCityId = sellerCityMap[val.prod_user_id];
+        const cityId = sellerCityId || datum['user.user_address_city_id'];
         let rawCity = cityId && cityMap[cityId] ? cityMap[cityId] : '';
         datum.seller_city = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
 
         return datum
       })
+
     }
 
     if (req.query.json == '1') {
@@ -206,8 +285,22 @@ router.get('/:id/:slug', async (req, res) => {
   const allCities = await territoryIndonesia.getAllRegencies();
   const cityMap = {};
   allCities.forEach(c => { cityMap[parseInt(c.id)] = c.name; });
-  const cityId = product['user.user_address_city_id'];
-  let rawCity = cityId && cityMap[cityId] ? cityMap[cityId] : '';
+
+  // Look up seller record from sellers table; prefer seller fields, fallback to user fields
+  let sellerRecord = null;
+  try {
+    sellerRecord = await req.app.locals.sellerModel.findOne({ sel_user_id: product.prod_user_id });
+  } catch (e) {
+    // ignore seller lookup errors
+  }
+
+  const sellerName = (sellerRecord && sellerRecord.sel_name) || product['user.user_name'];
+  const sellerUsername = product['user.user_username'] || null;
+  const sellerSlug = (sellerRecord && sellerRecord.sel_slug) || '';
+  const sellerAvatar = (sellerRecord && sellerRecord.sel_avatar) || product['user.user_avatar'];
+  const sellerPhone = (sellerRecord && sellerRecord.sel_phone) || product['user.user_hp'];
+  const sellerCityId = (sellerRecord && sellerRecord.sel_address_city_id) || product['user.user_address_city_id'];
+  let rawCity = sellerCityId && cityMap[sellerCityId] ? cityMap[sellerCityId] : '';
   const sellerCity = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
 
   // Map your existing fields into the template shape
@@ -219,7 +312,7 @@ router.get('/:id/:slug', async (req, res) => {
         { text: product.prod_name, link: '' }
       ],
       waHref: isLoggedIn
-        ? `https://wa.me/${product['user.user_hp']}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}`
+        ? `https://wa.me/${sellerPhone}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}`
         : null
     },
     product: {
@@ -245,13 +338,16 @@ router.get('/:id/:slug', async (req, res) => {
       { value:'4xl', label:'4XL' },
     ],
     seller: {
-      name: product['user.user_name'],
-      username: product['user.user_username'] || null,
-      slug: slug((product['user.user_name']).toLowerCase(), '-'),
-      avatar:  req.app.locals.cloudinary.url(product['user.user_avatar'], {width: 75}),
-      hp: isLoggedIn ? product['user.user_hp'] : null,
+      name: sellerName,
+      username: sellerUsername,
+      slug: sellerSlug || slug((sellerName).toLowerCase(), '-'),
+      avatar: sellerAvatar
+        ? req.app.locals.cloudinary.url(sellerAvatar, {width: 75})
+        : null,
+      hp: isLoggedIn ? sellerPhone : null,
       city: sellerCity
     },
+
     marketplaces: [
       { name:'Tokopedia', url: prodMarketPlace.tokopedia ? 'https://tokopedia.com/' +  prodMarketPlace.tokopedia : null, icon:'/marketplace/tokopedia.png' },
       { name:'Shopee', url: prodMarketPlace.shopee ? 'https://shopee.com/' + prodMarketPlace.shopee : null, icon:'/marketplace/shopee.png' }
@@ -327,7 +423,8 @@ router.get('/:id/:slug', async (req, res) => {
 
 module.exports = router
 
-function _filtering(req, obj, query) {
+async function _filtering(req, obj, query) {
+
   if (req.query.kategori) {
     let catSlug = '';
     if (isArray(req.query.kategori)) {
@@ -474,11 +571,23 @@ function _filtering(req, obj, query) {
   }
 
   if (req.query.seller) {
-    query['$user.user_username$'] = req.query.seller.trim();
-    obj.data.pageTitle = `Produk dari ${req.query.seller.trim()}`;
+    // First try to find seller by slug
+    const sellerBySlug = await req.app.locals.sellerModel.findOne({ sel_slug: req.query.seller.trim() });
+    if (sellerBySlug) {
+      // Found by slug - filter by user ID
+      query.prod_user_id = sellerBySlug.sel_user_id;
+      obj.data.pageTitle = `Produk dari ${sellerBySlug.sel_name || req.query.seller.trim()}`;
+    } else {
+      // Not found by slug - fall back to username lookup
+      query['$user.user_username$'] = req.query.seller.trim();
+      obj.data.pageTitle = `Produk dari ${req.query.seller.trim()}`;
+    }
   }
 
+
+
   if (req.query.collection) { 
+
     query['$collection.col_slug$'] = req.query.collection.trim();
   }
 }

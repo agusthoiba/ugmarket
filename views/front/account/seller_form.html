@@ -1,32 +1,50 @@
 <%- include ("dashboard_header.html") %>
 <div class="product-form">
 
-<h3> Lapak </h3>
+<h3> Lengkapi informasi lapakmu </h3>
 <p> </p>
 
 <form method="POST" action="/account/seller" id="uploadForm">
   <% let alertClass = error ? 'd-block' : 'd-none' %>
   
-  <div class="alert alert-danger <%= alertClass %>" role="alert" id="alert" >
+  <div class="alert <%= alertClass %>" role="alert" id="alert" >
     <%= error %>
   </div>
   
 
   <div class="mb-3">
-    <label for="name">Nama Toko <span class="text-danger">*</span> </label>
-    <input type="text" class="form-control" id="name" name="name" value="<%= data.seller.name %>" placeholder="">
+    <label for="name">Nama Lapak <span class="text-danger">*</span> </label>
+    <input type="text" class="form-control" id="name" name="name" value="<%= data.seller.name %>" placeholder="" oninput="generateSlug(this.value)">
 
     <div class="invalid-feedback"></div>
   </div>
 
   <div class="mb-3">
-    <label for="description">No HP/WhatsApp <span class="text-danger">*</span></label>
-    <input type="text" class="form-control" id="hp" name="hp" value="<%= data.seller.phone %>">
-    <div class="invalid-feedback"> </div>
+    <label for="slug">Link Lapak (slug) </label>
+    <div class="input-group">
+      <span class="input-group-text" id="slug-prefix">/products?seller=</span>
+      <input type="text" class="form-control" id="slug" name="slug" value="<%= data.seller.slug %>" placeholder="nama-lapak-anda">
+    </div>
+    <div class="form-text">URL yang akan digunakan untuk halaman produk lapak Anda. Biarkan kosong untuk menghasilkan otomatis dari nama lapak.</div>
+    <div class="invalid-feedback"></div>
   </div>
 
   <div class="mb-3">
-    <label for="name">Avatar (300x300) </label>
+    <label for="description">No Telp/HP/WA Toko <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" id="hp" name="hp" value="<%= data.seller.phone %>">
+    <div class="invalid-feedback"> </div>
+    <% if (data.user.user_hp) { %>
+    <div class="form-check mt-2">
+      <input class="form-check-input" type="checkbox" id="useUserHp" data-user-hp="<%= data.user.user_hp %>">
+      <label class="form-check-label" for="useUserHp" style="font-size: 13px; color: #666;">
+        Gunakan nomor HP dari profil (<%= data.user.user_hp %>)
+      </label>
+    </div>
+    <% } %>
+  </div>
+
+  <div class="mb-3">
+    <label for="name">Profil Lapak (300x300) </label>
     <ul class="image-upload list-inline">
       <input id="upload_image_avatar" type="file" name="image_avatar" accept="image/*" style="display:none" data-idx="0" onchange="uploadImage(this.files, 'avatar')">
       <li id="thumb_image_avatar" class="pickfile-container"  onclick="browseFile(event, 'avatar')" >
@@ -41,7 +59,7 @@
 
 
   <div class="mb-3">
-    <label for="name">Banner (1024x256) </label>
+    <label for="name">Background Lapak (1024x256) </label>
     <ul class="image-upload list-inline">
       <input id="upload_image_banner" type="file" name="image" accept="image/*" style="display:none" data-idx="0" onchange="uploadImageAdvance(this.files, 'banner',  '4:1', 1024, 256, 512)">
       <li id="thumb_image_banner" class="pickfile-container" style="width: 512px; height: 128px;" onclick="browseFile(event, 'banner')" >
@@ -61,7 +79,7 @@
   </div>
 
     <div class="mb-3">
-      <%- include ("profile_address.html") %>
+      <%- include ("seller_address.html") %>
     </div>
 
   <div class="mb-3 btn-form-wrapper">

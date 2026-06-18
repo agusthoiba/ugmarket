@@ -32,10 +32,19 @@
             </div>
           <% } %>
           <div>
-            <div class="fw-bold fs-5 mb-1"><%= data.seller.name %></div>
-            <div class="text-muted small mb-1">@<%= data.seller.username %></div>
+              <div class="fw-bold fs-5 mb-1"><%= data.seller.name %></div>
+            <% if (data.seller.city) { %>
+            <div class="small mb-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;vertical-align:-2px;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <%= data.seller.city %>
+            </div>
+            <% } %>
             <div class="small"><%= data.seller.total %> Product</div>
           </div>
+
         </div>
         <% } %>
 

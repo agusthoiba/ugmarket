@@ -211,11 +211,15 @@ document.addEventListener('DOMContentLoaded', async function () {
       isValid = false;
     }
 
+    const redirectInput = document.querySelector('input[name="redirect"]');
+    const redirectValue = redirectInput ? redirectInput.value : '';
+
     const payload = {
       name: (nameInput.value).trim(),
       email: (emailInput.value).trim(),
       password: passwordInput.value,
-      confirm_password: confirmPasswordInput.value
+      confirm_password: confirmPasswordInput.value,
+      redirect: redirectValue
     }
     
     console.log("isValid:" , isValid)
@@ -223,12 +227,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (isValid) {
       try {
         const reg = await register(payload)
-        window.location.assign('/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.')
+        const redirectUrl = redirectValue || '/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.'
+        window.location.assign(redirectUrl)
 
       } catch (error) {
         console.error(error)
       }
     }
+
 
         // Re-enable button if validation fails
     if (!isValid) {

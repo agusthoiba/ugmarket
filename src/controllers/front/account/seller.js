@@ -13,29 +13,39 @@ const itemData = (seller, cloudinary) => {
   return {
     id: seller?.sel_id || 0,
     name: seller?.sel_name || '',
+    slug: seller?.sel_slug || '',
     phone: seller?.sel_phone || '',
     description: seller?.sel_description || '',
     avatar: seller_avatar,
     banner: seller_banner,
+    sel_address_province_id: seller?.sel_address_province_id || '',
+    sel_address_city_id: seller?.sel_address_city_id || '',
+    sel_address_district_id: seller?.sel_address_district_id || '',
+    sel_address_village_id: seller?.sel_address_village_id || '',
+    sel_address_street: seller?.sel_address_street || '',
+    sel_address_zipcode: seller?.sel_address_zipcode || '',
   }
 }
 
 router.get('/', async (req, res, next) => {
   const { sellerModel } = req.app.locals;
+  const { userModel } = res.locals;
 
   const findSeller = await sellerModel.findOne({ sel_user_id: req.session.user.id });
+  const findUser = await userModel.findOne({ user_id: req.session.user.id });
   var obj = {
     error: null,
     message: null,
     data: {
       seller: itemData(findSeller || null, req.app.locals.cloudinary),
       user: {
-        user_address_province_id: findSeller ? findSeller.sel_address_province_id : 0,
-        user_address_city_id: findSeller ? findSeller.sel_address_city_id : 0,
-        user_address_district_id: findSeller ? findSeller.sel_address_district_id : 0,
-        user_address_village_id: findSeller ? findSeller.sel_address_village_id : 0,
-        user_address_street: findSeller ? findSeller.sel_address_street : '',
-        user_address_zipcode: findSeller ? findSeller.sel_address_zipcode : ''
+        user_hp: findUser ? findUser.user_hp : '',
+        user_address_province_id: findUser ? findUser.user_address_province_id : '',
+        user_address_city_id: findUser ? findUser.user_address_city_id : '',
+        user_address_district_id: findUser ? findUser.user_address_district_id : '',
+        user_address_village_id: findUser ? findUser.user_address_village_id : '',
+        user_address_street: findUser ? findUser.user_address_street : '',
+        user_address_zipcode: findUser ? findUser.user_address_zipcode : '',
       }
     },
     //action: '/account/product/create',
@@ -73,9 +83,17 @@ router.post('/', validate(sellerSchema),  async (req, res, next) => {
 
 async function cleanPost(body) {
   console.log("body: ", body); //body
+  const name = (body.name || '').trim();
+  let slug = (body.slug || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  // If no slug provided, generate from name
+  if (!slug) {
+    slug = slug(name, '-');
+  }
+
   let payload = {
     sel_user_id: parseInt(body.user_id),
-    sel_name: (body.name || '').trim(),
+    sel_name: name,
+    sel_slug: slug,
     sel_phone: (body.hp || '').trim(),
     sel_description: (body.description || '').trim(),
     sel_address_province_id: parseInt(body.province) || 0,

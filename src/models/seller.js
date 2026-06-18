@@ -17,6 +17,7 @@ class Seller {
         }
       },
       sel_name: { type: Sequelize.STRING, allowNull: false },
+      sel_slug: { type: Sequelize.STRING, allowNull: true },
       sel_phone: { type: Sequelize.STRING(20), allowNull: false },
       sel_avatar: { type: Sequelize.STRING },
       sel_banner: { type: Sequelize.STRING },
@@ -64,6 +65,13 @@ class Seller {
       where: query
     });
   }
+
+  async findAll (query) {
+    return await this.schema.findAll({
+      where: query
+    });
+  }
+
 }
 
 module.exports = Seller;

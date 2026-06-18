@@ -36,7 +36,8 @@ router.get('/register', function (req, res, next) {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
       action: '/auth/register',
-      cfKey: req.app.locals.config.cloudflare.siteKey
+      cfKey: req.app.locals.config.cloudflare.siteKey,
+      redirect: req.query.redirect || ''
     },
     js: ['auth_register']
   };
@@ -206,7 +207,10 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   }
 
   authSession(req, userData);
-  return res.redirect('/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.');
+
+  // Redirect to the specified page if provided, otherwise go to login with success message
+  const redirectUrl = req.body.redirect || '/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.';
+  return res.redirect(redirectUrl);
 });
 
 
