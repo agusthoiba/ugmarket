@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const masterBands = window.__BANDS__ || [];
 
   let displayBands = [];
-  let currentView = "grid";
+  let currentView = "list";
 
   const state = { rendered: 0, loading: false };
 
@@ -251,7 +251,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (countryFilter && urlParams.get("country")) countryFilter.value = urlParams.get("country");
   if (sortFilter   && urlParams.get("sort"))     sortFilter.value    = urlParams.get("sort");
 
-  // Initial render
+  // Initial render — start with list view
+  currentView = "list";
+  bandGrid.style.display = "block";
+  bandGrid.classList.add("alpha-view");
+  alphaNav.style.display = "flex";
   applyFiltersAndSort();
 
   // Sentinel for infinite scroll (grid only)

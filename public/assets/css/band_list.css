@@ -114,12 +114,9 @@
     border: 1px solid #e9ecef;
 }
 
-/* Band Grid */
-.band-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
-    margin-bottom: 50px;
+/* Band Grid — hidden (only grid/card view, list view still visible) */
+.band-grid:not(.alpha-view) {
+    display: none !important;
 }
 
 .band-card {
