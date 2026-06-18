@@ -3,16 +3,14 @@
 
 <!-- Tagline -->
 <div class="container text-center" style="padding-top: 40px; padding-bottom: 40px;">  
-  <h2 style="margin-bottom: 24px;"> Web Hub Stores for any needs of xtreme music merchandise from rock, punk, metal and more 🤘</h2>
+  <h2 style="margin-bottom: 24px;"> Web Hub Stores for xtreme music merchandise from rock, punk, metal and more</h2>
   <p style="margin-bottom: 32px;"> Penjual bebas biaya admin - harga jadi lebih jujur, transaksi antara penjual dan pembeli independen </p>
   <div style="margin-bottom: 16px;">
-    <button class="btn btn-success" onclick="window.location.href='/auth/register'">Daftar Sekarang</button>
-  </div>
-  <div>
-    <button class="btn btn-default" onclick="window.location.href='/auth/register?redirect=/account/seller'">
+    <button class="btn btn-success" onclick="window.location.href='/products'">Eksplor Produk</button>
+  
+    <button class="btn btn-default" onclick="window.location.href='<%= data.isLoggedIn ? '/account/seller' : '/auth/register?redirect=/account/seller' %>'">
       <i class="fas fa-store" aria-hidden="true"></i>  Mulai Jualan
     </button>
-  </div>
 
 </div>
 

@@ -4,6 +4,10 @@ const cloudinaryTransformation = require("../../helpers/cloudinaryTransformation
 router.get("/", async (req, res, next) => {
   var obj = { error: null, data: { products: [], bands: [], collections: [] } };
   var query = { prod_is_visible: 1, band_enabled: 1 };
+
+  // Check if user is logged in
+  const isLoggedIn = !!(req.session && req.session.user);
+  obj.data.isLoggedIn = isLoggedIn;
   const sort = { prod_id: "DESC" };
   const doc = await res.locals.productModel.findRaw(query, sort);
 
