@@ -45,23 +45,28 @@ router.get("/", async (req, res, next) => {
     });
   }
 
-  obj.data.collections = (req.app.locals.collections || [])
-    .filter((col) => col.col_is_visible == 1)
+  const allCollections = (req.app.locals.collections || [])
     .sort((a, b) => (a.col_sort || 0) - (b.col_sort || 0));
 
   const carouselSlides = [];
-  obj.data.collections = obj.data.collections.map((col) => {
-    col.href = `/products?collection=${col.col_slug}`;
-    if (col.col_thumbnail) {
-      col.thumbnailUrl = req.app.locals.cloudinary.url(col.col_thumbnail, {
-        width: 320,
-        height: 320,
-        crop: "thumb",
-        ...cloudinaryTransformation.watermark,
-      });
-    } else {
-      col.thumbnailUrl = "https://via.placeholder.com/320x320?text=No+Image";
-    }
+  obj.data.collections = allCollections
+    .filter((col) => col.col_is_visible == 1)
+    .map((col) => {
+      col.href = `/products?collection=${col.col_slug}`;
+      if (col.col_thumbnail) {
+        col.thumbnailUrl = req.app.locals.cloudinary.url(col.col_thumbnail, {
+          width: 320,
+          height: 320,
+          crop: "thumb",
+          ...cloudinaryTransformation.watermark,
+        });
+      } else {
+        col.thumbnailUrl = "https://via.placeholder.com/320x320?text=No+Image";
+      }
+      return col;
+    });
+
+  allCollections.forEach((col) => {
     if (col.col_banner_isdisplay_home == 1) {
       carouselSlides.push({
         desktop: col.col_banner_desktop,
@@ -70,7 +75,6 @@ router.get("/", async (req, res, next) => {
         href: `/products?collection=${col.col_slug}`,
       });
     }
-    return col;
   });
 
   obj.data.carousels = carouselSlides.map((slide) => ({
