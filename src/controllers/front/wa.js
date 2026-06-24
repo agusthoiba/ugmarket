@@ -47,7 +47,7 @@ router.post('/product', async (req, res) => {
       user_id: user_id || null,
       ip: req.ip,
       userAgent: req.get('User-Agent'),
-      cookies: req.cookies,
+      req_id: req.cookies['X-Request-Id'],
       timestamp: new Date().toISOString()
     });
 
