@@ -119,6 +119,10 @@ app.use(function (req, res, next) {
     req.session.login_type === undefined &&
     req.session.user === undefined
   ) {
+    // Allow cart routes for guest users (they use guest_cart_token)
+    if (path[2] === "cart") {
+      return next();
+    }
     return res.redirect("/");
   }
 

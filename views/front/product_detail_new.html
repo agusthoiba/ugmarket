@@ -320,17 +320,11 @@
       });
     })();
 
-    // --- ADD TO CART (shared logic) ---
+    // --- ADD TO CART (shared logic - works for both logged in and guest users) ---
     (function() {
       var prodId = <%= product.id %>;
-      var loggedIn = <%= isLoggedIn %>;
 
       function addToCart(btn) {
-        if (!loggedIn) {
-          openLoginModal();
-          return;
-        }
-
         // Get selected size
         var selectedSize = document.querySelector('input[name="size"]:checked');
         var size = selectedSize ? selectedSize.value : null;
