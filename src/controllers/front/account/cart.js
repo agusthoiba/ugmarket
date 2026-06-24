@@ -1,12 +1,32 @@
 var router = express.Router();
 const moment = require("moment");
 const pagination = require("../../../helpers/pagination");
+const { guestCartMid } = require("../../../middleware");
+
+// Apply guest cart middleware to all cart routes
+router.use(guestCartMid);
+
+/**
+ * Helper to get the cart identifier (user ID or guest token).
+ * Returns an object with the appropriate query field.
+ */
+function getCartIdentifier(req) {
+  if (req.session && req.session.user) {
+    return { field: 'cart_user_id', value: parseInt(req.session.user.id) };
+  }
+  return { field: 'cart_guest_token', value: req.guestCartToken };
+}
+
+function buildCartQuery(req) {
+  const ident = getCartIdentifier(req);
+  return { [ident.field]: ident.value };
+}
 
 router.get("/", async (req, res, next) => {
-  const userId = parseInt(req.session.user.id);
+  const ident = getCartIdentifier(req);
   const pageLimit = 20;
 
-  const query = { cart_user_id: userId };
+  const query = { [ident.field]: ident.value };
 
   const option = {
     limit: pageLimit,
@@ -29,7 +49,8 @@ router.get("/", async (req, res, next) => {
       totalPrice: 0,
       totalItems: 0,
     },
-    isShowMenu: false
+    isShowMenu: false,
+    isGuest: ident.field === 'cart_guest_token',
   };
 
   let totalPrice = 0;
@@ -103,7 +124,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/add", async (req, res, next) => {
-  const userId = parseInt(req.session.user.id);
+  const ident = getCartIdentifier(req);
   const prodId = parseInt(req.body.prod_id);
   const qty = parseInt(req.body.qty) || 1;
   const size = req.body.size || null;
@@ -128,7 +149,7 @@ router.post("/add", async (req, res, next) => {
     }
 
     // Check if user can only add products from one seller
-    const existingCartItems = await req.app.locals.cartModel.find({ cart_user_id: userId });
+    const existingCartItems = await req.app.locals.cartModel.find({ [ident.field]: ident.value });
     if (existingCartItems.length > 0) {
       // Get the seller of the first existing cart item
       const firstCartItem = existingCartItems[0];
@@ -142,7 +163,7 @@ router.post("/add", async (req, res, next) => {
 
     // Check if item already in cart
     const existingQuery = {
-      cart_user_id: userId,
+      [ident.field]: ident.value,
       cart_prod_id: prodId,
     };
     if (size) {
@@ -167,14 +188,17 @@ router.post("/add", async (req, res, next) => {
       return res.json({ status: "updated", cart_id: existing.cart_id, qty: newQty });
     } else {
       // Create new cart item
-      const created = await req.app.locals.cartModel.create({
-        cart_user_id: userId,
+      const payload = {
         cart_prod_id: prodId,
         cart_qty: qty,
         cart_size: size,
         cart_created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
         cart_updated_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-      });
+      };
+      // Set either user_id or guest_token
+      payload[ident.field] = ident.value;
+
+      const created = await req.app.locals.cartModel.create(payload);
       return res.json({ status: "added", cart_id: created.cart_id, qty: qty });
     }
   } catch (err) {
@@ -184,7 +208,7 @@ router.post("/add", async (req, res, next) => {
 });
 
 router.post("/update", async (req, res, next) => {
-  const userId = parseInt(req.session.user.id);
+  const ident = getCartIdentifier(req);
   const cartId = parseInt(req.body.cart_id);
   const qty = parseInt(req.body.qty);
 
@@ -199,7 +223,7 @@ router.post("/update", async (req, res, next) => {
   try {
     const cartItem = await req.app.locals.cartModel.findOne({
       cart_id: cartId,
-      cart_user_id: userId,
+      [ident.field]: ident.value,
     });
 
     if (!cartItem) {
@@ -228,13 +252,13 @@ router.post("/update", async (req, res, next) => {
 });
 
 router.post("/remove/:id", async (req, res, next) => {
-  const userId = parseInt(req.session.user.id);
+  const ident = getCartIdentifier(req);
   const cartId = parseInt(req.params.id);
 
   try {
     await req.app.locals.cartModel.remove({
       cart_id: cartId,
-      cart_user_id: userId,
+      [ident.field]: ident.value,
     });
     return res.redirect("/account/cart");
   } catch (err) {
@@ -244,15 +268,10 @@ router.post("/remove/:id", async (req, res, next) => {
 });
 
 router.get("/count", async (req, res, next) => {
-  if (!req.session.user) {
-    return res.json({ count: 0 });
-  }
-
-  const userId = parseInt(req.session.user.id);
-
   try {
+    const ident = getCartIdentifier(req);
     const total = await req.app.locals.cartModel.count({
-      cart_user_id: userId,
+      [ident.field]: ident.value,
     });
     return res.json({ count: total });
   } catch (err) {

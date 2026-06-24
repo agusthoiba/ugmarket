@@ -10,11 +10,16 @@ class Cart {
       cart_id: { type: Sequelize.INTEGER(11).UNSIGNED, primaryKey: true, autoIncrement: true },
       cart_user_id: { 
         type: Sequelize.INTEGER(11).UNSIGNED, 
-        allowNull: false,
+        allowNull: true,
         references: {
           model: this.user.schema,
           key: 'user_id'
         }
+      },
+      cart_guest_token: {
+        type: Sequelize.STRING(36),
+        allowNull: true,
+        defaultValue: null
       },
       cart_prod_id: { 
         type: Sequelize.INTEGER(11).UNSIGNED, 

@@ -156,14 +156,10 @@
       .catch(function() { /* ignore */ });
   }
 
-  // Cart icon click handler - redirect to cart if logged in, else show login modal
+  // Cart icon click handler - redirect to cart (works for both logged in and guest users)
   function handleCartClick(e) {
     e.preventDefault();
-    if (isLoggedIn) {
-      window.location.href = '/account/cart';
-    } else {
-      openLoginModal();
-    }
+    window.location.href = '/account/cart';
   }
 
   var cartDesktop = document.getElementById('cartIconDesktop');
