@@ -43,6 +43,15 @@
           </button>
         </div>
 
+        <!-- STOCK INFO -->
+        <div class="stock-info">
+          <% if (product.inStock) { %>
+            <span class="stock-badge stock-badge--in">Stok Tersedia (<%= product.stock %>)</span>
+          <% } else { %>
+            <span class="stock-badge stock-badge--out">Stok Habis</span>
+          <% } %>
+        </div>
+
         <% if (product.shippingNote) { %>
           <p class="note"><%= product.shippingNote %></p>
         <% } %>
@@ -71,15 +80,9 @@
         <div class="cta">
           <% if (product.inStock) { %>
             <div class="d-lg-flex d-none" style="gap: 8px;">
-              <% if (isLoggedIn) { %>
-                <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
-                  <i class="fab fa-whatsapp"></i> Hubungi Penjual
-                </a>
-              <% } else { %>
-                <button type="button" class="btn btn-success" onclick="openLoginModal()">
-                  <i class="fab fa-whatsapp"></i> Hubungi Penjual
-                </button>
-              <% } %>
+              <button type="button" class="btn btn-success" onclick="openWaModal()">
+                <i class="fab fa-whatsapp"></i> Hubungi Penjual
+              </button>
               <button class="btn btn-dark" id="addToCartBtn">
                 <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
               </button>
@@ -128,6 +131,7 @@
             <% if (seller.city) { %>
               <div class="seller__city"><%= seller.city %></div>
             <% } %>
+            <div class="seller__product-count"><%= seller.totalProduct %> Produk</div>
           </div>
         </div>
 
@@ -147,22 +151,91 @@
 
   <!-- STICKY BAR (MOBILE) -->
   <div class="sticky-bar">
-    <% if (isLoggedIn) { %>
-      <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
-        <i class="fab fa-whatsapp"></i> Hubungi Penjual
-      </a>
-    <% } else { %>
-      <button type="button" class="btn btn-success" onclick="openLoginModal()">
-        <i class="fab fa-whatsapp"></i> Hubungi Penjual
-      </button>
-    <% } %>
+    <button type="button" class="btn btn-success" onclick="openWaModal()">
+      <i class="fab fa-whatsapp"></i> Hubungi Penjual
+    </button>
     <button class="btn btn-dark btn-sm" id="stickyAddToCart" style="font-size:0.8rem;">
       <i class="fas fa-shopping-cart"></i> Keranjang
     </button>
   </div>
 
+  <!-- WHATSAPP CONFIRMATION MODAL -->
+  <div id="waModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)closeWaModal()">
+    <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="font-size:2.5rem;margin-bottom:12px;">
+        <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+      </div>
+      <p style="margin:0 0 8px;font-size:1rem;font-weight:600;color:#222;">Hubungi Penjual via WhatsApp</p>
+      <p style="margin:0 0 20px;font-size:0.85rem;color:#666;">Kamu akan diarahkan ke WhatsApp untuk menanyakan produk ini.</p>
+      <button id="waModalConfirmBtn" type="button" class="btn btn-success" style="display:block;width:100%;margin-bottom:10px;justify-content:center;" onclick="handleWaConfirm()">
+        <i class="fab fa-whatsapp"></i> Lanjutkan ke WhatsApp
+      </button>
+      <button type="button" onclick="closeWaModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Batal</button>
+    </div>
+  </div>
+
   <!-- Optional: tiny no-framework JS just to switch gallery image and forward sticky CTA -->
   <script>
+    // --- WHATSAPP MODAL ---
+    var waModalProductId = <%= product.id %>;
+    var waModalSellerId = <%= seller.hp ? '1' : '0' %>; // placeholder, will be resolved via API
+
+    function openWaModal() {
+      document.getElementById('waModal').style.display = 'flex';
+    }
+
+    function closeWaModal() {
+      document.getElementById('waModal').style.display = 'none';
+    }
+
+    function handleWaConfirm() {
+      var btn = document.getElementById('waModalConfirmBtn');
+      var originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengarahkan...';
+
+      var loggedIn = <%= isLoggedIn %>;
+      var userId = null;
+      <% if (isLoggedIn) { %>
+        userId = <%= session.user.id %>;
+      <% } %>
+
+      // Get cookies as a string
+      var cookies = document.cookie;
+
+      fetch('/wa/product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: waModalProductId,
+          seller_id: <%= product.sellerUserId %>,
+          user_id: userId,
+          cookies: cookies
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success && data.waUrl) {
+          window.open(data.waUrl, '_blank');
+          closeWaModal();
+        } else {
+          alert('Gagal memproses. Silakan coba lagi.');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      })
+      .catch(function() {
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWaModal();
+    });
+    // --- END WHATSAPP MODAL ---
+
     const hero = document.querySelector('.gallery__hero');
     const images = <%- JSON.stringify(product.images || []) %>;
     const thumbs = document.querySelectorAll('.thumb');

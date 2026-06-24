@@ -30,6 +30,7 @@
     "axios": "^1.11.0",
     "body-parser": "^1.15.2",
     "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
     "cookie-session": "^2.0.0-beta.3",
     "cors": "^2.8.5",
     "css-minify": "^2.1.0",

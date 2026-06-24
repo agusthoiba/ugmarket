@@ -31,6 +31,7 @@ class Seller {
       sel_address_lat: { type: Sequelize.DECIMAL(10, 7), allowNull: true },
       sel_address_lng: { type: Sequelize.DECIMAL(10, 7), allowNull: true },
       sel_is_active: { type: Sequelize.TINYINT(1), defaultValue: 1 },
+      sel_total_product: { type: Sequelize.INTEGER(11).UNSIGNED, defaultValue: 0 },
       sel_created_at: { type: Sequelize.DATE, allowNull: false },
       sel_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }
     }, {

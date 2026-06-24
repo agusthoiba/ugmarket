@@ -222,6 +222,18 @@ router.post("/update/:id", async function (req, res, next) {
     const payload = await cleanPost(req.body, findBand, "update");
 
     await res.locals.productModel.update(query, payload);
+
+    // Update seller total published product count
+    const publishedCount = await res.locals.productModel.count({
+      prod_user_id: parseInt(req.session.user.id),
+      prod_is_visible: 1,
+      prod_is_deleted: 0
+    });
+    await req.app.locals.sellerModel.update(
+      { sel_user_id: parseInt(req.session.user.id) },
+      { sel_total_product: publishedCount }
+    );
+
     return res.redirect("/account/product");
   } catch (err) {
     console.error(err);
@@ -280,6 +292,17 @@ router.post("/create", async (req, res) => {
       {
         band_total_product: findBand.band_total_product + 1,
       },
+    );
+
+    // Update seller total published product count
+    const publishedCount = await res.locals.productModel.count({
+      prod_user_id: parseInt(req.body.user_id),
+      prod_is_visible: 1,
+      prod_is_deleted: 0
+    });
+    await req.app.locals.sellerModel.update(
+      { sel_user_id: parseInt(req.body.user_id) },
+      { sel_total_product: publishedCount }
     );
 
     return res.redirect("/account/product");

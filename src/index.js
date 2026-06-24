@@ -8,6 +8,7 @@ const ejs = require("ejs");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 
 const config = require("./config");
 const cloudinary = require("cloudinary").v2;
@@ -60,6 +61,7 @@ app.locals.cloudinary = cloudinary;
 
 app.use(morgan("combined"));
 app.use(express.static("public"));
+app.use(cookieParser());
 
 var cookieSession = require("cookie-session");
 
@@ -201,6 +203,7 @@ app.use("/account/profile", require("./controllers/front/account/profile"));
 app.use("/account/seller", require("./controllers/front/account/seller"));
 app.use("/account/favorite", require("./controllers/front/account/favorite"));
 app.use("/account/cart", require("./controllers/front/account/cart"));
+app.use("/wa", require("./controllers/front/wa"));
 app.use("/account/upload", require("./controllers/upload"));
 
 app.use("/admin/auth", require("./controllers/admin/auth"));

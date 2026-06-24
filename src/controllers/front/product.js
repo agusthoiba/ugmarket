@@ -2,6 +2,7 @@
 const router = express.Router()
 const URI = require("urijs");
 const { Op } = require("sequelize");
+const crypto = require("crypto");
 
 
 const { PRODUCT_SORT } = require('../../constant');
@@ -255,6 +256,13 @@ router.get('/', async (req, res, next) => {
 })
 
 router.get('/:id/:slug', async (req, res) => {
+  // Set X-Request-Id cookie with UUID v4
+  res.cookie('X-Request-Id', crypto.randomUUID(), {
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  });
+
   const prodId = parseInt(req.params.id); // prodId
   const product = await res.locals.productModel.findOne({prod_id: prodId})
 
@@ -303,6 +311,13 @@ router.get('/:id/:slug', async (req, res) => {
   let rawCity = sellerCityId && cityMap[sellerCityId] ? cityMap[sellerCityId] : '';
   const sellerCity = rawCity.replace(/^(Kabupaten|Kota)\s+/i, '');
 
+  // Count total published products for this seller
+  const sellerTotalProduct = await res.locals.productModel.count({
+    prod_user_id: product.prod_user_id,
+    prod_is_visible: 1,
+    prod_is_deleted: 0
+  });
+
   // Map your existing fields into the template shape
   const data = {
     isLoggedIn,
@@ -317,6 +332,7 @@ router.get('/:id/:slug', async (req, res) => {
     },
     product: {
       id: product.prod_id,
+      sellerUserId: product.prod_user_id,
       title: product.prod_name,
       band: product['band.band_name'],
       bandSlug: product['band.band_slug'],
@@ -324,6 +340,7 @@ router.get('/:id/:slug', async (req, res) => {
       price: product.prod_price,
       description: product.prod_desc,
       inStock: product.prod_stock > 0,
+      stock: product.prod_stock,
       shippingNote: '',
       sizes: product.prod_sizes
     },
@@ -345,7 +362,8 @@ router.get('/:id/:slug', async (req, res) => {
         ? req.app.locals.cloudinary.url(sellerAvatar, {width: 75})
         : null,
       hp: isLoggedIn ? sellerPhone : null,
-      city: sellerCity
+      city: sellerCity,
+      totalProduct: sellerTotalProduct
     },
 
     marketplaces: [
