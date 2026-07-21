@@ -11,7 +11,9 @@ router.get("/", async (req, res, next) => {
     js: ["band_list_new"],
     data: {
       breadcrumb: [{ link: "#", text: "bands" }],
-      pageTitle: "Bands",
+      pageTitle: "Bands Marchandise | Undergroundsync",
+      pageDescription: "Jelajahi daftar band lengkap dari dalam dan luar negeri. Temukan merchandise resmi dari band favorit kamu di Undergroundsync.",
+      pageKeywords: "band, musik, merchandise band, official merchandise, Undergroundsync",
       bands: [],
       genres: [],
       imageBaseUrl: config.file_host,

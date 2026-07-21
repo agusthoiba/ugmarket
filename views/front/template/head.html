@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
+  <meta name="title" content="<%= data.pageTitle ? data.pageTitle : 'Undergroundsync - Merchandise' %>">
+  <meta name="description" content="<%= data.pageDescription ? data.pageDescription : 'Undergroundsync - Merchandise' %>">
+  <meta name="keywords" content="<%= data.pageKeywords ? data.pageKeywords : 'Undergroundsync, merchandise, music' %>  ">
   <meta name="author" content="Gusto">
   <meta name="generator" content="Hugo 0.88.1">
 
-  <title>Undergroundsync</title>
+  <title> <%= data.pageTitle ? data.pageTitle : 'Merchandise' %>  | Undergroundsync </title>
 
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
@@ -54,4 +56,3 @@
   </script>
 </head>
 <body>
-  

@@ -2,7 +2,17 @@ const router = express.Router();
 const cloudinaryTransformation = require("../../helpers/cloudinaryTransformation");
 
 router.get("/", async (req, res, next) => {
-  var obj = { error: null, data: { products: [], bands: [], collections: [] } };
+  var obj = {
+    error: null,
+    data: {
+      products: [],
+      bands: [],
+      collections: [],
+      pageTitle: "Beranda - Undergroundsync Merchandise",
+      pageDescription: "Temukan berbagai macam merchandise musik, kaos, hoodie, vinyl, dan aksesoris dari band favorit kamu hanya di Undergroundsync.",
+      pageKeywords: "Undergroundsync, merchandise, musik, kaos, hoodie, vinyl, band, aksesoris",
+    },
+  };
   var query = { prod_is_visible: 1, band_enabled: 1 };
 
   // Check if user is logged in

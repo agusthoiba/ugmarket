@@ -29,6 +29,8 @@ router.post('/', async (req, res, next) => {
                 {link: '#', text: 'Kontak Kami'}
             ],
             pageTitle: 'Kontak Kami',
+            pageDescription: 'Hubungi tim Undergroundsync untuk pertanyaan, saran, atau informasi lebih lanjut tentang merchandise musik.',
+            pageKeywords: 'kontak, hubungi kami, Undergroundsync, customer service',
             action: '/contact',
             successPostMessage: 'Data anda berhasil tersimpan, akan kami respons segera'
         },

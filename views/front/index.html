@@ -2,10 +2,10 @@
 <%- include ("../front/template/header.html") %>
 
 <!-- Tagline -->
-<div class="container text-center" style="padding-top: 40px; padding-bottom: 40px;">  
-  <h2 style="margin-bottom: 24px;"> Web Hub Stores for xtreme music merchandise from rock, punk, metal and more</h2>
-  <p style="margin-bottom: 32px;"> Penjual bebas biaya admin - harga jadi lebih jujur, transaksi antara penjual dan pembeli independen </p>
-  <div style="margin-bottom: 16px;">
+<div class="container text-center" style="padding:20px 0;">  
+  <h2 style="margin-bottom: 10px;"> Web Hub Stores for xtreme music merchandise</h2>
+  <p style="margin-bottom: 20px;"> Penjual bebas biaya admin - harga jadi lebih jujur, transaksi antara penjual dan pembeli independen </p>
+  <div style="margin-bottom: 12px;">
     <button class="btn btn-success" onclick="window.location.href='/products'">Eksplor Produk</button>
   
     <button class="btn btn-default" onclick="window.location.href='<%= data.isLoggedIn ? '/account/seller' : '/auth/register?redirect=/account/seller' %>'">
@@ -16,6 +16,10 @@
 
 
 <%- include ("carousel.html") %>
+
+
+<!-- Categories -->
+<%- include ("home_categories.html") %>
 
   <!-- Collections -->
   <div class="container">

@@ -20,7 +20,7 @@ router.get('/', async (req, res, next) => {
       breadcrumb: [
         {link: '#', text: 'products'}
       ],
-      pageTitle: 'Product',
+      pageTitle: 'Merchandise Product',
       pageBanner: '',
       categories: req.app.locals.categories,
       products: [],
@@ -328,7 +328,10 @@ router.get('/:id/:slug', async (req, res) => {
       ],
       waHref: isLoggedIn
         ? `https://wa.me/${sellerPhone}?text=Halo, saya tertarik dengan ${product['band.band_name']} - ${product.prod_name} (Rp ${(product.prod_price).toLocaleString('id-ID')}) ${currentUrl}`
-        : null
+        : null,
+      pageTitle: `${product['category.cat_name']} ${product['band.band_name']} - ${product.prod_name}`,
+      pageDescription: product.prod_desc,
+      pageKeywords: `${product['band.band_name']}, ${product.prod_name}, merchandise, music`
     },
     product: {
       id: product.prod_id,

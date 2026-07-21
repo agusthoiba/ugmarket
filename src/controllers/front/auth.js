@@ -17,7 +17,10 @@ router.get('/login', function (req, res, next) {
       isUrlActive: req.path === '/login',
       action: '/auth/login',
       cfKey: req.app.locals.config.cloudflare.siteKey,
-      redirect: req.query.redirect || ''
+      redirect: req.query.redirect || '',
+      pageTitle: 'Masuk - Undergroundsync',
+      pageDescription: 'Masuk ke akun Undergroundsync untuk mulai berbelanja merchandise musik favorit kamu.',
+      pageKeywords: 'masuk, login, Undergroundsync, akun, merchandise'
     },
     message: null
   };
@@ -37,7 +40,10 @@ router.get('/register', function (req, res, next) {
       isUrlActive: req.path === '/register',
       action: '/auth/register',
       cfKey: req.app.locals.config.cloudflare.siteKey,
-      redirect: req.query.redirect || ''
+      redirect: req.query.redirect || '',
+      pageTitle: 'Daftar - Merchandise Undergroundsync',
+      pageDescription: 'Daftar akun baru di Merchandise Undergroundsync dan mulai berjualan atau berbelanja merchandise musik.',
+      pageKeywords: 'daftar, register, Undergroundsync, akun baru, merchandise'
     },
     js: ['auth_register']
   };
