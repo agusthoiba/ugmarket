@@ -43,13 +43,24 @@
           </button>
         </div>
 
-        <!-- STOCK INFO -->
-        <div class="stock-info">
-          <% if (product.inStock) { %>
-            <span class="stock-badge stock-badge--in">Stok Tersedia (<%= product.stock %>)</span>
-          <% } else { %>
-            <span class="stock-badge stock-badge--out">Stok Habis</span>
+        <!-- CONDITION & STOCK (one line) -->
+        <div class="meta-row">
+          <% if (product.condition) { %>
+            <span class="condition-badge condition-badge--<%= product.condition === 'b' ? 'new' : 'second' %>">
+              <% if (product.condition === 'b') { %>
+                <i class="fas fa-tag"></i> Baru
+              <% } else { %>
+                <i class="fas fa-tag"></i> Bekas
+              <% } %>
+            </span>
           <% } %>
+          <div class="stock-info">
+            <% if (product.inStock) { %>
+              <span class="stock-badge stock-badge--in">Stok Tersedia (<%= product.stock %>)</span>
+            <% } else { %>
+              <span class="stock-badge stock-badge--out">Stok Habis</span>
+            <% } %>
+          </div>
         </div>
 
         <% if (product.shippingNote) { %>

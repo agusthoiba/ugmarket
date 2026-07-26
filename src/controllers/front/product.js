@@ -344,6 +344,7 @@ router.get('/:id/:slug', async (req, res) => {
       description: product.prod_desc,
       inStock: product.prod_stock > 0,
       stock: product.prod_stock,
+      condition: product.prod_condition,
       shippingNote: '',
       sizes: product.prod_sizes
     },

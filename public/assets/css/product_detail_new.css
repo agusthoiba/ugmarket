@@ -93,8 +93,12 @@ body{
 .btn-favorite.is-favorited i {
   color: #ff5d6c;
 }
-/* Stock info */
-.stock-info{margin:6px 0 12px}
+/* Meta row: condition + stock in one line */
+.meta-row{display:flex; align-items:center; gap:10px; margin:6px 0 12px}
+.condition-badge{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:4px 12px; border-radius:999px}
+.condition-badge--new{background:#e3f2fd; color:#1565c0}
+.condition-badge--second{background:#fef3e2; color:#b8860b}
+.stock-info{display:inline-flex}
 .stock-badge{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; padding:4px 12px; border-radius:999px}
 .stock-badge--in{background:#e8f5e9; color:#2e7d32}
 .stock-badge--out{background:#ffebee; color:#c62828}
