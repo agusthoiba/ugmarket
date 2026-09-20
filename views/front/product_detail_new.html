@@ -227,7 +227,8 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.success && data.waUrl) {
-          window.open(data.waUrl, '_blank');
+          //window.open(data.waUrl, '_blank');
+          window.location.href = data.waUrl;
           closeWaModal();
         } else {
           alert('Gagal memproses. Silakan coba lagi.');
