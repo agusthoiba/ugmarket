@@ -268,6 +268,7 @@ router.get("/add", async (req, res, next) => {
 });
 
 router.post("/create", async (req, res) => {
+  console.log("req.body: ", req.body); //req.body
   var obj = {
     error: null,
     data: null,
@@ -277,7 +278,6 @@ router.post("/create", async (req, res) => {
 
   req.body.user_id = req.session.user.id;
 
-  console.log("body.band: ", req.body.band);
   try {
     const findBand = await res.locals.bandModel.findOne({
       band_id: req.body.band,
@@ -380,7 +380,15 @@ async function cleanPost(body, findBand, tipe = "create") {
   const prodSlug = slug(
     `${findBand.band_slug}-${body.name.trim().toLowerCase()}`,
   );
-  console.log("prodSlug", prodSlug);
+
+  let sizes = '';
+  if (body.sizes) { 
+    if (Array.isArray(body.sizes)) {
+      sizes = body.sizes.join();
+    }  else if (typeof body.sizes === 'string') {
+      sizes = body.sizes;
+    }
+  }
 
   var payload = {
     prod_name: body.name.trim(),
@@ -395,7 +403,7 @@ async function cleanPost(body, findBand, tipe = "create") {
     prod_col_id: body.collection_id ? parseInt(body.collection_id) : 0,
 
     prod_is_visible: body.is_visible == "publish" ? 1 : 0,
-    prod_sizes: body.sizes ? body.sizes.join() : "",
+    prod_sizes: sizes,
   };
 
   if (tipe == "create") {
