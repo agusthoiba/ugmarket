@@ -5,6 +5,7 @@ const URI = require("urijs");
 var crypto = require('crypto');
 const { sellerSchema } = require("../../../models/schema");
 const Upload = require('../../../helpers/uploadCloudinary');
+const { formatPhone } = require('../../../helpers/phone');
 const validate = require("../../../middleware/validate");
 
 const itemData = (seller, cloudinary) => {
@@ -94,7 +95,8 @@ async function cleanPost(body) {
     sel_user_id: parseInt(body.user_id),
     sel_name: name,
     sel_slug: slug,
-    sel_phone: (body.hp || '').trim(),
+    // prefix "0" -> "+62", prefix "+62" -> kept as is
+    sel_phone: formatPhone(body.hp),
     sel_description: (body.description || '').trim(),
     sel_address_province_id: parseInt(body.province) || 0,
     sel_address_city_id: parseInt(body.city) || 0,
