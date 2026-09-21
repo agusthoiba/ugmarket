@@ -15,67 +15,98 @@ const {
 
 const Upload = require("../helpers/uploadCloudinary");
 
-const modelMiddleware = (req, res, next) => {
-  req.app.locals.config = config;
+/**
+ * Create the model wrappers for a database connection.
+ * @param {Object} db - sequelize instance
+ * @returns {Object} - model wrappers
+ */
+const createModels = (db) => {
+  const genreModel = new Genre({ db: db });
+  const bandModel = new Band({ db: db });
+  const categoryModel = new Category({ db: db });
+  const userModel = new User({ db: db });
+  const collectionModel = new Collections({ db: db });
 
-  res.locals.genreModel = new Genre({
-    db: req.app.locals.db,
+  const productModel = new Product({
+    db: db,
+    category: categoryModel,
+    band: bandModel,
+    user: userModel,
+    collections: collectionModel,
   });
 
-  res.locals.bandModel = new Band({
-    db: req.app.locals.db,
+  const contactModel = new Contact({ db: db });
+  const userAdminModel = new UserAdmin({ db: db });
+
+  const sellerModel = new Seller({
+    db: db,
+    user: userModel,
   });
 
-  res.locals.categoryModel = new Category({
-    db: req.app.locals.db,
+  const favoriteModel = new Favorite({
+    db: db,
+    user: userModel,
+    product: productModel,
+    band: bandModel,
   });
 
-  res.locals.userModel = new User({
-    db: req.app.locals.db,
+  const cartModel = new Cart({
+    db: db,
+    user: userModel,
+    product: productModel,
+    band: bandModel,
   });
 
-  req.app.locals.collectionModel = new Collections({
-    db: req.app.locals.db,
-  });
+  return {
+    genreModel,
+    bandModel,
+    categoryModel,
+    userModel,
+    collectionModel,
+    productModel,
+    contactModel,
+    userAdminModel,
+    sellerModel,
+    favoriteModel,
+    cartModel,
+    uploadCloudinary: new Upload(),
+  };
+};
 
-  res.locals.productModel = new Product({
-    db: req.app.locals.db,
-    category: res.locals.categoryModel,
-    band: res.locals.bandModel,
-    user: res.locals.userModel,
-    collections: req.app.locals.collectionModel,
-  });
+/**
+ * The models are shared by every request. Defining them again on each request
+ * made sequelize re-run its schema sync (information_schema + show index
+ * queries) on every single page hit, which slowed down the pages a lot.
+ */
+let models = null;
 
-  res.locals.contactModel = new Contact({
-    db: req.app.locals.db,
-  });
+const modelMiddleware = async (req, res, next) => {
+  try {
+    req.app.locals.config = config;
 
-  res.locals.userAdminModel = new UserAdmin({
-    db: req.app.locals.db,
-  });
+    if (!models) {
+      const db = req.app.locals.db || (await req.app.locals.dbReady);
 
-  req.app.locals.sellerModel = new Seller({
-    db: req.app.locals.db,
-    user: res.locals.userModel,
-  });
+      models = createModels(db);
+    }
 
-  req.app.locals.favoriteModel = new Favorite({
-    db: req.app.locals.db,
-    user: res.locals.userModel,
-    product: res.locals.productModel,
-    band: res.locals.bandModel,
-  });
+    res.locals.genreModel = models.genreModel;
+    res.locals.bandModel = models.bandModel;
+    res.locals.categoryModel = models.categoryModel;
+    res.locals.userModel = models.userModel;
+    req.app.locals.collectionModel = models.collectionModel;
+    res.locals.productModel = models.productModel;
+    res.locals.contactModel = models.contactModel;
+    res.locals.userAdminModel = models.userAdminModel;
+    req.app.locals.sellerModel = models.sellerModel;
+    req.app.locals.favoriteModel = models.favoriteModel;
+    req.app.locals.cartModel = models.cartModel;
+    res.locals.uploadCloudinary = models.uploadCloudinary;
 
-  req.app.locals.cartModel = new Cart({
-    db: req.app.locals.db,
-    user: res.locals.userModel,
-    product: res.locals.productModel,
-    band: res.locals.bandModel,
-  });
-
-  res.locals.uploadCloudinary = new Upload();
-
-  return next();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
 };
 
 module.exports = modelMiddleware;

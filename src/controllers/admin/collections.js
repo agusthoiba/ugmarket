@@ -5,6 +5,7 @@ const multer = require("multer");
 
 const { collectionsSchema } = require("../../models/schema");
 const validate = require("../../middleware/validate");
+const { invalidatePredefined } = require("../../middleware/predefined");
 // Configure multer for file uploads
 const uploadMulter = multer({ dest: "/tmp/upload" }); // Store files in /tmp/upload
 
@@ -123,6 +124,9 @@ router.post(
       const newCollection =
         await req.app.locals.collectionModel.create(payload);
 
+      // Collections are cached for the public pages, refresh them right away
+      invalidatePredefined();
+
       res.status(201).json(newCollection);
     } catch (error) {
       console.error(error);
@@ -224,6 +228,10 @@ router.put("/:id", authCheckSession, uploadFields, async (req, res) => {
     if (!updated) {
       return res.status(404).json({ error: "Collection not found" });
     }
+
+    // Collections are cached for the public pages, refresh them right away
+    invalidatePredefined();
+
     res.status(200).json(updated);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -239,6 +247,10 @@ router.delete("/:id", authCheckSession, async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: "Collection not found" });
     }
+
+    // Collections are cached for the public pages, refresh them right away
+    invalidatePredefined();
+
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -3,8 +3,18 @@
 
       <% data.carousels.forEach(function(slide, i) { %>
         <a href="<%= slide.href %>" target="_blank" class="carousel-item <%= i === 0 ? 'active' : '' %>">
-          <img src="<%= slide.desktopUrl %>" class="img-fluid d-none d-md-block w-100" alt="<%= slide.alt %>">
-          <img src="<%= slide.mobileUrl %>" class="img-fluid d-block d-lg-none w-100" alt="<%= slide.alt %>">
+          <!-- picture keeps the browser from downloading both the desktop and
+               the mobile banner -->
+          <picture class="d-block">
+            <source media="(min-width: 992px)" srcset="<%= slide.desktopUrl %>">
+            <img
+              src="<%= slide.mobileUrl %>"
+              class="img-fluid d-block w-100"
+              alt="<%= slide.alt %>"
+              decoding="async"
+              <% if (i === 0) { %>fetchpriority="high"<% } %>
+            >
+          </picture>
         </a>
       <% }) %>
 

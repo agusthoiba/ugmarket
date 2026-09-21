@@ -62,13 +62,13 @@
             No product found
           <% } else {
               for(var i in products) { 
-              let imgPath  = products[i].thumbnail ? products[i].thumbnail: '/image/no-image-180x180';
+              let imgPath  = products[i].thumbnail ? products[i].thumbnail: '/image/no-image-180x180.png';
                 %>
               <div class="product-list-item-carousel">
                 <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
-                  <img src="<%= imgPath %>" class="card-img-top">
+                  <img src="<%= imgPath %>" class="card-img-top" width="200" height="200" loading="lazy" decoding="async">
                   <h5 class="product-list-item-carousel-title">
-                    <%= products[i]["band.band_name"] %>
+                    <%= products[i].band_name || products[i]["band.band_name"] || '' %>
                   </h5>
                   <h5 class="product-list-item-carousel-subtitle">
                     <%= products[i].prod_name %>
@@ -103,7 +103,7 @@
               <div class="logo-item" >
                 <div class="band-img" >
                   <a href="/products/?band=<%= bands[i].band_slug %>">
-                    <img src="<%= bands[i].band_image %>" class="img-responsive">
+                    <img src="<%= bands[i].band_image %>" class="img-responsive" loading="lazy" decoding="async">
                   </a>
                 </div>
                 <p class="band-name"><a href="/products/?band=<%= bands[i].band_slug %>"><%= bands[i].band_name %></a></p>

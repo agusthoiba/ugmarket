@@ -60,7 +60,10 @@ app.locals.cloudinary = cloudinary;
 } */
 
 app.use(morgan("combined"));
-app.use(express.static("public"));
+// Static assets are not fingerprinted, so they are only cached for an hour to
+// avoid serving stale css/js after a deploy. The cached copy still removes the
+// revalidation requests (public files were served with max-age=0 before).
+app.use(express.static("public", { maxAge: "1h" }));
 app.use(cookieParser());
 
 var cookieSession = require("cookie-session");
@@ -176,17 +179,37 @@ const connMysql = async () => {
   app.locals.logo = app.locals.cloudinary.url("logo-ugsync-new-white_czdjci.png", {
     width: 200,
   });
+
+  return app.locals.db;
 };
 
-connMysql();
+// Kept as a promise so requests that arrive before mysql is ready wait for it
+// instead of crashing on a missing connection.
+app.locals.dbReady = connMysql();
+
 app.use(modelMid);
 app.use(predefinedMid);
 
-async function getTopBands(req, res, next) {
-  req.app.locals.bandsAll = await res.locals.bandModel.findAll();
-  req.app.locals.bandsTop = await res.locals.bandModel.findTopBands();
+// Top bands are rendered in the footer of every page, so they are cached for a
+// few minutes instead of being queried on every request.
+const BANDS_TOP_TTL = 5 * 60 * 1000;
+let bandsTopCache = null;
 
-  return next();
+async function getTopBands(req, res, next) {
+  try {
+    if (!bandsTopCache || bandsTopCache.expiresAt <= Date.now()) {
+      bandsTopCache = {
+        value: await res.locals.bandModel.findTopBands(),
+        expiresAt: Date.now() + BANDS_TOP_TTL,
+      };
+    }
+
+    req.app.locals.bandsTop = bandsTopCache.value;
+
+    return next();
+  } catch (err) {
+    return next(err);
+  }
 }
 
 app.use(getTopBands);

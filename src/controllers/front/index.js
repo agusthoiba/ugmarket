@@ -19,7 +19,18 @@ router.get("/", async (req, res, next) => {
   const isLoggedIn = !!(req.session && req.session.user);
   obj.data.isLoggedIn = isLoggedIn;
   const sort = { prod_id: "DESC" };
-  const doc = await res.locals.productModel.findRaw(query, sort);
+  const optionsFindBands = {
+    sort: [["band_total_product", "DESC"]],
+    limit: 12,
+  };
+  const queryBand = { band_enabled: 1 };
+
+  // The two queries do not depend on each other, so they run together to save
+  // a database round trip. The product query is limited to what the page shows.
+  const [doc, findBands] = await Promise.all([
+    res.locals.productModel.findRaw(query, sort, 0, 20),
+    res.locals.bandModel.find(queryBand, optionsFindBands),
+  ]);
 
   if (doc.length > 0) {
     obj.data.products = doc.map((val) => {
@@ -31,22 +42,14 @@ router.get("/", async (req, res, next) => {
           width: 200,
           height: 200,
           crop: "thumb",
+          fetch_format: "auto",
+          quality: "auto",
           ...cloudinaryTransformation.watermark,
         });
       }
       return val;
     });
   }
-
-  const optionsFindBands = {
-    sort: [["band_total_product", "DESC"]],
-    limit: 12,
-  };
-  const queryBand = { band_enabled: 1 };
-  const findBands = await res.locals.bandModel.find(
-    queryBand,
-    optionsFindBands,
-  );
 
   if (findBands.length > 0) {
     obj.data.bands = findBands.map((band) => {
@@ -68,6 +71,8 @@ router.get("/", async (req, res, next) => {
           width: 320,
           height: 320,
           crop: "thumb",
+          fetch_format: "auto",
+          quality: "auto",
           ...cloudinaryTransformation.watermark,
         });
       } else {
@@ -87,12 +92,23 @@ router.get("/", async (req, res, next) => {
     }
   });
 
+  // Banners are only displayed at the size of the container, so they are
+  // capped to keep the images light (the desktop/mobile versions are also
+  // separated in the carousel template so only one of them is downloaded).
   obj.data.carousels = carouselSlides.map((slide) => ({
     href: slide.href,
     desktopUrl: req.app.locals.cloudinary.url(slide.desktop, {
+      width: 1350,
+      crop: "limit",
+      fetch_format: "auto",
+      quality: "auto",
       ...cloudinaryTransformation.watermarkCarousel,
     }),
     mobileUrl: req.app.locals.cloudinary.url(slide.mobile, {
+      width: 828,
+      crop: "limit",
+      fetch_format: "auto",
+      quality: "auto",
       ...cloudinaryTransformation.watermarkCarousel,
     }),
     alt: slide.alt,
