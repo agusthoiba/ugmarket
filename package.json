@@ -1,8 +1,8 @@
 {
   "name": "ugmarket",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "description": "Undergoundsync market",
   "main": "index.js",
@@ -47,6 +47,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.0.1",
     "numeral": "^2.0.6",
+    "pino": "^9.9.0",
     "pino-http": "^10.5.0",
     "resend": "^3.5.0",
     "semantic-release": "^22.0.12",
