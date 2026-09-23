@@ -1,0 +1,47 @@
+<footer class="ugs-footer" data-testid="site-footer">
+  <div class="container-xxl">
+    <div class="row g-5">
+      <div class="col-md-5">
+        <img src="/brand/logo.png" alt="UndergroundSync" class="footer-logo">
+        <p class="footer-tagline mt-3">
+          Web Hub Stores for xtreme music merchandise. Penjual bebas biaya
+          admin — harga jadi lebih jujur, transaksi langsung antara penjual
+          dan pembeli independen.
+        </p>
+      </div>
+      <div class="col-md-3 offset-md-1">
+        <p class="mono-label">Marketplace</p>
+        <ul class="list-unstyled footer-links">
+          <li><a href="https://merch.undergroundsync.com/" target="_blank" rel="noopener" data-testid="footer-link-main-site">Website Utama</a></li>
+          <li><a href="https://merch.undergroundsync.com/products" target="_blank" rel="noopener" data-testid="footer-link-products">Eksplor Produk</a></li>
+          <li><a href="https://merch.undergroundsync.com/bands" target="_blank" rel="noopener" data-testid="footer-link-bands">Semua Band</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <p class="mono-label">Seller</p>
+        <ul class="list-unstyled footer-links">
+          <li><a href="#daftar" data-testid="footer-link-register">Daftar Seller</a></li>
+          <li><a href="#faq" data-testid="footer-link-faq">FAQ Seller</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-column flex-sm-row justify-content-between gap-2 mt-5 pt-4">
+      <span class="mono-dim">© <%= data.year %> UndergroundSync Merch — All rights reserved</span>
+      <span class="mono-dim">Loud. Independent. 0% Admin.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<% if (locals.js != undefined) { %>
+    <% for(var i in locals.js) { %>
+      <% if (locals.ENV == 'development') { %>
+        <script src="/assets/js/main/<%= locals.js[i] %>.js"></script>
+      <% } else { %>
+        <script src="/assets/js/main-minify/<%= locals.js[i] %>.min.js"></script>
+      <% } %>      
+    <% } %>
+<% } %>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<section id="cara-daftar" class="ugs-section section-alt" data-testid="steps-section">
+  <div class="container-xxl">
+    <div class="reveal">
+      <p class="section-eyebrow">// Manifesto 3 bab</p>
+      <h2 class="section-title" data-testid="steps-title">Cara daftar sebagai seller</h2>
+    </div>
+
+    <div class="mt-4">
+      <% data.steps.forEach(function(s, i) { %>
+        <div class="step-row reveal" style="transition-delay:<%= i * 0.1 %>s" data-testid="step-chapter-<%= s.n %>">
+          <span class="step-number"><%= s.n %></span>
+          <h3 class="step-title"><%= s.title %></h3>
+          <p class="step-desc"><%= s.desc %></p>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>

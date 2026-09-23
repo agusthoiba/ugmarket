@@ -1,0 +1,44 @@
+<section class="ugs-hero d-flex flex-column justify-content-center" data-testid="hero-section">
+  <div class="hero-bg" style="background-image:url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?crop=entropy&cs=srgb&fm=jpg&q=85&w=1920')" role="img" aria-label="Panggung konser musik"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-noise"></div>
+  <img src="/image/logo1.png" alt="" aria-hidden="true" class="hero-watermark">
+
+  <div class="container-xxl position-relative py-5">
+    <p class="section-eyebrow hero-fade" style="animation-delay:.15s" data-testid="hero-eyebrow">
+      <i class="bi bi-vinyl-fill spin-slow"></i> Web Hub Stores — Xtreme Music Merchandise
+    </p>
+
+    <h1 class="hero-title" data-testid="hero-headline">
+      <span class="hero-line"><span class="hero-line-inner" style="animation-delay:.3s">JUAL MERCH</span></span>
+      <span class="hero-line"><span class="hero-line-inner" style="animation-delay:.44s">MUSIK EKSTREM.</span></span>
+      <span class="hero-line"><span class="hero-line-inner text-blood" style="animation-delay:.58s">0% BIAYA ADMIN.</span></span>
+    </h1>
+
+    <p class="hero-sub hero-fade" style="animation-delay:.85s" data-testid="hero-subcopy">
+      Marketplace khusus merchandise band rock &amp; metal — Vinyl, CD, Kaos,
+      Hoodies. Penjual bebas biaya admin, harga jadi lebih jujur, transaksi
+      langsung antara penjual dan pembeli independen.
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 mt-4 hero-fade" style="animation-delay:1s">
+      <a href="/auth/register" class="btn-ugs btn-ugs-lg" data-testid="hero-cta-register">
+        Daftar Sebagai Seller <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+      <a href="/products" class="btn-ugs-outline btn-ugs-lg" data-testid="hero-cta-catalog">Lihat Katalog</a>
+    </div>
+
+    <div class="hero-stats hero-fade" style="animation-delay:1.2s" data-testid="hero-stats">
+      <% data.heroStats.forEach(function(s) { %>
+        <div>
+          <div class="hero-stat-value"><%= s.value %></div>
+          <div class="hero-stat-label"><%= s.label %></div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+
+  <a href="#keunggulan" class="hero-scroll" aria-label="Scroll ke bawah" data-testid="hero-scroll-indicator">
+    <i class="bi bi-arrow-down"></i>
+  </a>
+</section>

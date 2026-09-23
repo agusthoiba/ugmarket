@@ -1,0 +1,34 @@
+<section id="keunggulan" class="ugs-section" data-testid="benefits-section">
+  <div class="container-xxl">
+    <div class="reveal">
+      <p class="section-eyebrow">// Kenapa di sini</p>
+      <h2 class="section-title" data-testid="benefits-title">Keunggulan jualan di UndergroundSync</h2>
+      <p class="section-sub">Platform khusus komunitas musik ekstrem — tanpa potong komisi, tanpa drama.</p>
+    </div>
+
+    <div class="row g-4 mt-4">
+      <% data.benefits.forEach(function(b, i) { %>
+        <div class="col-md-6 <%= b.big ? 'col-lg-8' : 'col-lg-4' %> reveal" style="transition-delay:<%= i * 0.08 %>s">
+          <div class="card-ugs h-100" data-testid="benefit-card-<%= i + 1 %>">
+            <div class="d-flex justify-content-between align-items-start">
+              <span class="card-tag"><%= b.tag %></span>
+              <i class="bi <%= b.icon %> card-icon"></i>
+            </div>
+            <% if (b.big) { %>
+              <div class="d-flex align-items-end gap-4 mt-4 flex-wrap">
+                <span class="big-zero">0%</span>
+                <div class="pb-1">
+                  <h3 class="card-title-ugs"><%= b.title %></h3>
+                  <p class="card-desc mb-0"><%= b.desc %></p>
+                </div>
+              </div>
+            <% } else { %>
+              <h3 class="card-title-ugs mt-4"><%= b.title %></h3>
+              <p class="card-desc mb-0"><%= b.desc %></p>
+            <% } %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>

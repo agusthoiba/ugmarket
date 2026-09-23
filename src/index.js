@@ -221,6 +221,7 @@ app.use("/", require("./controllers/front/index"));
 app.use("/about", require("./controllers/front/about"));
 app.use("/contact", require("./controllers/front/contact"));
 app.use("/tnc", require("./controllers/front/tnc"));
+app.use("/seller", require("./controllers/front/landing"));
 app.use("/privasi", require("./controllers/front/privasi"));
 app.use("/products", require("./controllers/front/product"));
 app.use("/bands", require("./controllers/front/band"));

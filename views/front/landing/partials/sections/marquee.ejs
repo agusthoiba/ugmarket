@@ -1,0 +1,11 @@
+<div class="ugs-marquee" data-testid="editorial-marquee">
+  <div class="marquee-track">
+    <% for (var half = 0; half < 2; half++) { %>
+      <div class="marquee-half" aria-hidden="<%= half === 1 ? 'true' : 'false' %>">
+        <% data.marqueeItems.forEach(function(item) { %>
+          <span class="marquee-item"><span><%= item %></span><span class="marquee-sep">◆</span></span>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</div>
