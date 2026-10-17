@@ -1,0 +1,23 @@
+<section id="faq" class="ugs-section section-alt" data-testid="faq-section">
+  <div class="container-xxl faq-container">
+    <div class="reveal">
+      <p class="section-eyebrow">// Sering ditanyakan</p>
+      <h2 class="section-title" data-testid="faq-title">Pertanyaan seputar jadi seller</h2>
+    </div>
+
+    <div class="accordion accordion-ugs mt-5 reveal" id="faqAccordion" style="transition-delay:.1s" data-testid="faq-accordion">
+      <% data.faqs.forEach(function(f, i) { %>
+        <div class="accordion-item" data-testid="faq-item-<%= i + 1 %>">
+          <h3 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-<%= i %>" aria-expanded="false" data-testid="faq-trigger-<%= i + 1 %>">
+              <%= f.q %>
+            </button>
+          </h3>
+          <div id="faq-<%= i %>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body"><%- f.a %></div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>

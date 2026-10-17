@@ -1,0 +1,29 @@
+<section id="tipe-seller" class="ugs-section" data-testid="seller-types-section">
+  <div class="container-xxl">
+    <div class="reveal">
+      <p class="section-eyebrow">// Pilih jalurmu</p>
+      <h2 class="section-title" data-testid="seller-types-title">Tiga jalur jadi seller</h2>
+      <p class="section-sub">Koleksi pribadi, stok toko, atau merch resmi band — semua bisa jualan dengan 0% biaya admin.</p>
+    </div>
+
+    <div class="row g-4 mt-4">
+      <% data.sellerTypes.forEach(function(t, i) { %>
+        <div class="col-md-4 reveal" style="transition-delay:<%= i * 0.1 %>s">
+          <div class="card-ugs type-card h-100 <%= t.featured ? 'type-featured' : '' %>" data-testid="seller-type-card-<%= t.id %>">
+            <% if (t.featured) { %><span class="type-flag">Band / Label Resmi</span><% } %>
+            <div class="d-flex justify-content-between align-items-start">
+              <span class="card-tag"><%= t.tag %></span>
+              <i class="bi <%= t.icon %> card-icon"></i>
+            </div>
+            <h3 class="card-title-ugs mt-4"><%= t.title %></h3>
+            <p class="card-desc"><%= t.desc %></p>
+            <p class="type-example"><%= t.example %></p>
+            <a href="<%= data.registerUrl %>?sel_type=<%= t.selType %>" class="btn-ugs-outline type-cta" data-type="<%= t.id %>" data-label="<%= t.title %>" data-testid="type-cta-<%= t.id %>">
+              <%= t.cta %> <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>

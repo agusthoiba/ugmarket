@@ -1,0 +1,25 @@
+<h4>Tipe Lapak</h4>
+<p class="form-text">
+    Pilih jalur lapak Anda: Collector (koleksi pribadi), Shop (distro / record store / online shop),
+    atau Official (band, label rekaman, manajemen artis).
+</p>
+
+<%
+    // The seller type is picked once, when the lapak is created. On update the
+    // seller already has an id (see itemData in the seller controller), so the
+    // select is disabled to keep the chosen type locked.
+    const isEdit = !!(data.seller && data.seller.id);
+%>
+<div class="mb-3">
+    <label for="sel_type" class="form-label">Tipe Seller <span class="text-danger">*</span></label>
+    <select class="form-select" id="sel_type" name="sel_type" required <%= isEdit ? 'disabled' : '' %>>
+        <option value="">Pilih tipe seller...</option>
+        <% for (let i = 0; i < data.sellerTypes.length; i++) { %>
+            <option value="<%= data.sellerTypes[i] %>" <%= data.seller.sel_type == data.sellerTypes[i] ? 'selected' : '' %>><%= data.sellerTypes[i].charAt(0) + data.sellerTypes[i].slice(1).toLowerCase() %></option>
+        <% } %>
+    </select>
+    <div class="invalid-feedback">Silakan pilih tipe seller</div>
+    <% if (isEdit) { %>
+    <div class="form-text">Tipe seller tidak dapat diubah setelah lapak dibuat.</div>
+    <% } %>
+</div>

@@ -1,0 +1,12 @@
+ALTER TABLE `user` ADD COLUMN `user_google_id` VARCHAR(255) NULL AFTER `user_facebook_id`;
+ALTER TABLE `user` MODIFY COLUMN `user_password` VARCHAR(255) NULL;
+ALTER TABLE `sellers` ADD COLUMN `sel_slug` VARCHAR(255) NULL AFTER `sel_name`;
+ALTER TABLE `sellers` ADD COLUMN `sel_total_product` INT(11) UNSIGNED NULL DEFAULT 0 AFTER `sel_is_active`;
+ALTER TABLE `cart` ADD COLUMN `cart_guest_token` VARCHAR(36) NULL AFTER `cart_user_id`, MODIFY COLUMN `cart_user_id` INT(11) UNSIGNED NULL;
+ALTER TABLE `sellers` ADD COLUMN `sel_bank_name` VARCHAR(60) NULL AFTER `sel_address_lng`;
+ALTER TABLE `sellers` ADD COLUMN `sel_bank_account_number` VARCHAR(30) NULL AFTER `sel_bank_name`;
+ALTER TABLE `sellers` ADD COLUMN `sel_bank_account_name` VARCHAR(100) NULL AFTER `sel_bank_account_number`;
+ALTER TABLE `sellers` ADD COLUMN `sel_is_verified_collector` TINYINT(1) NOT NULL DEFAULT 0 AFTER `sel_type`;
+ALTER TABLE `sellers` ADD COLUMN `sel_is_verified_shop` TINYINT(1) NOT NULL DEFAULT 0 AFTER `sel_is_verified_collector`;
+ALTER TABLE `sellers` ADD COLUMN `sel_is_verified_official` TINYINT(1) NOT NULL DEFAULT 0 AFTER `sel_is_verified_shop`;
+ALTER TABLE `sellers` DROP COLUMN `sel_bank_name`, ADD COLUMN `sel_bank_code` SMALLINT NULL AFTER `sel_address_lng`;

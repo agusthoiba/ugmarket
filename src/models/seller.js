@@ -17,6 +17,11 @@ class Seller {
         }
       },
       sel_name: { type: Sequelize.STRING, allowNull: false },
+      sel_slug: { type: Sequelize.STRING, allowNull: true },
+      sel_type: { type: Sequelize.ENUM('COLLECTOR', 'SHOP', 'OFFICIAL'), allowNull: false, defaultValue: 'COLLECTOR' },
+      sel_is_verified_collector: { type: Sequelize.TINYINT(1), allowNull: false, defaultValue: 0 },
+      sel_is_verified_shop: { type: Sequelize.TINYINT(1), allowNull: false, defaultValue: 0 },
+      sel_is_verified_official: { type: Sequelize.TINYINT(1), allowNull: false, defaultValue: 0 },
       sel_phone: { type: Sequelize.STRING(20), allowNull: false },
       sel_avatar: { type: Sequelize.STRING },
       sel_banner: { type: Sequelize.STRING },
@@ -29,7 +34,11 @@ class Seller {
       sel_address_street: { type: Sequelize.TEXT, allowNull: true },
       sel_address_lat: { type: Sequelize.DECIMAL(10, 7), allowNull: true },
       sel_address_lng: { type: Sequelize.DECIMAL(10, 7), allowNull: true },
+      sel_bank_code: { type: Sequelize.SMALLINT, allowNull: true },
+      sel_bank_account_number: { type: Sequelize.STRING(30), allowNull: true },
+      sel_bank_account_name: { type: Sequelize.STRING(100), allowNull: true },
       sel_is_active: { type: Sequelize.TINYINT(1), defaultValue: 1 },
+      sel_total_product: { type: Sequelize.INTEGER(11).UNSIGNED, defaultValue: 0 },
       sel_created_at: { type: Sequelize.DATE, allowNull: false },
       sel_updated_at: { type: Sequelize.DATE, defaultValue: Sequelize.NOW }
     }, {
@@ -64,6 +73,13 @@ class Seller {
       where: query
     });
   }
+
+  async findAll (query) {
+    return await this.schema.findAll({
+      where: query
+    });
+  }
+
 }
 
 module.exports = Seller;

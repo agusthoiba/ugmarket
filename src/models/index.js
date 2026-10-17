@@ -8,6 +8,8 @@ const Contact = require('./contact');
 const UserAdmin = require('./userAdmin');
 const Collections = require('./collections');
 const Seller = require('./seller');
+const Favorite = require('./favorite');
+const Cart = require('./cart');
 
 module.exports = {
     Genre,
@@ -18,5 +20,7 @@ module.exports = {
     Contact,
     UserAdmin,
     Collections,
-    Seller
+    Seller,
+    Favorite,
+    Cart
 }

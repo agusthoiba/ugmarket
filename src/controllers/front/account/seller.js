@@ -5,6 +5,10 @@ const URI = require("urijs");
 var crypto = require('crypto');
 const { sellerSchema } = require("../../../models/schema");
 const Upload = require('../../../helpers/uploadCloudinary');
+const { formatPhone } = require('../../../helpers/phone');
+const { bankList } = require('../../../helpers/bank');
+const { SELLER_TYPES } = require('../../../constant');
+const { normalizeSellerType } = require('../../../helpers/sellerType');
 const validate = require("../../../middleware/validate");
 
 const itemData = (seller, cloudinary) => {
@@ -13,33 +17,59 @@ const itemData = (seller, cloudinary) => {
   return {
     id: seller?.sel_id || 0,
     name: seller?.sel_name || '',
+    slug: seller?.sel_slug || '',
+    sel_type: seller?.sel_type || 'COLLECTOR',
     phone: seller?.sel_phone || '',
     description: seller?.sel_description || '',
     avatar: seller_avatar,
     banner: seller_banner,
+    sel_address_province_id: seller?.sel_address_province_id || '',
+    sel_address_city_id: seller?.sel_address_city_id || '',
+    sel_address_district_id: seller?.sel_address_district_id || '',
+    sel_address_village_id: seller?.sel_address_village_id || '',
+    sel_address_street: seller?.sel_address_street || '',
+    sel_address_zipcode: seller?.sel_address_zipcode || '',
+    sel_bank_code: seller?.sel_bank_code || '',
+    sel_bank_account_number: seller?.sel_bank_account_number || '',
+    sel_bank_account_name: seller?.sel_bank_account_name || '',
   }
 }
 
 router.get('/', async (req, res, next) => {
   const { sellerModel } = req.app.locals;
+  const { userModel } = res.locals;
 
   const findSeller = await sellerModel.findOne({ sel_user_id: req.session.user.id });
+  const findUser = await userModel.findOne({ user_id: req.session.user.id });
+  const seller = itemData(findSeller || null, req.app.locals.cloudinary);
+
+  // Prefill the seller type from the query string: the landing page sends
+  // /account/seller?sel_type=SHOP when a visitor picks the "Daftar sebagai Shop"
+  // card. A type already saved on the seller always wins.
+  if (!findSeller || !findSeller.sel_type) {
+    seller.sel_type = normalizeSellerType(req.query.sel_type) || seller.sel_type;
+  }
+
   var obj = {
     error: null,
     message: null,
     data: {
-      seller: itemData(findSeller || null, req.app.locals.cloudinary),
+      seller,
+      sellerTypes: SELLER_TYPES,
+      banks: bankList,
       user: {
-        user_address_province_id: findSeller ? findSeller.sel_address_province_id : 0,
-        user_address_city_id: findSeller ? findSeller.sel_address_city_id : 0,
-        user_address_district_id: findSeller ? findSeller.sel_address_district_id : 0,
-        user_address_village_id: findSeller ? findSeller.sel_address_village_id : 0,
-        user_address_street: findSeller ? findSeller.sel_address_street : '',
-        user_address_zipcode: findSeller ? findSeller.sel_address_zipcode : ''
+        user_hp: findUser ? findUser.user_hp : '',
+        user_address_province_id: findUser ? findUser.user_address_province_id : '',
+        user_address_city_id: findUser ? findUser.user_address_city_id : '',
+        user_address_district_id: findUser ? findUser.user_address_district_id : '',
+        user_address_village_id: findUser ? findUser.user_address_village_id : '',
+        user_address_street: findUser ? findUser.user_address_street : '',
+        user_address_zipcode: findUser ? findUser.user_address_zipcode : '',
       }
     },
     //action: '/account/product/create',
-    js: ['account_seller', 'address']
+    js: ['account_seller', 'address'],
+    isShowMenu: true
   };
   console.log('heyyy!')
   
@@ -72,10 +102,20 @@ router.post('/', validate(sellerSchema),  async (req, res, next) => {
 
 async function cleanPost(body) {
   console.log("body: ", body); //body
+  const name = (body.name || '').trim();
+  let slug = (body.slug || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  // If no slug provided, generate from name
+  if (!slug) {
+    slug = slug(name, '-');
+  }
+
   let payload = {
     sel_user_id: parseInt(body.user_id),
-    sel_name: (body.name || '').trim(),
-    sel_phone: (body.hp || '').trim(),
+    sel_name: name,
+    sel_slug: slug,
+    sel_type: (body.sel_type || 'COLLECTOR').toUpperCase(),
+    // prefix "0" -> "+62", prefix "+62" -> kept as is
+    sel_phone: formatPhone(body.hp),
     sel_description: (body.description || '').trim(),
     sel_address_province_id: parseInt(body.province) || 0,
     sel_address_city_id: parseInt(body.city) || 0,
@@ -83,6 +123,9 @@ async function cleanPost(body) {
     sel_address_village_id: parseInt(body.village) || 0,
     sel_address_zipcode: (body.zipcode || '').trim(),
     sel_address_street: (body.street || '').trim(),
+    sel_bank_code: parseInt(body.bank_code, 10) || 0,
+    sel_bank_account_number: (body.bank_account_number || '').trim(),
+    sel_bank_account_name: (body.bank_account_name || '').trim(),
     sel_created_at: Date.now('YYYY-MM-DD HH:mm:ss')
   }
 

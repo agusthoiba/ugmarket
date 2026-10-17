@@ -1,4 +1,20 @@
-<ul class="list-unstyled">
-    <li> <a href="/admin/band">Bands </a> </li>
-    <li> <a href="/admin/collections">Collections </a> </li>
+<ul class="list-unstyled admin-sidebar-menu">
+    <li class="admin-sidebar-item">
+        <a
+            href="/admin/band"
+            class="admin-sidebar-link <%= (locals.uri && uri.pathname && uri.pathname.startsWith('/admin/band')) ? 'active' : '' %>"
+        >
+            <i class="fas fa-microphone-alt"></i>
+            <span>Bands</span>
+        </a>
+    </li>
+    <li class="admin-sidebar-item">
+        <a
+            href="/admin/collections"
+            class="admin-sidebar-link <%= (locals.uri && uri.pathname && uri.pathname.startsWith('/admin/collections')) ? 'active' : '' %>"
+        >
+            <i class="fas fa-layer-group"></i>
+            <span>Collections</span>
+        </a>
+    </li>
 </ul>

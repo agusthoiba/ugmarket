@@ -21,23 +21,26 @@ function submitAuth(e, obj) {
 }
 
 $(document).ready(function(){
-  $(".owl-carousel").owlCarousel({
+  $(".owl-carousel-products").owlCarousel({
     loop: true,
-    navText:['<i class="fas fa-less-than fa-lg"></i>', '<i class="fas fa-greater-than fa-lg"></i>'],
-    responsiveClass:true,
-    responsive:{
-        0:{
-            items:2,
-            nav:false
-        },
-        600:{
-            items:4,
-            nav:false
-        },
-        1000:{
-            items:6,
-            nav:true,
-        }
+    nav: true,
+    navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+    responsiveClass: true,
+    responsive: {
+      0:   { items: 1, nav: true },
+      768: { items: 2, nav: true },
+      992: { items: 4, nav: true }
+    }
+  });
+
+  $(".owl-carousel-bands").owlCarousel({
+    loop: true,
+    navText: ['<i class="fas fa-less-than fa-lg"></i>', '<i class="fas fa-greater-than fa-lg"></i>'],
+    responsiveClass: true,
+    responsive: {
+      0:    { items: 2, nav: false },
+      600:  { items: 4, nav: false },
+      1000: { items: 6, nav: true }
     }
   });
 

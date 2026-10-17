@@ -1,0 +1,26 @@
+<section id="testimoni" class="ugs-section" data-testid="testimonials-section">
+  <div class="container-xxl">
+    <div class="reveal">
+      <p class="section-eyebrow">// Dari barisan depan</p>
+      <h2 class="section-title" data-testid="testimonials-title">Kata mereka yang sudah bergabung</h2>
+    </div>
+
+    <div class="row g-4 mt-4">
+      <% data.testimonials.forEach(function(t, i) { %>
+        <div class="col-md-4 reveal" style="transition-delay:<%= i * 0.1 %>s">
+          <figure class="card-ugs testimonial-card h-100" data-testid="testimonial-card-<%= i + 1 %>">
+            <i class="bi bi-quote quote-icon"></i>
+            <blockquote class="testimonial-quote">“<%= t.quote %>”</blockquote>
+            <figcaption class="testimonial-meta">
+              <span class="testimonial-initials"><%= t.initials %></span>
+              <div>
+                <p class="testimonial-seller"><%= t.seller %></p>
+                <p class="testimonial-genre"><%= t.genre %> — <%= t.location %></p>
+              </div>
+            </figcaption>
+          </figure>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>

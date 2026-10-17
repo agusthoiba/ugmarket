@@ -1,0 +1,26 @@
+{
+  "defaultEnv": {"ENV": "NODE_ENV"},
+  "development": {
+    "driver": "mysql",
+    "host": {"ENV": "DB_HOST"},
+    "user": {"ENV": "DB_USER"},
+    "password": {"ENV": "DB_PASSWORD"},
+    "database": {"ENV": "DB_NAME"},
+    "multipleStatements": true
+  },
+
+  "test": {
+    "driver": "sqlite3",
+    "filename": ":memory:"
+  },
+
+  "prod": {
+    "driver": "mysql",
+    "host": {"ENV": "DB_HOST"},
+    "user": {"ENV": "DB_USER"},
+    "password": {"ENV": "DB_PASSWORD"},
+    "database": {"ENV": "DB_NAME"},
+    "multipleStatements": true
+  },
+  "sql-file" : true
+}

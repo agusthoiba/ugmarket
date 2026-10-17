@@ -1,0 +1,30 @@
+<header class="ugs-header sticky-top" data-testid="site-header">
+  <div class="container-xxl d-flex align-items-center justify-content-between py-2">
+    <a href="https://merch.undergroundsync.com/" target="_blank" rel="noopener" class="d-flex align-items-center gap-3 text-decoration-none" data-testid="brand-logo-link">
+      <img src="/image/logo1.png" alt="UndergroundSync" class="brand-logo">
+      <span class="mono-label d-none d-sm-inline">Merch / Seller</span>
+    </a>
+
+    <nav class="d-none d-lg-flex align-items-center gap-4" data-testid="desktop-nav">
+      <% data.navItems.forEach(function(n) { %>
+        <a href="<%= n.href %>" class="nav-ugs" data-testid="<%= n.testid %>"><%= n.label %></a>
+      <% }); %>
+    </nav>
+
+    <div class="d-flex align-items-center gap-2">
+      <a href="/auth/register" class="btn-ugs d-none d-sm-inline-block" data-testid="header-cta-button">Daftar Seller</a>
+      <button class="hamburger d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu" aria-label="Menu" data-testid="mobile-menu-button">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="collapse d-lg-none mobile-menu" id="mobileMenu" data-testid="mobile-menu-panel">
+    <div class="container-xxl py-3 d-flex flex-column gap-1">
+      <% data.navItems.forEach(function(n) { %>
+        <a href="<%= n.href %>" class="nav-ugs py-2" data-testid="mobile-<%= n.testid %>"><%= n.label %></a>
+      <% }); %>
+      <a href="/auth/register" class="btn-ugs text-center mt-2" data-testid="mobile-header-cta-button">Daftar Seller</a>
+    </div>
+  </div>
+</header>

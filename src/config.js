@@ -6,6 +6,7 @@ const config = {
     protocol: env.APP_PROTOCOL,
     host: env.APP_HOST,
     port: env.PORT,
+    domain: env.APP_DOMAIN,
     db: {
         mysql: {
             url: env.DB_MYSQL_URL,
@@ -28,7 +29,19 @@ const config = {
     },
     google: {
         apiKey: env.GOOGLE_API_KEY,
-        mapsUrl: env.GOOGLE_MAPS_URL
+        mapsUrl: env.GOOGLE_MAPS_URL,
+        oauth: {
+            clientId: env.GOOGLE_OAUTH_CLIENT_ID,
+            clientSecret: env.GOOGLE_OAUTH_CLIENT_SECRET,
+            redirectUri: env.GOOGLE_OAUTH_REDIRECT_URI
+        }
+    },
+    cloudflare: {
+        siteKey: env.CLOUDFLARE_SITE_KEY
+    },
+    resend: {
+        apiKey: env.RESEND_API_KEY,
+        from: env.RESEND_FROM || 'noreply@undergroundsync.com'
     }
 }
 

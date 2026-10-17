@@ -15,7 +15,10 @@
         <div class="gallery__stage">
           <img src="<%= (product.images && product.images[0]) || '/img/placeholder.png' %>"
                alt="<%= product.title %>" class="gallery__hero" loading="eager">
-
+          <% if ((product.images || []).length > 1) { %>
+            <button class="gallery__nav gallery__nav--prev" aria-label="Sebelumnya">&#8249;</button>
+            <button class="gallery__nav gallery__nav--next" aria-label="Berikutnya">&#8250;</button>
+          <% } %>
         </div>
         <% if ((product.images || []).length > 1) { %>
           <div class="gallery__thumbs" role="list">
@@ -30,11 +33,34 @@
 
       <!-- RIGHT: DETAILS -->
       <div class="details">
-        <h1 class="band"><%= product.band %></h1>
+        <h1 class="band"><a href="/products?band=<%= product.bandSlug %>" style="color:inherit;text-decoration:none;"><%= product.band %></a></h1>
         <h2 class="product-title"><%= product.title %></h2>
 
         <div class="price-row">
           <div class="price">Rp <%= product.price.toLocaleString('id-ID') %></div>
+          <button class="btn-favorite" id="btnFavorite" data-prod-id="<%= product.id %>" title="Tambahkan ke Wishlist">
+            <i class="far fa-heart"></i>
+          </button>
+        </div>
+
+        <!-- CONDITION & STOCK (one line) -->
+        <div class="meta-row">
+          <% if (product.condition) { %>
+            <span class="condition-badge condition-badge--<%= product.condition === 'b' ? 'new' : 'second' %>">
+              <% if (product.condition === 'b') { %>
+                <i class="fas fa-tag"></i> Baru
+              <% } else { %>
+                <i class="fas fa-tag"></i> Bekas
+              <% } %>
+            </span>
+          <% } %>
+          <div class="stock-info">
+            <% if (product.inStock) { %>
+              <span class="stock-badge stock-badge--in">Stok Tersedia (<%= product.stock %>)</span>
+            <% } else { %>
+              <span class="stock-badge stock-badge--out">Stok Habis</span>
+            <% } %>
+          </div>
         </div>
 
         <% if (product.shippingNote) { %>
@@ -64,20 +90,29 @@
         <!-- CTA -->
         <div class="cta">
           <% if (product.inStock) { %>
-            <!--button class="btn btn-dark" id="addToCart">Tambah ke Keranjang</button-->
-           <a href="<%= data.waHref %>" class="btn btn-success d-lg-block d-none" target="_blank" rel="noopener" style="width: 170px;">
-              <i class="fab fa-whatsapp"></i> Pesan sekarang
-            </a>
+            <div class="d-lg-flex d-none" style="gap: 8px;">
+              <button type="button" class="btn btn-success" onclick="openWaModal()">
+                <i class="fab fa-whatsapp"></i> Hubungi Penjual
+              </button>
+              <button class="btn btn-dark" id="addToCartBtn">
+                <i class="fas fa-shopping-cart"></i> Tambah ke Keranjang
+              </button>
+            </div>
           <% } else { %>
             <button class="btn btn-disabled" disabled>Stok Habis</button>
           <% } %>
           <% if (marketplaces && marketplaces.length) { %>
             <div class="marketplaces">
               <% marketplaces.forEach(m => { %>
-                <a class="btn btn-ghost" href="<%= m.url %>" target="_blank" rel="noopener" aria-label="Buka di <%= m.name %>">
-                  <!--img src="<%= m.icon %>" alt="" class="ico"> <span><%= m.name %></span-->
-                  <img width="auto" height="25" src="/marketplace/tokopedia.png">
-                </a>
+                <% if (m.url != null) { %>
+                  <a class="btn btn-ghost" href="<%= m.url %>" target="_blank" rel="noopener" aria-label="Buka di <%= m.name %>">
+                    <img width="auto" height="25" src="<%= m.icon %>">
+                  </a>
+                <% } else { %>
+                  <button class="btn btn-ghost" disabled style="opacity:0.35;cursor:not-allowed;">
+                    <img width="auto" height="25" src="<%= m.icon %>">
+                  </button>
+                <% } %>
               <% }) %>
             </div>
           <% } %>
@@ -92,12 +127,25 @@
 
         <!-- SELLER -->
         <div class="seller">
-          <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
+          <% const sellerLink = seller.slug ? `/products?seller=${seller.slug}` : (seller.username ? `/products?seller=${seller.username}` : '#'); %>
+
+          <a class="seller__name seller__link" href="<%= sellerLink %>">
+
+            <img class="seller__avatar" src="<%= seller.avatar || '/img/store.png' %>" alt="" />
+          </a>
           <div>
-            <div class="seller__name"><%= seller.name %></div>
-            <!--a class="seller__link" href="/seller/<%= seller.slug %>">Lihat lapak</a-->
+            <% if (sellerLink !== '#') { %>
+              <a class="seller__name seller__link" href="<%= sellerLink %>"><%= seller.name %></a>
+            <% } else { %>
+              <div class="seller__name"><%= seller.name %></div>
+            <% } %>
+            <% if (seller.city) { %>
+              <div class="seller__city"><%= seller.city %></div>
+            <% } %>
+            <div class="seller__product-count"><%= seller.totalProduct %> Produk</div>
           </div>
         </div>
+
 
         <% if (product.description) { %>
           <div class="desc">
@@ -114,29 +162,256 @@
 
   <!-- STICKY BAR (MOBILE) -->
   <div class="sticky-bar">
-    <div class="sticky-bar__price">Rp <%= product.price.toLocaleString('id-ID') %></div>
-    
-    <!--button class="btn btn-primary" id="stickyAdd">Beli Sekarang</button-->
-    <a href="<%= data.waHref %>" class="btn btn-success" target="_blank" rel="noopener">
-      <i class="fab fa-whatsapp"></i> Pesan sekarang
-    </a>
+    <button type="button" class="btn btn-success" onclick="openWaModal()">
+      <i class="fab fa-whatsapp"></i> Hubungi Penjual
+    </button>
+    <button class="btn btn-dark btn-sm" id="stickyAddToCart" style="font-size:0.8rem;">
+      <i class="fas fa-shopping-cart"></i> Keranjang
+    </button>
+  </div>
+
+  <!-- WHATSAPP CONFIRMATION MODAL -->
+  <div id="waModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;" onclick="if(event.target===this)closeWaModal()">
+    <div style="background:#fff;border-radius:12px;padding:32px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <div style="font-size:2.5rem;margin-bottom:12px;">
+        <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+      </div>
+      <p style="margin:0 0 8px;font-size:1rem;font-weight:600;color:#222;">Hubungi Penjual via WhatsApp</p>
+      <p style="margin:0 0 20px;font-size:0.85rem;color:#666;">Kamu akan diarahkan ke WhatsApp untuk menanyakan produk ini.</p>
+      <button id="waModalConfirmBtn" type="button" class="btn btn-success" style="display:block;width:100%;margin-bottom:10px;justify-content:center;" onclick="handleWaConfirm()">
+        <i class="fab fa-whatsapp"></i> Lanjutkan ke WhatsApp
+      </button>
+      <button type="button" onclick="closeWaModal()" style="background:none;border:none;color:#888;cursor:pointer;font-size:0.9rem;">Batal</button>
+    </div>
   </div>
 
   <!-- Optional: tiny no-framework JS just to switch gallery image and forward sticky CTA -->
   <script>
+    // --- WHATSAPP MODAL ---
+    var waModalProductId = <%= product.id %>;
+    var waModalSellerId = <%= seller.hp ? '1' : '0' %>; // placeholder, will be resolved via API
+
+    function openWaModal() {
+      document.getElementById('waModal').style.display = 'flex';
+    }
+
+    function closeWaModal() {
+      document.getElementById('waModal').style.display = 'none';
+    }
+
+    function handleWaConfirm() {
+      var btn = document.getElementById('waModalConfirmBtn');
+      var originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengarahkan...';
+
+      var loggedIn = <%= isLoggedIn %>;
+      var userId = null;
+      <% if (isLoggedIn) { %>
+        userId = <%= session.user.id %>;
+      <% } %>
+
+      // Get cookies as a string
+      var cookies = document.cookie;
+
+      fetch('/wa/product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product_id: waModalProductId,
+          seller_id: <%= product.sellerUserId %>,
+          user_id: userId,
+          cookies: cookies
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success && data.waUrl) {
+          //window.open(data.waUrl, '_blank');
+          window.location.href = data.waUrl;
+          closeWaModal();
+        } else {
+          alert('Gagal memproses. Silakan coba lagi.');
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
+      })
+      .catch(function() {
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWaModal();
+    });
+    // --- END WHATSAPP MODAL ---
+
     const hero = document.querySelector('.gallery__hero');
     const images = <%- JSON.stringify(product.images || []) %>;
-    document.querySelectorAll('.thumb').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var src = images[+btn.dataset.index];
-        if (src) hero.src = src;
-        document.querySelectorAll('.thumb').forEach(function (b) { b.classList.remove('thumb--active'); });
-        btn.classList.add('thumb--active');
-      });
+    const thumbs = document.querySelectorAll('.thumb');
+    let current = 0;
+
+    function goTo(idx) {
+      if (!images.length) return;
+      current = (idx + images.length) % images.length;
+      hero.src = images[current];
+      thumbs.forEach(function (b) { b.classList.remove('thumb--active'); });
+      if (thumbs[current]) thumbs[current].classList.add('thumb--active');
+    }
+
+    thumbs.forEach(function (btn) {
+      btn.addEventListener('click', function () { goTo(+btn.dataset.index); });
     });
+
+    var prevBtn = document.querySelector('.gallery__nav--prev');
+    var nextBtn = document.querySelector('.gallery__nav--next');
+    if (prevBtn) prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    // Swipe support
+    var stage = document.querySelector('.gallery__stage');
+    var touchStartX = 0;
+    stage.addEventListener('touchstart', function (e) { touchStartX = e.changedTouches[0].clientX; }, {passive: true});
+    stage.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+    }, {passive: true});
+
     const add = document.getElementById('addToCart');
     const stickyAdd = document.getElementById('stickyAdd');
     if (add && stickyAdd) stickyAdd.addEventListener('click', function () { add.click(); });
+
+    // --- FAVORITE / WISHLIST TOGGLE ---
+    (function() {
+      var btn = document.getElementById('btnFavorite');
+      if (!btn) return;
+
+      var prodId = btn.getAttribute('data-prod-id');
+      var icon = btn.querySelector('i');
+      var loggedIn = <%= isLoggedIn %>;
+
+      if (loggedIn) {
+        // Check initial state
+        fetch('/account/favorite/check/' + prodId)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.favorited) {
+              icon.className = 'fas fa-heart';
+              btn.classList.add('is-favorited');
+            }
+          })
+          .catch(function() { /* ignore */ });
+      }
+
+      // Toggle on click
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (!loggedIn) {
+          openLoginModal();
+          return;
+        }
+
+        fetch('/account/favorite/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prod_id: prodId })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.favorited) {
+            icon.className = 'fas fa-heart';
+            btn.classList.add('is-favorited');
+          } else {
+            icon.className = 'far fa-heart';
+            btn.classList.remove('is-favorited');
+          }
+        })
+        .catch(function() { alert('Gagal menyimpan. Silakan coba lagi.'); });
+      });
+    })();
+
+    // --- ADD TO CART (shared logic - works for both logged in and guest users) ---
+    (function() {
+      var prodId = <%= product.id %>;
+
+      function addToCart(btn) {
+        // Get selected size
+        var selectedSize = document.querySelector('input[name="size"]:checked');
+        var size = selectedSize ? selectedSize.value : null;
+
+        var originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menambahkan...';
+
+        fetch('/account/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prod_id: prodId,
+            qty: 1,
+            size: size
+          })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.status === 'added' || data.status === 'updated') {
+            btn.innerHTML = '<i class="fas fa-check"></i> Ditambahkan';
+            setTimeout(function() {
+              btn.innerHTML = originalText;
+              btn.disabled = false;
+            }, 2000);
+            // Refresh cart badge count
+            var desktopBadge = document.getElementById('cartBadgeDesktop');
+            var mobileBadge = document.getElementById('cartBadgeMobile');
+            if (desktopBadge || mobileBadge) {
+              fetch('/account/cart/count')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  var count = data.count || 0;
+                  if (desktopBadge) {
+                    desktopBadge.style.display = count > 0 ? 'flex' : 'none';
+                    desktopBadge.textContent = count > 99 ? '99+' : count;
+                  }
+                  if (mobileBadge) {
+                    mobileBadge.style.display = count > 0 ? 'flex' : 'none';
+                    mobileBadge.textContent = count > 99 ? '99+' : count;
+                  }
+                })
+                .catch(function() {});
+            }
+          } else {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+            alert(data.error || 'Gagal menambahkan ke keranjang');
+          }
+        })
+        .catch(function() {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          alert('Terjadi kesalahan. Silakan coba lagi.');
+        });
+      }
+
+      // Desktop add to cart button
+      var addBtn = document.getElementById('addToCartBtn');
+      if (addBtn) {
+        addBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          addToCart(this);
+        });
+      }
+
+      // Sticky bar add to cart button
+      var stickyBtn = document.getElementById('stickyAddToCart');
+      if (stickyBtn) {
+        stickyBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          addToCart(this);
+        });
+      }
+    })();
   </script>
 
 <%- include ("../front/template/footer.html") %>

@@ -28,7 +28,7 @@ function pagination(limit, page, total, basePath, maxPages = 15) {
     const list = [];
     for (let i = startPage; i <= endPage; i++) {
         list.push({
-            link: `${basePath}?page=${i}`,
+            link: `${basePath}${basePath.includes('?') ? '&' : '?'}page=${i}`,
             no: i,
             active: page === i
         });

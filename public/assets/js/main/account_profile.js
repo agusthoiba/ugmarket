@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const form = document.getElementById('uploadForm');
+    const usernameInput = document.getElementById('username');
     const nameInput = document.getElementById('name');
     const hpInput = document.getElementById('hp');
     
@@ -17,6 +18,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (feedback && feedback.classList.contains('invalid-feedback')) {
             feedback.textContent = '';
         }
+    }
+
+    function validateUsername(username) {
+        if (!username || username.trim().length === 0) {
+            return 'Username wajib diisi';
+        }
+        if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(username.trim())) {
+            return 'Gunakan 3-30 karakter: huruf, angka, simbol (-, _, .)';
+        }
+        return '';
     }
 
     function validateName(name) {
@@ -38,6 +49,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // Add input event listeners for real-time validation
+    usernameInput.addEventListener('input', function() {
+        const error = validateUsername(this.value);
+        if (error) {
+            showError(this, error);
+        } else {
+            clearError(this);
+        }
+    });
+
     nameInput.addEventListener('input', function() {
         const error = validateName(this.value);
         if (error) {
@@ -58,10 +78,15 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Form submission validation
     form.addEventListener('submit', function(e) {
-        // e.preventDefault();
         let isValid = true;
-        
-        
+
+        // Validate username
+        const usernameError = validateUsername(usernameInput.value);
+        if (usernameError) {
+            showError(usernameInput, usernameError);
+            isValid = false;
+        }
+
         // Validate name
         const nameError = validateName(nameInput.value);
         if (nameError) {

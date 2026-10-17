@@ -1,236 +1,363 @@
-var router = express.Router()
+var router = express.Router();
 
 const URI = require("urijs");
+const { Op } = require("sequelize");
 
-var Band = require('../../../models/band')
+var Band = require("../../../models/band");
 
-const moment = require('moment')
-const pagination = require('../../../helpers/pagination');
-const { SIZES } = require('../../../constant');
+const moment = require("moment");
+const pagination = require("../../../helpers/pagination");
+const { SIZES } = require("../../../constant");
 const { collect } = require("underscore");
 
-router.get('/', async (req, res, next) => {
-  var userId = parseInt(req.session.user.id)
+const SORT_MAP = {
+  newest: [["prod_id", "DESC"]],
+  oldest: [["prod_id", "ASC"]],
+  price_asc: [["prod_price", "ASC"]],
+  price_desc: [["prod_price", "DESC"]],
+  name_asc: [["prod_name", "ASC"]],
+  name_desc: [["prod_name", "DESC"]],
+};
 
-  var obj = {
-    error: null,
-    data: {
-      products: []
-    }
-  }
+router.get("/", async (req, res, next) => {
+  const userId = parseInt(req.session.user.id);
 
-  var query = { prod_user_id: userId, prod_is_deleted: 0 }
+  const search = (req.query.search || "").trim();
+  const categoryFilter =
+    req.query.category && !isNaN(parseInt(req.query.category))
+      ? parseInt(req.query.category)
+      : null;
+  const conditionFilter = ["b", "s"].includes(req.query.condition)
+    ? req.query.condition
+    : "";
+  const statusFilter = ["publish", "draft"].includes(req.query.status)
+    ? req.query.status
+    : "";
+  const sortFilter = SORT_MAP[req.query.sort] ? req.query.sort : "newest";
+
+  const query = { prod_user_id: userId, prod_is_deleted: 0 };
+  if (search)
+    query[Op.or] = [
+      { prod_name: { [Op.like]: `%${search}%` } },
+      { "$band.band_name$": { [Op.like]: `%${search}%` } },
+    ];
+  if (categoryFilter) query.prod_cat_id = categoryFilter;
+  if (conditionFilter) query.prod_condition = conditionFilter;
+  if (statusFilter === "publish") query.prod_is_visible = 1;
+  if (statusFilter === "draft") query.prod_is_visible = 0;
+
   const pageLimit = 20;
-	let option = {
-		limit: pageLimit,
-		page: req.query.page && !isNaN(parseInt(req.query.page)) && parseInt(req.query.page) > 0 ? parseInt(req.query.page) : 1,
-	};
+  const option = {
+    limit: pageLimit,
+    page:
+      req.query.page &&
+      !isNaN(parseInt(req.query.page)) &&
+      parseInt(req.query.page) > 0
+        ? parseInt(req.query.page)
+        : 1,
+    sort: SORT_MAP[sortFilter],
+  };
 
   const prodCount = await res.locals.productModel.count(query);
   const doc = await res.locals.productModel.find(query, option);
-  const basePath = '/account/product';
-  
-  if (doc.length > 0) {
-    obj.data.products = doc.map(val => {
-        val.is_visible = val.prod_is_visible == 1
-        const imgs = val.prod_images.split(',');
-        val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {width: 100, height: 100, crop: "thumb"});
 
-        return val
+  const filterParams = new URLSearchParams();
+  if (search) filterParams.set("search", search);
+  if (categoryFilter) filterParams.set("category", categoryFilter);
+  if (conditionFilter) filterParams.set("condition", conditionFilter);
+  if (statusFilter) filterParams.set("status", statusFilter);
+  if (sortFilter !== "newest") filterParams.set("sort", sortFilter);
+  const filterStr = filterParams.toString();
+  const basePath = filterStr
+    ? `/account/product?${filterStr}`
+    : "/account/product";
+
+  const obj = {
+    error: null,
+    data: {
+      products: [],
+      categoryGroups: buildCategoryGroups(
+        await res.locals.categoryModel.find(),
+      ),
+      filters: {
+        search,
+        category: categoryFilter,
+        condition: conditionFilter,
+        status: statusFilter,
+        sort: sortFilter,
+      },
+    },
+    isShowMenu: true,
+  };
+
+  if (doc.length > 0) {
+    obj.data.products = doc.map((val) => {
+      val.is_visible = val.prod_is_visible == 1;
+      const imgs = val.prod_images.split(",");
+      val.thumbnail = req.app.locals.cloudinary.url(imgs[0], {
+        width: 100,
+        height: 100,
+        crop: "thumb",
+      });
+      return val;
     });
   }
 
   const paginate = pagination(pageLimit, option.page, prodCount, basePath);
   Object.assign(obj, paginate);
 
-  if (req.query.json == '1') {
-    return res.json(obj);
-  }
+  if (req.query.json == "1") return res.json(obj);
+  return res.render("front/account/product_list", obj);
+});
 
-  return res.render('front/account/product_list', obj)
-})
-
-router.get('/edit/:id', async (req, res, next) => {
+router.get("/edit/:id", async (req, res, next) => {
   var userId = req.session.user.id;
-  const prodId = parseInt(req.params.id)
+  const prodId = parseInt(req.params.id);
 
   var obj = {
-    error: null, 
+    error: null,
     data: {
       item: {},
       categories: [],
       bands: [],
       collections: [],
-      sizes: SIZES
+      sizes: SIZES,
     },
     action: `/account/product/update/${prodId}`,
-    js: ['account_product', 'product_image_dropzone']
+    js: ["account_product", "product_image_dropzone"],
+    isShowMenu: true
   };
 
   try {
-    const product = await res.locals.productModel.findOne({ prod_id: prodId, prod_user_id: userId })
+    const product = await res.locals.productModel.findOne({
+      prod_id: prodId,
+      prod_user_id: userId,
+    });
 
     obj.data.item = {
       id: product.prod_id,
       name: product.prod_name,
       category: product.prod_cat_id,
       band: product.prod_band_id,
+      collection_id: product.prod_col_id,
       images: [],
       thumbnails: [],
       price: product.prod_price,
       weight: product.prod_weight,
       desc: product.prod_desc,
-      marketplace_tokopedia: product.prod_marketplace_tokopedia_path == null ? '' : `https://www.tokopedia.com${product.prod_marketplace_tokopedia_path}`,
-      marketplace_shoope: product.prod_marketplace_shoope_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shoope_path}`,
-      marketplace_shopee: product.prod_marketplace_shopee_path == null ? '' : `https://shopee.co.id${product.prod_marketplace_shopee_path}`,
+      marketplace_tokopedia:
+        product.prod_marketplace_tokopedia_path == null
+          ? ""
+          : `https://www.tokopedia.com${product.prod_marketplace_tokopedia_path}`,
+      marketplace_shoope:
+        product.prod_marketplace_shoope_path == null
+          ? ""
+          : `https://shopee.co.id${product.prod_marketplace_shoope_path}`,
+      marketplace_shopee:
+        product.prod_marketplace_shopee_path == null
+          ? ""
+          : `https://shopee.co.id${product.prod_marketplace_shopee_path}`,
       is_visible: product.prod_is_visible == 1,
-      sizes: req.app.locals.strToArr(product.prod_sizes, ','),
+      sizes: req.app.locals.strToArr(product.prod_sizes, ","),
       condition: product.prod_condition,
       stock: product.prod_stock,
-      created_at: product.prod_created_at
-    }
+      created_at: product.prod_created_at,
+    };
 
     let mps = [];
     if (product.prod_marketplaces && product.prod_marketplaces.length > 0) {
       mps = product.prod_marketplaces;
-      for(let i = 0; i < mps.length; i++) {
-        obj.data.item.marketplaces[mps[i].name] = mps[i].url
+      for (let i = 0; i < mps.length; i++) {
+        obj.data.item.marketplaces[mps[i].name] = mps[i].url;
       }
     }
 
     if (product.prod_images && product.prod_images != null) {
-      const thumbs = req.app.locals.strToArr(product.prod_images, ',')
+      const thumbs = req.app.locals.strToArr(product.prod_images, ",");
 
       obj.data.item.images = thumbs;
-      obj.data.item.thumbnails = thumbs.map(val => {
-        return req.app.locals.cloudinary.url(val, {width: 100, height: 100, crop: "thumb"});
+      obj.data.item.thumbnails = thumbs.map((val) => {
+        return req.app.locals.cloudinary.url(val, {
+          width: 100,
+          height: 100,
+          crop: "thumb",
+        });
       });
     }
 
     obj.data.categories = await res.locals.categoryModel.find();
     obj.data.bands = await res.locals.bandModel.findAll();
-    obj.data.collections = await res.locals.collectionModel.find({ col_is_visible: 1 });
+    obj.data.collections = await req.app.locals.collectionModel.find({
+      col_is_visible: 1,
+    });
 
-    if (req.query.json == '1') {
+    if (req.query.json == "1") {
       return res.json(obj);
     }
 
-    return res.render('front/account/product_form', obj);
+    return res.render("front/account/product_form", obj);
   } catch (err) {
-    console.error(err)
-    obj.error = 'An Error occured while load your product';
-    if (req.query.json == '1') {
+    console.error(err);
+    obj.error = "An Error occured while load your product";
+    if (req.query.json == "1") {
       return res.json(obj);
     }
-    return res.render('front/account/product_form', obj);
+    return res.render("front/account/product_form", obj);
   }
+});
 
-})
-
-router.post('/update/:id', async function (req, res, next) {
-  const prodId = parseInt(req.params.id)
+router.post("/update/:id", async function (req, res, next) {
+  const prodId = parseInt(req.params.id);
 
   const query = {
-    prod_id: prodId
-  }
+    prod_id: prodId,
+  };
 
   var obj = { error: null, data: null };
 
   try {
-    const payload = await cleanPost(req.body, res, 'update');
+    const findBand = await res.locals.bandModel.findOne({
+      band_id: req.body.band,
+    });
+    const payload = await cleanPost(req.body, findBand, "update");
 
     await res.locals.productModel.update(query, payload);
-    return res.redirect('/account/product');
-  } catch (err) {
-    console.error(err)
-    obj.error = 'An Error occured while update your product';
-    return res.render('front/account/product_form', obj);
-  }
-})
 
-router.get('/add', async (req, res, next) => {
+    // Update seller total published product count
+    const publishedCount = await res.locals.productModel.count({
+      prod_user_id: parseInt(req.session.user.id),
+      prod_is_visible: 1,
+      prod_is_deleted: 0
+    });
+    await req.app.locals.sellerModel.update(
+      { sel_user_id: parseInt(req.session.user.id) },
+      { sel_total_product: publishedCount }
+    );
+
+    return res.redirect("/account/product");
+  } catch (err) {
+    console.error(err);
+    obj.error = "An Error occured while update your product";
+    return res.render("front/account/product_form", obj);
+  }
+});
+
+router.get("/add", async (req, res, next) => {
   var obj = {
     error: null,
     data: {},
-    action: '/account/product/create',
-    js: ['account_product', 'product_image_dropzone']
+    action: "/account/product/create",
+    js: ["account_product", "product_image_dropzone"],
+    isShowMenu: true
   };
 
   obj.data = {
     categories: await res.locals.categoryModel.find(),
-    bands:  await res.locals.bandModel.findAll({ band_enabled: 1}),
-    collections: await res.locals.collectionModel.find({ col_is_visible: 1 }),
+    bands: await res.locals.bandModel.findAll({ band_enabled: 1 }),
+    collections: await req.app.locals.collectionModel.find({
+      col_is_visible: 1,
+    }),
     sizes: SIZES,
-    item: itemData()
-  }
-  
-  if (req.query.json == '1') {
+    item: itemData(),
+  };
+
+  if (req.query.json == "1") {
     return res.json(obj);
   }
-  return res.render('front/account/product_form', obj);
-})
+  return res.render("front/account/product_form", obj);
+});
 
-router.post('/create', async (req, res) => {
-  var obj = { 
-    error: null, 
+router.post("/create", async (req, res) => {
+  console.log("req.body: ", req.body); //req.body
+  var obj = {
+    error: null,
     data: null,
-    action: '/account/product/create',
-    js: ['account_product', 'product_image_dropzone']
+    action: "/account/product/create",
+    js: ["account_product", "product_image_dropzone"],
   };
 
   req.body.user_id = req.session.user.id;
 
   try {
     const findBand = await res.locals.bandModel.findOne({
-      band_id: req.body.band
+      band_id: req.body.band,
     });
 
     const payload = await cleanPost(req.body, findBand);
 
-    await res.locals.productModel.create(payload)
+    await res.locals.productModel.create(payload);
 
-    await res.locals.bandModel.update({ band_id: payload.prod_band_id }, {
-      band_total_product: findBand.band_total_product + 1
+    await res.locals.bandModel.update(
+      { band_id: payload.prod_band_id },
+      {
+        band_total_product: findBand.band_total_product + 1,
+      },
+    );
+
+    // Update seller total published product count
+    const publishedCount = await res.locals.productModel.count({
+      prod_user_id: parseInt(req.body.user_id),
+      prod_is_visible: 1,
+      prod_is_deleted: 0
     });
+    await req.app.locals.sellerModel.update(
+      { sel_user_id: parseInt(req.body.user_id) },
+      { sel_total_product: publishedCount }
+    );
 
-    return res.redirect('/account/product');
+    return res.redirect("/account/product");
   } catch (err) {
-    console.error(err)
+    console.error(err);
     obj.data = {
       categories: await res.locals.categoryModel.find(),
-      bands:  await res.locals.bandModel.findAll(),
+      bands: await res.locals.bandModel.findAll(),
       sizes: SIZES,
-      item: itemData()
-    }
-    obj.error = 'An Error occured while create your product';
-    return res.render('front/account/product_form', obj)
-  }  
-
-  
-})
+      item: itemData(),
+    };
+    obj.error = "An Error occured while create your product";
+    return res.render("front/account/product_form", obj);
+  }
+});
 
 module.exports = router;
 
+function buildCategoryGroups(categories) {
+  const parents = categories.filter((c) => c.cat_parent_id === 0);
+  const children = categories.filter((c) => c.cat_parent_id !== 0);
+  const parentIds = new Set(parents.map((p) => p.cat_id));
+
+  const groups = parents.map((p) => ({
+    parent: p,
+    children: children.filter((c) => c.cat_parent_id === p.cat_id),
+  }));
+
+  // categories whose parent isn't in the list — treat as standalone
+  const orphans = children.filter((c) => !parentIds.has(c.cat_parent_id));
+  if (orphans.length) groups.push({ parent: null, children: orphans });
+
+  return groups;
+}
+
 function itemData() {
   return {
-    name: '',
-    category: '',
-    description: '',
+    name: "",
+    category: "",
+    description: "",
     price: 0,
-    size: '',
+    size: "",
     sizes: [],
     weight: 0,
     stock: 1,
     images: [],
     thumbnails: [],
-    band: '',
-    collection_id: '',
+    band: "",
+    collection_id: "",
     marketplaces: {
-      tokopedia: '',
-      bukalapak: '',
-      shopee: ''
+      tokopedia: "",
+      bukalapak: "",
+      shopee: "",
     },
-  }
+  };
 }
 
 /*function validate(req) {
@@ -249,8 +376,19 @@ function itemData() {
     return errVal;
 }*/
 
-async function cleanPost(body, findBand, tipe = 'create') {
-  const prodSlug = slug(`${findBand.band_slug}-${body.name.trim().toLowerCase()}`)
+async function cleanPost(body, findBand, tipe = "create") {
+  const prodSlug = slug(
+    `${findBand.band_slug}-${body.name.trim().toLowerCase()}`,
+  );
+
+  let sizes = '';
+  if (body.sizes) { 
+    if (Array.isArray(body.sizes)) {
+      sizes = body.sizes.join();
+    }  else if (typeof body.sizes === 'string') {
+      sizes = body.sizes;
+    }
+  }
 
   var payload = {
     prod_name: body.name.trim(),
@@ -264,31 +402,31 @@ async function cleanPost(body, findBand, tipe = 'create') {
     prod_band_id: body.band,
     prod_col_id: body.collection_id ? parseInt(body.collection_id) : 0,
 
-    prod_is_visible: body.is_visible == 'publish' ? 1 : 0,
-    prod_sizes: body.sizes ? body.sizes.join() : ''
-  }
+    prod_is_visible: body.is_visible == "publish" ? 1 : 0,
+    prod_sizes: sizes,
+  };
 
-  if (tipe == 'create') {
+  if (tipe == "create") {
     payload = Object.assign(payload, {
       prod_user_id: parseInt(body.user_id),
-      prod_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
-    })
+      prod_created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+    });
   }
 
   if (body.marketplace_tokopedia) {
-    const uriTokped = new URI((body.marketplace_tokopedia).trim());
+    const uriTokped = new URI(body.marketplace_tokopedia.trim());
     payload.prod_marketplace_tokopedia_path = uriTokped.path();
   }
 
   if (body.marketplace_shoope) {
-    const uriShoope = new URI((body.marketplace_shoope).trim());
+    const uriShoope = new URI(body.marketplace_shoope.trim());
     payload.prod_marketplace_shoope_path = uriShoope.path();
   }
 
   if (body.marketplace_shopee) {
-    const uriShopee = new URI((body.marketplace_shopee).trim());
-    if (!['shopee.co.id'].includes(uriShopee.hostname())) {
-      throw new Error('Invalid shopee URL');
+    const uriShopee = new URI(body.marketplace_shopee.trim());
+    if (!["shopee.co.id"].includes(uriShopee.hostname())) {
+      throw new Error("Invalid shopee URL");
     }
     payload.prod_marketplace_shopee_path = uriShopee.path();
   }
@@ -303,35 +441,39 @@ async function cleanPost(body, findBand, tipe = 'create') {
 
 function getCategory(categoryModel) {
   return new Promise((resolve, reject) => {
-    categoryModel.find({}, {}).then(doc => {
-      return resolve(doc);
-    }, err => {
-      return reject(err);
-    });
-  })
+    categoryModel.find({}, {}).then(
+      (doc) => {
+        return resolve(doc);
+      },
+      (err) => {
+        return reject(err);
+      },
+    );
+  });
 }
 
 function getBand() {
-  let query = {}
+  let query = {};
   let option = {
-    order: [
-      ['band_name', 'asc']
-    ]
-  }
+    order: [["band_name", "asc"]],
+  };
 
   return new Promise((resolve, reject) => {
-    Band.find(query, option).then(doc => {
-      return resolve(doc);
-    }, err => {
-      return reject(err);
-    });
-  })
+    Band.find(query, option).then(
+      (doc) => {
+        return resolve(doc);
+      },
+      (err) => {
+        return reject(err);
+      },
+    );
+  });
 }
 
 async function getSyncData(catModel, bandModel) {
   let result = {
     categories: await getCategory(catModel),
-    bands: await getBand(bandModel)
-  }
+    bands: await getBand(bandModel),
+  };
   return result;
-};
+}

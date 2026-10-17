@@ -1,0 +1,40 @@
+<section id="daftar" class="ugs-section register-section" data-testid="register-section">
+  <div class="hero-noise"></div>
+  <div class="container-xxl position-relative">
+    <div class="row g-5">
+      <div class="col-lg-6 reveal">
+        <p class="section-eyebrow">// Gabung sekarang</p>
+        <h2 class="section-title" data-testid="register-title">Daftar sebagai seller. <span class="text-blood">Gratis.</span></h2>
+        <p class="section-sub">
+          Isi formulir ini dan tim UndergroundSync akan menghubungi Anda untuk
+          aktivasi toko. Tanpa biaya pendaftaran, tanpa komisi.
+        </p>
+        <ul class="list-unstyled perk-list">
+          <% data.perks.forEach(function(p) { %>
+            <li><span class="perk-check"><i class="bi bi-check-lg"></i></span> <%= p %></li>
+          <% }); %>
+        </ul>
+      </div>
+
+      <div class="col-lg-6 reveal" style="transition-delay:.12s">
+        <% if (data.status === 'sukses') { %>
+          <div class="alert-ugs alert-ugs-success" data-testid="form-success-alert">
+            <i class="bi bi-check-circle-fill me-2"></i>Pendaftaran terkirim! Tim kami akan menghubungi Anda segera.
+          </div>
+        <% } else if (data.status === 'gagal') { %>
+          <div class="alert-ugs alert-ugs-error" data-testid="form-error-alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Gagal mengirim pendaftaran. Periksa kembali isian Anda.
+          </div>
+        <% } %>
+         
+        
+          <button type="submit" onclick="window.location.href='/auth/register'" class="btn-ugs btn-ugs-lg w-100 mt-4" data-testid="seller-form-submit-button">
+            <i class="bi bi-send me-1"></i> Daftar Sekarang (Gratis 0% Admin)
+          </button>
+        
+          <p class="mono-dim text-center mt-3 mb-0">Data Anda aman &amp; hanya dipakai untuk aktivasi toko</p>
+
+      </div>
+    </div>
+  </div>
+</section>

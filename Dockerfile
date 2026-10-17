@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:20
 
 # Create app directory
 WORKDIR /home/ugmarket
@@ -10,6 +10,7 @@ ENV SERVICE_PORT 4000
 # 'WITH_SASL' is required when we are building the kafka client.
 COPY package.json .
 RUN WITH_SASL=0 npm install --production --verbose
+RUN npm run db:migrate up
 COPY . .
 
 # Expose then start the server.

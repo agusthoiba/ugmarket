@@ -62,6 +62,7 @@
                     <option value="indonesia">Indonesia</option>
                     <option value="United States">USA</option>
                     <option value="United Kingdom">United Kingdom</option>
+                    <option value="Japan">Japan</option>
                     <option value="Germany">Germany</option>
                 </select>
 
@@ -74,43 +75,43 @@
         </div>
 
         <!-- View Toggle -->
-        <div class="view-toggle">
-            <button class="view-btn active" data-view="grid">
+        <!--div class="view-toggle">
+            <button class="view-btn" data-view="grid">
                 <i class="fas fa-th-large"></i> Grid
             </button>
-            <button class="view-btn" data-view="list">
+            <button class="view-btn active" data-view="list">
                 <i class="fas fa-list"></i> List
             </button>
-        </div>
+        </div-->
 
-        <!-- Band data for JS — all bands loaded once, no further API calls -->
-        <script>window.__BANDS__ = <%- JSON.stringify(data.bands || []).replace(/<\//g, '<\\/') %>;</script>
+		<!-- Band data for JS — all bands loaded once, no further API calls -->
+		<script>window.__BANDS__ = <%- JSON.stringify(data.bands || []).replace(/<\//g, '<\\/') %>;</script>
 
-        <!-- Band Grid — populated entirely by band_list_new.js -->
-        <% if (data.bandTotal > 0) { %>
-        <div class="band-grid" id="bandGrid"></div>
-        <!-- Loading Spinner for infinite scroll -->
-        <div id="band-loading-spinner" class="text-center py-4" style="display: none;">
-            <div class="spinner-border text-light" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-        <% } else { %>
-        <!-- Empty State -->
-        <div class="empty-state">
-            <div class="empty-icon">
-                <i class="fas fa-guitar"></i>
-            </div>
-            <h3 class="empty-title">No Bands Found</h3>
-            <p class="empty-message">
-                We couldn't find any bands matching your criteria. Try adjusting
-                your filters or search terms.
-            </p>
-            <button class="band-link" id="resetFilters">
-                Reset All Filters
-            </button>
-        </div>
-        <% } %>
+		<!-- Band Grid — populated entirely by band_list_new.js -->
+		<% if (data.bandTotal > 0) { %>
+		<div class="band-grid" id="bandGrid"></div>
+		<!-- Loading Spinner for infinite scroll -->
+		<div id="band-loading-spinner" class="text-center py-4" style="display: none;">
+			<div class="spinner-border text-light" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+		</div>
+		<% } else { %>
+		<!-- Empty State -->
+		<div class="empty-state">
+			<div class="empty-icon">
+				<i class="fas fa-guitar"></i>
+			</div>
+			<h3 class="empty-title">No Bands Found</h3>
+			<p class="empty-message">
+				We couldn't find any bands matching your criteria. Try adjusting
+				your filters or search terms.
+			</p>
+			<button class="band-link" id="resetFilters">
+				Reset All Filters
+			</button>
+		</div>
+		<% } %>
 
         <!-- Pagination removed — lazy loading handles loading more bands -->
     </div>

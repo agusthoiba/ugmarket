@@ -56,16 +56,29 @@ document.addEventListener("DOMContentLoaded", () => {
       accordionTriggers.forEach((t) => {
         t.classList.remove("active")
         const content = document.getElementById(t.dataset.target)
-        if (content) content.classList.remove("active")
+        if (content) {
+          content.classList.remove("active")
+          content.style.maxHeight = ""
+        }
       })
 
       // Open clicked accordion if it wasn't active
-      if (!isActive) {
+      if (!isActive && target) {
         this.classList.add("active")
         target.classList.add("active")
+        // Use the real content height instead of a fixed max-height, otherwise
+        // long lists (e.g. all categories) get cut off on small screens
+        target.style.maxHeight = `${target.scrollHeight}px`
       }
     })
   });
+
+  // Keep an expanded accordion fully visible after the viewport changes
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".mobile-accordion-content.active").forEach((content) => {
+      content.style.maxHeight = `${content.scrollHeight}px`
+    })
+  })
 
   // Desktop accordion functionality (independent per section)
   desktopAccordionTriggers.forEach((trigger) => {
@@ -96,6 +109,12 @@ document.addEventListener("DOMContentLoaded", () => {
       activeFilters.push({ type: checkbox.name, value: checkbox.value, label: `${section}: ${label}` })
     })
 
+    // Check seller input
+    const sellerInput = document.getElementById('seller-input')
+    if (sellerInput && sellerInput.value.trim()) {
+      activeFilters.push({ type: 'seller', value: sellerInput.value.trim(), label: `Penjual: ${sellerInput.value.trim()}` })
+    }
+
     // Update active filters display
     activeFiltersContainer.innerHTML = ""
     activeFilters.forEach((filter) => {
@@ -119,10 +138,15 @@ document.addEventListener("DOMContentLoaded", () => {
         const type = this.dataset.type
         const value = this.dataset.value
 
-        // Uncheck the corresponding checkbox
-        const checkbox = document.querySelector(`input[name="${type}"][value="${value}"]`)
-        if (checkbox) {
-          checkbox.checked = false
+        if (type === 'seller') {
+          const sellerInput = document.getElementById('seller-input')
+          const mobileSellerInput = document.getElementById('mobile-seller-input')
+          if (sellerInput) sellerInput.value = ''
+          if (mobileSellerInput) mobileSellerInput.value = ''
+        } else {
+          // Uncheck the corresponding checkbox
+          const checkbox = document.querySelector(`input[name="${type}"][value="${value}"]`)
+          if (checkbox) checkbox.checked = false
         }
 
         updateActiveFilters()
@@ -141,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let conditions = [];
     let categories = [];
     let kategori = ''; // kategori for parent category
+    let country = ''; // country filter
     
     checkboxes.forEach((checkbox) => {
       if (checkbox.name == "sizes") {
@@ -151,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
         categories.push(checkbox.value);
       } else if (checkbox.name == "kategori") {
         kategori = checkbox.value;
+      } else if (checkbox.name == "country") {
+        country = checkbox.value;
       }
     });
 
@@ -171,6 +198,10 @@ document.addEventListener("DOMContentLoaded", () => {
       params.append("categories", categories.join(','));
     }
 
+    if (country !== '') { 
+      params.append("country", country);
+    }
+
     // Check for sort from radio buttons or select dropdowns
     const checkedRadio = document.querySelector('input[type="radio"]:checked');
     const sortSelect = document.getElementById("sort-select");
@@ -183,6 +214,14 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (sortSelectDesktop && sortSelectDesktop.value) {
       params.append("sort", sortSelectDesktop.value)
     }
+
+    // Handle seller input
+    const desktopSellerInput = document.getElementById('seller-input')
+    const mobileSellerInput = document.getElementById('mobile-seller-input')
+    const sellerVal = (desktopSellerInput && desktopSellerInput.value.trim())
+      || (mobileSellerInput && mobileSellerInput.value.trim())
+      || ''
+    if (sellerVal) params.append('seller', sellerVal)
 
     // Handle price inputs separately
     const priceMinInput = document.getElementById('price-min');
@@ -208,6 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
       checkbox.checked = false
     })
+
+    // Clear seller inputs
+    const sellerInput = document.getElementById('seller-input')
+    const mobileSellerInput = document.getElementById('mobile-seller-input')
+    if (sellerInput) sellerInput.value = ''
+    if (mobileSellerInput) mobileSellerInput.value = ''
 
     // Reset sort to default
     const sortSelect = document.getElementById("sort-input")
@@ -247,6 +292,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })
 
+    // Sync mobile seller to desktop seller
+    const mobileSellerVal = document.getElementById('mobile-seller-input')
+    const desktopSellerInput = document.getElementById('seller-input')
+    if (mobileSellerVal && desktopSellerInput) {
+      desktopSellerInput.value = mobileSellerVal.value.trim()
+    }
+
     closeMobileFilter()
     updateActiveFilters()
     applyFilters()
@@ -278,11 +330,23 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => applyFilters(), 500); // Debounce for 500ms
     });
   }
-  
+
   if (priceMaxInput) {
     priceMaxInput.addEventListener("input", () => {
       setTimeout(() => applyFilters(), 500); // Debounce for 500ms
     });
+  }
+
+  const sellerInput = document.getElementById('seller-input')
+  if (sellerInput) {
+    let sellerDebounce
+    sellerInput.addEventListener("input", () => {
+      clearTimeout(sellerDebounce)
+      sellerDebounce = setTimeout(() => {
+        updateActiveFilters()
+        applyFilters()
+      }, 600)
+    })
   }
 
   // Listen for sort changes

@@ -1,8 +1,8 @@
 {
   "name": "ugmarket",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "description": "Undergoundsync market",
   "main": "index.js",
@@ -17,7 +17,8 @@
     "lint:quiet": "eslint src config --quiet",
     "lint:fix": "eslint src config --fix",
     "css-minify": "./node_modules/css-minify/bin/css-minify.js -d public/assets/css/ -o public/assets/css-minify/",
-    "js-minify": "script/minifyjs.sh"
+    "js-minify": "script/minifyjs.sh",
+    "db:migrate": "node node_modules/db-migrate/bin/db-migrate --migrations-dir src/dbMigrations"
   },
   "keywords": [
     "Marketplace",
@@ -30,9 +31,12 @@
     "axios": "^1.11.0",
     "body-parser": "^1.15.2",
     "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
     "cookie-session": "^2.0.0-beta.3",
     "cors": "^2.8.5",
     "css-minify": "^2.1.0",
+    "db-migrate": "^0.11.14",
+    "db-migrate-mysql": "^3.0.0",
     "dotenv": "^8.1.0",
     "ejs": "^3.1.8",
     "express": "^4.13.4",
@@ -46,7 +50,9 @@
     "multer": "^2.0.2",
     "mysql2": "^3.0.1",
     "numeral": "^2.0.6",
+    "pino": "^9.9.0",
     "pino-http": "^10.5.0",
+    "resend": "^3.5.0",
     "semantic-release": "^22.0.12",
     "sequelize": "6.29.0",
     "slug": "^0.9.1",

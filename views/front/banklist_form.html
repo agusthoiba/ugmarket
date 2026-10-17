@@ -1,0 +1,23 @@
+    <h3 class="modal-title">Pilih Pembayaran</h3>
+    <p class="modal-subtitle">Transfer bank manual</p>
+
+    <form id="paymentForm" novalidate>
+      <div class="modal-form-group">
+        <label for="bankSelect">Bank Tujuan</label>
+        <select id="bankSelect" required>
+          <option value="">Pilih bank...</option>
+          <% for (let i = 0; i < data.banks.length; i++) { %>
+            <option value="<%= data.banks[i].code %>"><%= data.banks[i].label %></option>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="modal-form-group">
+        <label for="accountNumber">Nomor Rekening</label>
+        <input type="text" id="accountNumber" placeholder="Masukkan nomor rekening" required pattern="[0-9]+" inputmode="numeric">
+      </div>
+
+      <div class="modal-error" id="modalError"></div>
+
+      <button type="submit" class="modal-btn-submit" id="modalSubmit">Konfirmasi Pembayaran</button>
+    </form>

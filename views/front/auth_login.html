@@ -4,10 +4,17 @@
 <main class="login-container container">
   <div class="login-card">
     <h1 class="login-title"> Login </h1>
-    <a href="/auth/login/facebook">
-      <img src="https://static-id.zacdn.com/next-assets/static-assets/images/logo/fb-logo-rounded.svg"
-        alt="facebook login" loading="lazy" width="37" height="37">
-    </a>
+    <div class="social-login">
+      <!--a href="/auth/login/facebook">
+        <img src="https://static-id.zacdn.com/next-assets/static-assets/images/logo/fb-logo-rounded.svg"
+          alt="facebook login" loading="lazy" width="37" height="37">
+      </a-->
+      
+      <a href="/auth/login/google" class="google-login-btn">
+        <img src="/image/google-logo.png" alt="Google" width="20" height="20">
+        <span>Login dengan Google</span>
+      </a>
+    </div>
     <div class="or-separator">
       <span class="line"></span>
       <span class="text">or</span>
@@ -25,6 +32,9 @@
     <% } %>
 
     <form action="/auth/login" method="POST" class="login-form">
+      <% if (data.redirect && data.redirect !== '') { %>
+        <input type="hidden" name="redirect" value="<%= data.redirect %>">
+      <% } %>
       <div class="login-form-group form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" required>
@@ -33,6 +43,11 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required>
       </div>
+
+      <div class="" style="text-align: center;" >
+        <div class="cf-turnstile" data-sitekey="<%= data.cfKey %>"></div>
+      </div>
+
       <button type="submit" class="submit-button">Submit</button>
     </form>
 

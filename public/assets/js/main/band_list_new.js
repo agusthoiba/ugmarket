@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const masterBands = window.__BANDS__ || [];
 
   let displayBands = [];
-  let currentView = "grid";
+  let currentView = "list";
 
   const state = { rendered: 0, loading: false };
 
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<div class="band-overlay"><span class="band-genre">' + escapeHtml(genre) + "</span></div>" +
         "</div>" +
         '<div class="band-content">' +
-        '<h3 class="band-name">' + escapeHtml(band.band_name) + "</h3>" +
+        '<h3 class="band-name"><a href="/products?band=' + escapeHtml(slug) + '" style="color:inherit;text-decoration:none;">' + escapeHtml(band.band_name) + "</a></h3>" +
         '<div class="band-meta"><div class="band-country">' +
         '<span class="country-flag">' + countryFlag + "</span>" +
         "<span>" + escapeHtml(countryName) + "</span>" +
@@ -251,7 +251,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (countryFilter && urlParams.get("country")) countryFilter.value = urlParams.get("country");
   if (sortFilter   && urlParams.get("sort"))     sortFilter.value    = urlParams.get("sort");
 
-  // Initial render
+  // Initial render — start with list view
+  currentView = "list";
+  bandGrid.style.display = "block";
+  bandGrid.classList.add("alpha-view");
+  alphaNav.style.display = "flex";
   applyFiltersAndSort();
 
   // Sentinel for infinite scroll (grid only)

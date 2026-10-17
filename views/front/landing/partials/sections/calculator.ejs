@@ -1,0 +1,92 @@
+<section id="kalkulator" class="ugs-section section-alt" data-testid="calculator-section">
+  <div class="container-xxl">
+    <div class="reveal">
+      <p class="section-eyebrow">// Simulasi cuan</p>
+      <h2 class="section-title" data-testid="calculator-title">Seberapa untung jualan di sini?</h2>
+      <p class="section-sub">Masukkan harga produkmu dan lihat sendiri bedanya biaya admin 0% dibanding marketplace lain.</p>
+    </div>
+
+    <div class="row g-4 mt-4">
+      <div class="col-lg-5 reveal">
+        <div class="card-ugs spotlight h-100">
+          <p class="mono-label"><i class="bi bi-calculator text-blood me-1"></i> Parameter produk</p>
+
+          <div class="mt-4">
+            <label for="calc-price" class="form-label-ugs">Harga Produk (Rp)</label>
+            <input id="calc-price" type="number" min="0" value="250000" class="input-ugs" data-testid="calculator-price-input">
+          </div>
+          <div class="mt-4">
+            <label for="calc-discount" class="form-label-ugs">Diskon (%) — opsional</label>
+            <input id="calc-discount" type="number" min="0" max="90" value="0" class="input-ugs" data-testid="calculator-discount-input">
+          </div>
+          <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <label for="calc-fee" class="form-label-ugs mb-0">Biaya admin marketplace lain</label>
+              <span class="fee-value" id="calc-fee-value" data-testid="calculator-fee-value">20%</span>
+            </div>
+            <input id="calc-fee" type="range" min="1" max="20" step="0.5" value="20" class="form-range range-ugs" data-testid="calculator-fee-slider">
+            <p class="mono-dim mt-2 mb-0">Umumnya 5–20% tergantung kategori &amp; program</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 reveal" style="transition-delay:.12s">
+        <div class="row g-3 h-100">
+          <div class="col-sm-6">
+            <div class="card-ugs calc-card calc-win h-100" data-testid="calculator-ugsync-card">
+              <span class="calc-badge">0% Admin</span>
+              <p class="mono-label">UndergroundSync</p>
+              <div class="calc-rows">
+                <div>
+                  <p class="calc-label">Harga jual</p>
+                  <p class="calc-value" id="calc-ugsync-price" data-testid="calculator-ugsync-price">Rp 250.000</p>
+                </div>
+                <div>
+                  <p class="calc-label">Biaya admin</p>
+                  <p class="calc-value">Rp 0</p>
+                </div>
+                <div class="calc-net">
+                  <p class="calc-label">Penghasilan bersih</p>
+                  <p class="calc-value calc-value-big text-blood" id="calc-ugsync-net" data-testid="calculator-ugsync-net">Rp 250.000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card-ugs calc-card calc-lose h-100" data-testid="calculator-other-card">
+              <p class="mono-label text-dim">Marketplace Lain</p>
+              <div class="calc-rows">
+                <div>
+                  <p class="calc-label">Harga jual</p>
+                  <p class="calc-value" id="calc-other-price" data-testid="calculator-other-price">Rp 250.000</p>
+                </div>
+                <div>
+                  <p class="calc-label">Biaya admin (<span id="calc-fee-echo">10</span>%)</p>
+                  <p class="calc-value" id="calc-other-fee" data-testid="calculator-other-fee">-Rp 25.000</p>
+                </div>
+                <div class="calc-net">
+                  <p class="calc-label">Penghasilan bersih</p>
+                  <p class="calc-value calc-value-big" id="calc-other-net" data-testid="calculator-other-net">Rp 225.000</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="savings-banner" data-testid="calculator-savings-banner">
+              <span class="savings-icon"><i class="bi bi-graph-up-arrow"></i></span>
+              <p class="mb-0 savings-text">
+                Setiap transaksi kamu hemat
+                <span class="savings-value" id="calc-savings" data-testid="calculator-savings">Rp 25.000</span>
+                dibanding jualan di marketplace lain.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mono-dim mt-4 reveal" style="transition-delay:.2s">
+      <i class="bi bi-badge-ad me-1"></i> Simulasi kasar — biaya admin marketplace lain dapat berubah sewaktu-waktu
+    </p>
+  </div>
+</section>

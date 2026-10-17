@@ -4,8 +4,10 @@ const moment = require('moment');
 
 const validate = require("../../middleware/validate");
 const { getFbAccessToken, graphApiGet } = require('../../helpers/facebookApi');
+const { getGoogleAccessToken, getGoogleUserInfo } = require('../../helpers/googleApi');
 
 const { registerSchema } = require("../../models/schema");
+const Email = require('../../connectors/email');
 
 router.get('/login', function (req, res, next) {
   const objView = {
@@ -13,7 +15,12 @@ router.get('/login', function (req, res, next) {
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/login',
-      action: '/auth/login'
+      action: '/auth/login',
+      cfKey: req.app.locals.config.cloudflare.siteKey,
+      redirect: req.query.redirect || '',
+      pageTitle: 'Masuk - Undergroundsync',
+      pageDescription: 'Masuk ke akun Undergroundsync untuk mulai berbelanja merchandise musik favorit kamu.',
+      pageKeywords: 'masuk, login, Undergroundsync, akun, merchandise'
     },
     message: null
   };
@@ -31,10 +38,16 @@ router.get('/register', function (req, res, next) {
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
-      action: '/auth/register'
+      action: '/auth/register',
+      cfKey: req.app.locals.config.cloudflare.siteKey,
+      redirect: req.query.redirect || '',
+      pageTitle: 'Daftar - Merchandise Undergroundsync',
+      pageDescription: 'Daftar akun baru di Merchandise Undergroundsync dan mulai berjualan atau berbelanja merchandise musik.',
+      pageKeywords: 'daftar, register, Undergroundsync, akun baru, merchandise'
     },
     js: ['auth_register']
   };
+  
   return res.render('front/auth_register', objView);
 });
 
@@ -86,15 +99,60 @@ router.get('/login/callback', async (req, res, next) => {
 });
 
 
-router.post('/register', validate(registerSchema), async (req, res, next) => {
-  console.log('req.body: ', req.body)
+router.get('/login/google', function (req, res, next) {
+  const gConfig = req.app.locals.config.google.oauth;
+  const params = new URLSearchParams({
+    client_id: gConfig.clientId,
+    redirect_uri: gConfig.redirectUri,
+    response_type: 'code',
+    scope: 'email profile',
+    access_type: 'online'
+  });
+  return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+});
 
+router.get('/login/google/callback', async (req, res, next) => {
+  const gConfig = req.app.locals.config.google.oauth;
+  const client = { id: gConfig.clientId, secret: gConfig.clientSecret };
+
+  const tokenResponse = await getGoogleAccessToken(client, gConfig.redirectUri, req.query.code);
+  const userInfo = await getGoogleUserInfo(tokenResponse.data.access_token);
+  const profile = userInfo.data;
+
+  let findUser = await res.locals.userModel.findOne({ user_google_id: profile.sub });
+
+  if (!findUser && profile.email) {
+    findUser = await res.locals.userModel.findOne({ user_email: profile.email });
+    if (findUser) {
+      await res.locals.userModel.update({ user_id: findUser.user_id }, { user_google_id: profile.sub });
+    }
+  }
+
+  if (!findUser) {
+    const payload = {
+      user_google_id: profile.sub,
+      user_name: profile.name,
+      user_is_verified: 1,
+      user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
+    };
+    if (profile.email) payload.user_email = profile.email;
+
+    const createUser = await res.locals.userModel.create(payload);
+    findUser = createUser.get({ plain: true });
+  }
+
+  authSession(req, { id: findUser.user_id });
+  return res.redirect('/');
+});
+
+router.post('/register', validate(registerSchema), async (req, res, next) => {
   var obj = { 
     error: null, 
     data: {
       urlActive: req.path,
       isUrlActive: req.path === '/register',
-      action: '/auth/register'
+      action: '/auth/register',
+      cfKey: req.app.locals.config.cloudflare.siteKey
     }
   };
 
@@ -114,14 +172,40 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
     return res.status(409).json(obj)
   }
 
+  const verifyToken = crypto.randomBytes(32).toString('hex');
+
   const payload = {
     user_name: (req.body.name).trim(),
     user_email: req.body.email,
     user_password: crypto.createHash('sha512').update(req.body.password).digest("hex"),
+    user_verify_token: verifyToken,
     user_created_at: moment().format('YYYY-MM-DD HH:mm:ss')
   }
 
   const docCreate = await res.locals.userModel.create(payload)
+
+  const appConfig = req.app.locals.config;
+  const verifyUrl = `${appConfig.domain}/auth/verify/${verifyToken}`;
+  const emailClient = new Email(appConfig.resend.apiKey);
+
+  emailClient.send({
+    from: appConfig.resend.from,
+    to: docCreate.user_email,
+    subject: 'Verifikasi Email Kamu - Lapak Undergroundsync',
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
+        <h2>Selamat Datang di Lapak Undergroundsync, ${docCreate.user_name}! 🤘</h2>
+        <p>Terima kasih sudah mendaftar. Satu langkah lagi — verifikasi email kamu untuk mulai berjualan dan berbelanja.</p>
+        <p style="margin:32px 0">
+          <a href="${verifyUrl}"
+             style="background:#000;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold">
+            Verifikasi Email
+          </a>
+        </p>
+        <p style="color:#666;font-size:13px">Link ini hanya berlaku selama 24 jam. Jika kamu tidak mendaftar di Lapak Undergroundsync, abaikan email ini.</p>
+      </div>
+    `
+  }).catch(err => console.error('Email verification send error:', err));
 
   var userData = {
     id: docCreate.user_id,
@@ -129,7 +213,26 @@ router.post('/register', validate(registerSchema), async (req, res, next) => {
   }
 
   authSession(req, userData);
-  return res.redirect('/auth/login');
+
+  // Redirect to the specified page if provided, otherwise go to login with success message
+  const redirectUrl = req.body.redirect || '/auth/login?message=Registrasi berhasil! Cek email kamu untuk verifikasi akun.';
+  return res.redirect(redirectUrl);
+});
+
+
+router.get('/verify/:token', async (req, res, next) => {
+  const findUser = await res.locals.userModel.findOne({ user_verify_token: req.params.token });
+
+  if (!findUser) {
+    return res.redirect('/auth/login?message=Link verifikasi tidak valid atau sudah kadaluarsa.');
+  }
+
+  await res.locals.userModel.update(
+    { user_id: findUser.user_id },
+    { user_is_verified: 1, user_verify_token: null }
+  );
+
+  return res.redirect('/auth/login?message=Email berhasil diverifikasi! Silakan login.');
 });
 
 
@@ -155,18 +258,32 @@ router.post('/login', async function (req, res, next) {
     // return res.json(obj);
   }
 
+  if (!findUser.user_is_verified) {
+    obj.error = 'Akun kamu belum diverifikasi. Cek email untuk link verifikasi.';
+    obj.data = {
+      urlActive: req.path,
+      isUrlActive: req.path === '/login',
+      action: '/auth/login'
+    }
+
+    return res.render('front/auth_login', obj);
+  }
+
   const userData = {
     id: findUser.user_id,
     email: findUser.user_email,
-    avatar: req.app.locals.cloudinary.url(findUser.user_avatar, {
+    avatar: findUser.user_avatar ? req.app.locals.cloudinary.url(findUser.user_avatar, {
       width: 50, height: 50, crop: 'thumb'
-    })
+    }) : null
   }
 
   authSession(req, userData);
 
   obj.data = findUser;
-  return res.redirect('/account/product');
+
+  // Redirect to the specified page if provided, otherwise go to account
+  const redirectUrl = req.body.redirect || '/account/product';
+  return res.redirect(redirectUrl);
 });
 
 router.get('/logout', function (req, res, next) {

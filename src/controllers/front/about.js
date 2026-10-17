@@ -7,7 +7,9 @@ router.get('/', async (req, res, next) => {
             breadcrumb: [
                 {link: '#', text: 'Tentang Kami'}
             ],
-            pageTitle: 'Tentang Kami'
+            pageTitle: 'Tentang Kami | Undergroundsync',
+            pageDescription: 'Pelajari lebih lanjut tentang Undergroundsync, toko merchandise musik yang menyediakan berbagai produk dari band favorit kamu.',
+            pageKeywords: 'Undergroundsync, tentang kami, merchandise musik, toko merchandise'
         }
     };
   

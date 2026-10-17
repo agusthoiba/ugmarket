@@ -24,7 +24,13 @@
   </div>
 
   <div class="mb-3">
-    <label for="name">Nama</label>
+    <label for="username">Username <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" id="username" name="username" value="<%= data.user.user_username || '' %>" placeholder="contoh: john_doe" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_.\-]{3,30}">
+    <div class="invalid-feedback"></div>
+  </div>
+
+  <div class="mb-3">
+    <label for="name">Nama <span class="text-danger">*</span></label>
     <input type="text" class="form-control" id="name" name="name" value="<%= data.user.user_name %>" placeholder="">
     <div class="invalid-feedback"></div>
   </div>

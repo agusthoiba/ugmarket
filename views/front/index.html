@@ -2,11 +2,24 @@
 <%- include ("../front/template/header.html") %>
 
 <!-- Tagline -->
-<div class="container text-center">  
-  <h3 style="font-size: 20px;"> Marketplace Band Rock/Metal Merchandise 🤘</h3>
+<div class="container text-center" style="padding:20px 0;">  
+  <h2 style="margin-bottom: 10px;"> Web Hub Stores for xtreme music merchandise</h2>
+  <p style="margin-bottom: 20px;"> Penjual bebas biaya admin - harga jadi lebih jujur, transaksi antara penjual dan pembeli independen </p>
+  <div style="margin-bottom: 12px;">
+    <button class="btn btn-success" onclick="window.location.href='/products'">Eksplor Produk</button>
+  
+    <button class="btn btn-default" onclick="window.location.href='/seller'">
+      <i class="fas fa-store" aria-hidden="true"></i>  Mulai Jualan
+    </button>
+  </div>
 </div>
 
+
 <%- include ("carousel.html") %>
+
+
+<!-- Categories -->
+<%- include ("home_categories.html") %>
 
   <!-- Collections -->
   <div class="container">
@@ -14,16 +27,16 @@
   </div>  
   
   <!-- banner  -->
-  <div class="container home-content">
+  <!--div class="container home-content">
     <div class="row home-widget">
       <div class="col-md-4 home-banner">
         <a href="/products?lokal-band=1">
           <img src="/image/Widget - Local Band.jpg" class="img-responsive">
         </a>
       </div>
-      <!--div class="col-md-4 home-banner">
+      <div class="col-md-4 home-banner">
         <img src="/image/Widget - Rock Merch.jpg" class="img-responsive">
-      </div-->
+      </div>
       <div class="col-md-4 home-banner">
         <a href="/products?kategori=kaos">
           <img src="/image/Widget - T-SHIRTS.jpeg" class="img-responsive">
@@ -31,7 +44,7 @@
       </div>
 
     </div>
-  </div>
+  </div-->
 
 <!--==========================================
   New Products
@@ -40,8 +53,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h3 class="title">Product Baru</h3>
-        <div class="owl-carousel">
+        <h3 class="title">Product Baru </h3>
+        <div class="owl-carousel owl-carousel-products">
 
           <% var products=data.products %>
   
@@ -49,18 +62,18 @@
             No product found
           <% } else {
               for(var i in products) { 
-              let imgPath  = products[i].thumbnail ? products[i].thumbnail: '/image/no-image-180x180';
+              let imgPath  = products[i].thumbnail ? products[i].thumbnail: '/image/no-image-180x180.png';
                 %>
               <div class="product-list-item-carousel">
                 <a href="/products/<%= products[i].prod_id %>/<%= products[i].prod_slug %>">
-                  <img src="<%= imgPath %>" class="card-img-top">
+                  <img src="<%= imgPath %>" class="card-img-top" width="200" height="200" loading="lazy" decoding="async">
                   <h5 class="product-list-item-carousel-title">
-                    <%= products[i]["band.band_name"] %>
+                    <%= products[i].band_name || products[i]["band.band_name"] || '' %>
                   </h5>
                   <h5 class="product-list-item-carousel-subtitle">
                     <%= products[i].prod_name %>
                   </h5>
-                  <p class="product-list-item-carousel-text">Rp. <%= products[i].prod_price %></p>
+                  <p class="product-list-item-carousel-text">Rp <%= Number(products[i].prod_price).toLocaleString('id-ID') %></p>
                 </a>
               </div>
           <% } %>
@@ -78,21 +91,22 @@
     <div class="row">
       <div class="col-md-12">
         <h3 class="title">Popular Bands</h3>
-        <div class="owl-carousel">
+        <div class="band-list-inline">
 
           <% const bands = data.bands %>
-  
+
           <% if (bands != undefined && bands.length==0) { %>
             No bands found
           <% } else {
-              for(var i in bands) { 
+              for(var i in bands) {
                 %>
               <div class="logo-item" >
                 <div class="band-img" >
                   <a href="/products/?band=<%= bands[i].band_slug %>">
-                    <img src="<%= bands[i].band_image %>" class="img-responsive">
+                    <img src="<%= bands[i].band_image %>" class="img-responsive" loading="lazy" decoding="async">
                   </a>
                 </div>
+                <p class="band-name"><a href="/products/?band=<%= bands[i].band_slug %>"><%= bands[i].band_name %></a></p>
               </div>
           <% } %>
         <% } %>
@@ -101,7 +115,7 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <a class="btn-see-more" href="/bands"> See More Bands > </a>
+        <a class="btn-see-more" href="/bands"> All Bands > </a>
       </div>
     </div>
   </div>

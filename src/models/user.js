@@ -15,10 +15,11 @@ class User {
       user_username: { type: Sequelize.STRING(100)},
       user_name: { type: Sequelize.STRING },
       user_gender: { type: Sequelize.ENUM('m', 'f', ''), defaultValue: '' },
-      user_password: { type: Sequelize.STRING, allowNull: false },
+      user_password: { type: Sequelize.STRING, allowNull: true },
       user_hp: { type: Sequelize.STRING(20) },
       user_avatar: { type: Sequelize.STRING },
       user_facebook_id: { type: Sequelize.STRING },
+      user_google_id: { type: Sequelize.STRING },
 
       user_address_street: { 
         type: Sequelize.TEXT, 
@@ -53,6 +54,7 @@ class User {
         allowNull: true 
       },
 
+      user_verify_token: { type: Sequelize.STRING(64), allowNull: true },
       user_is_verified: { type: Sequelize.TINYINT(1), defaultValue: 0 },
       user_is_deleted: { type: Sequelize.TINYINT(1), defaultValue: 0 },
       user_created_at: { type: Sequelize.DATE },
@@ -65,12 +67,6 @@ class User {
     })
 
     this.schema.sync();
-
-    // one time sync, after altered, remove this
-    // Sync with alter option
-    // this.schema.sync({ alter: true })
-    //  .then(() => console.log('User table synchronized'))
-    //  .catch(err => console.error('User table sync error:', err))
   }
 
   async create (payload) {
