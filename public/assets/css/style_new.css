@@ -650,8 +650,12 @@ body {
 
 .mobile-filter-content {
   flex: 1;
+  /* min-height 0 lets this flex item shrink so the sheet body really scrolls,
+     making every filter (e.g. all categories) reachable on small screens */
+  min-height: 0;
   overflow-y: auto;
   padding: 0 24px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-filter-section {
@@ -695,7 +699,9 @@ body {
 }
 
 .mobile-accordion-content.active {
-  max-height: 675px;
+  /* no fixed cap: the exact height is set from scrollHeight in
+     product_list_new.js so long lists (e.g. every category) are never clipped */
+  max-height: none;
 }
 
 .mobile-filter-options {

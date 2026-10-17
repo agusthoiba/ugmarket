@@ -6,6 +6,9 @@ var crypto = require('crypto');
 const { sellerSchema } = require("../../../models/schema");
 const Upload = require('../../../helpers/uploadCloudinary');
 const { formatPhone } = require('../../../helpers/phone');
+const { bankList } = require('../../../helpers/bank');
+const { SELLER_TYPES } = require('../../../constant');
+const { normalizeSellerType } = require('../../../helpers/sellerType');
 const validate = require("../../../middleware/validate");
 
 const itemData = (seller, cloudinary) => {
@@ -15,6 +18,7 @@ const itemData = (seller, cloudinary) => {
     id: seller?.sel_id || 0,
     name: seller?.sel_name || '',
     slug: seller?.sel_slug || '',
+    sel_type: seller?.sel_type || 'COLLECTOR',
     phone: seller?.sel_phone || '',
     description: seller?.sel_description || '',
     avatar: seller_avatar,
@@ -25,6 +29,9 @@ const itemData = (seller, cloudinary) => {
     sel_address_village_id: seller?.sel_address_village_id || '',
     sel_address_street: seller?.sel_address_street || '',
     sel_address_zipcode: seller?.sel_address_zipcode || '',
+    sel_bank_code: seller?.sel_bank_code || '',
+    sel_bank_account_number: seller?.sel_bank_account_number || '',
+    sel_bank_account_name: seller?.sel_bank_account_name || '',
   }
 }
 
@@ -34,11 +41,22 @@ router.get('/', async (req, res, next) => {
 
   const findSeller = await sellerModel.findOne({ sel_user_id: req.session.user.id });
   const findUser = await userModel.findOne({ user_id: req.session.user.id });
+  const seller = itemData(findSeller || null, req.app.locals.cloudinary);
+
+  // Prefill the seller type from the query string: the landing page sends
+  // /account/seller?sel_type=SHOP when a visitor picks the "Daftar sebagai Shop"
+  // card. A type already saved on the seller always wins.
+  if (!findSeller || !findSeller.sel_type) {
+    seller.sel_type = normalizeSellerType(req.query.sel_type) || seller.sel_type;
+  }
+
   var obj = {
     error: null,
     message: null,
     data: {
-      seller: itemData(findSeller || null, req.app.locals.cloudinary),
+      seller,
+      sellerTypes: SELLER_TYPES,
+      banks: bankList,
       user: {
         user_hp: findUser ? findUser.user_hp : '',
         user_address_province_id: findUser ? findUser.user_address_province_id : '',
@@ -95,6 +113,7 @@ async function cleanPost(body) {
     sel_user_id: parseInt(body.user_id),
     sel_name: name,
     sel_slug: slug,
+    sel_type: (body.sel_type || 'COLLECTOR').toUpperCase(),
     // prefix "0" -> "+62", prefix "+62" -> kept as is
     sel_phone: formatPhone(body.hp),
     sel_description: (body.description || '').trim(),
@@ -104,6 +123,9 @@ async function cleanPost(body) {
     sel_address_village_id: parseInt(body.village) || 0,
     sel_address_zipcode: (body.zipcode || '').trim(),
     sel_address_street: (body.street || '').trim(),
+    sel_bank_code: parseInt(body.bank_code, 10) || 0,
+    sel_bank_account_number: (body.bank_account_number || '').trim(),
+    sel_bank_account_name: (body.bank_account_name || '').trim(),
     sel_created_at: Date.now('YYYY-MM-DD HH:mm:ss')
   }
 

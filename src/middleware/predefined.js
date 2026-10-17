@@ -1,5 +1,7 @@
 // Categories and collections are identical for every visitor, so they are kept
 // in memory for a few minutes instead of being queried on each request.
+const { buildCategoryTree } = require("../helpers/category");
+
 const PREDEFINED_TTL = 5 * 60 * 1000;
 let predefinedCache = null;
 
@@ -23,27 +25,11 @@ async function predefinedMiddleware(req, res, next) {
       return next();
     }
 
-    // --- Categories (nested) ---
+    // --- Categories (nested, parents ordered by cat_sort) ---
     const categoryModel = res.locals.categoryModel;
     const findCats = await categoryModel.find();
 
-    const categoriesNested = findCats.filter((cat) => cat.cat_parent_id === 0);
-
-    for (let i = 0; i < categoriesNested.length; i++) {
-      const catChilds = findCats.filter(
-        (cat) => cat.cat_parent_id === categoriesNested[i].cat_id,
-      );
-
-      categoriesNested[i] = Object.assign(categoriesNested[i], {
-        childs: catChilds.sort((a, b) => {
-          const aIsOther = a.cat_name.toLowerCase() === "others";
-          const bIsOther = b.cat_name.toLowerCase() === "others";
-          if (aIsOther) return 1;
-          if (bIsOther) return -1;
-          return a.cat_name.localeCompare(b.cat_name);
-        }),
-      });
-    }
+    const categoriesNested = buildCategoryTree(findCats);
 
     // --- Collections ---
     const collectionModel = req.app.locals.collectionModel;

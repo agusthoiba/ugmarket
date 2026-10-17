@@ -4,7 +4,7 @@ const content = require('../../data/content');
 
 
 router.get('/', async (req, res, next) => {
-    var obj = {
+    let obj = {
         error: null,
         js: ['landing'],
         data: {
@@ -15,6 +15,8 @@ router.get('/', async (req, res, next) => {
             ...content,
             status: req.query.status || null,
             year: new Date().getFullYear(),
+            isLoggedIn: req.session.user ? true : false,
+            registerUrl: req.session.user ? '/account/seller' : '/auth/register'
         }
     };
 

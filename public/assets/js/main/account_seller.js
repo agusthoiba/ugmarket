@@ -74,6 +74,46 @@ document.addEventListener('DOMContentLoaded', function() {
     return '';
   }
 
+  function validateBankCode(bankCode) {
+    // Bank is optional: an empty selection is allowed.
+    if (!bankCode || bankCode.trim().length === 0) {
+      return '';
+    }
+    return '';
+  }
+
+  function validateBankAccountNumber(accountNumber) {
+    // Account number is optional: only validate the format when filled.
+    if (!accountNumber || accountNumber.trim().length === 0) {
+      return '';
+    }
+    if (!/^\d{6,20}$/.test(accountNumber.trim())) {
+      return 'Nomor rekening harus berupa angka 6-20 digit';
+    }
+    return '';
+  }
+
+  function validateBankAccountName(accountName) {
+    // Account name is optional: only validate the length when filled.
+    if (!accountName || accountName.trim().length === 0) {
+      return '';
+    }
+    if (accountName.trim().length < 3) {
+      return 'Nama pemilik rekening minimal 3 karakter';
+    }
+    if (accountName.trim().length > 100) {
+      return 'Nama pemilik rekening maksimal 100 karakter';
+    }
+    return '';
+  }
+
+  function validateSellerType(sellerType) {
+    if (!sellerType || sellerType.trim().length === 0) {
+      return 'Tipe seller harus dipilih';
+    }
+    return '';
+  }
+
   function validateCoordinates(lat, lng) {
     if (!lat || !lng) {
       return 'Silakan pilih lokasi pada peta';
@@ -109,11 +149,27 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('uploadForm');
     const nameInput = document.getElementById('name');
+    const sellerTypeInput = document.getElementById('sel_type');
     const hpInput = document.getElementById('hp');
     const descriptionInput = document.getElementById('description');
     const postalCodeInput = document.getElementById('zipcode');
+    const bankCodeInput = document.getElementById('bank_code');
+    const bankAccountNumberInput = document.getElementById('bank_account_number');
+    const bankAccountNameInput = document.getElementById('bank_account_name');
     //const latInput = document.getElementById('address_lat');
     //const lngInput = document.getElementById('address_lng');
+
+    // Real-time validation for seller type
+    if (sellerTypeInput) {
+      sellerTypeInput.addEventListener('change', function() {
+        const error = validateSellerType(this.value);
+        if (error) {
+          showError(this, error);
+        } else {
+          clearError(this);
+        }
+      });
+    }
 
     // Real-time validation for name
     if (nameInput) {
@@ -345,10 +401,87 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
+    // Real-time validation for bank code
+    if (bankCodeInput) {
+      const validateBankCodeField = function () {
+        const error = validateBankCode(bankCodeInput.value);
+        if (error) {
+          showError(bankCodeInput, error);
+        } else {
+          clearError(bankCodeInput);
+        }
+      };
+
+      // Select2 (initialised at the bottom of this file) emits its change
+      // event through jQuery only, so the field must be validated through
+      // jQuery as well as the native event.
+      bankCodeInput.addEventListener('change', validateBankCodeField);
+      if (window.jQuery) {
+        $(bankCodeInput).on('change', validateBankCodeField);
+      }
+    }
+
+    // Real-time validation for bank account number
+    if (bankAccountNumberInput) {
+      bankAccountNumberInput.addEventListener('blur', function() {
+        const error = validateBankAccountNumber(this.value);
+        if (error) {
+          showError(this, error);
+        } else {
+          clearError(this);
+        }
+      });
+
+      bankAccountNumberInput.addEventListener('input', function() {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, '').substring(0, 20);
+
+        if (this.classList.contains('is-invalid')) {
+          const error = validateBankAccountNumber(this.value);
+          if (!error) {
+            clearError(this);
+          }
+        }
+      });
+    }
+
+    // Real-time validation for bank account name
+    if (bankAccountNameInput) {
+      bankAccountNameInput.addEventListener('blur', function() {
+        const error = validateBankAccountName(this.value);
+        if (error) {
+          showError(this, error);
+        } else {
+          clearError(this);
+        }
+      });
+
+      bankAccountNameInput.addEventListener('input', function() {
+        if (this.classList.contains('is-invalid')) {
+          const error = validateBankAccountName(this.value);
+          if (!error) {
+            clearError(this);
+          }
+        }
+      });
+    }
+
     // Form submission validation
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       let isValid = true;
+
+      // Validate seller type
+      const sellerTypeError = validateSellerType(sellerTypeInput ? sellerTypeInput.value : '');
+      if (sellerTypeError) {
+        if (sellerTypeInput) {
+          showError(sellerTypeInput, sellerTypeError);
+        }
+        console.log('Seller type validation error:', sellerTypeError);
+        isValid = false;
+      } else if (sellerTypeInput) {
+        clearError(sellerTypeInput);
+      }
 
       // Validate name
       const nameError = validateSellerName(nameInput.value);
@@ -378,6 +511,36 @@ document.addEventListener('DOMContentLoaded', function() {
         isValid = false;
       } else {
         clearError(postalCodeInput);
+      }
+
+      // Validate bank code
+      const bankCodeError = validateBankCode(bankCodeInput.value);
+      if (bankCodeError) {
+        showError(bankCodeInput, bankCodeError);
+        console.log('Bank code validation error:', bankCodeError);
+        isValid = false;
+      } else {
+        clearError(bankCodeInput);
+      }
+
+      // Validate bank account number
+      const bankAccountNumberError = validateBankAccountNumber(bankAccountNumberInput.value);
+      if (bankAccountNumberError) {
+        showError(bankAccountNumberInput, bankAccountNumberError);
+        console.log('Bank account number validation error:', bankAccountNumberError);
+        isValid = false;
+      } else {
+        clearError(bankAccountNumberInput);
+      }
+
+      // Validate bank account name
+      const bankAccountNameError = validateBankAccountName(bankAccountNameInput.value);
+      if (bankAccountNameError) {
+        showError(bankAccountNameInput, bankAccountNameError);
+        console.log('Bank account name validation error:', bankAccountNameError);
+        isValid = false;
+      } else {
+        clearError(bankAccountNameInput);
       }
 
       console.log('Form validation result:', isValid);
@@ -411,6 +574,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const payload = {
           name: nameInput.value.trim(),
+          sel_type: sellerTypeInput ? sellerTypeInput.value : '',
           slug: document.getElementById('slug')?.value.trim() || '',
           hp: hpInput.value.trim(),
           description: descriptionInput.value.trim(),
@@ -420,6 +584,9 @@ document.addEventListener('DOMContentLoaded', function() {
           district: document.getElementById('district')?.value || '',
           village: document.getElementById('village')?.value || '',
           zipcode: postalCodeInput.value.trim(),
+          bank_code: bankCodeInput.value.trim(),
+          bank_account_number: bankAccountNumberInput.value.trim(),
+          bank_account_name: bankAccountNameInput.value.trim(),
           image_banner: document.getElementById('image_ori_banner')?.value || '',
           image_ori_avatar: document.getElementById('image_ori_avatar')?.value || '',
         };
@@ -495,3 +662,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+// Enhance the bank dropdown with Select2, like the other account forms.
+// Select2 is loaded at the bottom of the page (after this file), so the
+// initialisation runs on jQuery ready once every script has been parsed.
+$(function () {
+  $('#bank_code').select2();
+});

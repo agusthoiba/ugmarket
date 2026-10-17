@@ -56,16 +56,29 @@ document.addEventListener("DOMContentLoaded", () => {
       accordionTriggers.forEach((t) => {
         t.classList.remove("active")
         const content = document.getElementById(t.dataset.target)
-        if (content) content.classList.remove("active")
+        if (content) {
+          content.classList.remove("active")
+          content.style.maxHeight = ""
+        }
       })
 
       // Open clicked accordion if it wasn't active
-      if (!isActive) {
+      if (!isActive && target) {
         this.classList.add("active")
         target.classList.add("active")
+        // Use the real content height instead of a fixed max-height, otherwise
+        // long lists (e.g. all categories) get cut off on small screens
+        target.style.maxHeight = `${target.scrollHeight}px`
       }
     })
   });
+
+  // Keep an expanded accordion fully visible after the viewport changes
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".mobile-accordion-content.active").forEach((content) => {
+      content.style.maxHeight = `${content.scrollHeight}px`
+    })
+  })
 
   // Desktop accordion functionality (independent per section)
   desktopAccordionTriggers.forEach((trigger) => {

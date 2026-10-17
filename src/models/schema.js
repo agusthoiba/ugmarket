@@ -1,5 +1,10 @@
 const Joi = require("joi");
 
+const { bankList } = require("../helpers/bank");
+const { SELLER_TYPES } = require("../constant");
+
+const bankCodes = bankList.map((bank) => bank.code);
+
 const collectionsSchema = Joi.object({
   col_name: Joi.string().min(3).max(50).required(),
   col_desc: Joi.string().max(500).allow(''),
@@ -37,6 +42,11 @@ const profileSchema = Joi.object({
 });
 
 const sellerSchema = Joi.object({
+  sel_type: Joi.string().valid(...SELLER_TYPES).required().messages({
+    'any.required': 'Tipe seller wajib dipilih',
+    'string.empty': 'Tipe seller wajib dipilih',
+    'any.only': 'Tipe seller wajib dipilih dari daftar yang tersedia',
+  }),
   name: Joi.string().regex(/[a-zA-Z0-9_.]/).required(),
   slug: Joi.string().regex(/^[a-z0-9-]+$/).max(100).allow('').optional(),
   hp: Joi.string().regex(/^(\+62|62|0)[0-9]{9,12}$/).required(),
@@ -49,6 +59,18 @@ const sellerSchema = Joi.object({
   village: Joi.string().regex(/[0-9]/).allow(''),
   street: Joi.string().allow(''),
   zipcode: Joi.string().regex(/[0-9]/).max(5).allow(''),
+  // Bank data is optional: an empty value is allowed, but when it is filled
+  // the value still has to match the expected format / bank list.
+  bank_code: Joi.number().integer().valid(...bankCodes).allow('', null).optional().messages({
+    'any.only': 'Nama bank wajib dipilih dari daftar bank yang tersedia',
+  }),
+  bank_account_number: Joi.string().regex(/^[0-9]{6,20}$/).allow('', null).optional().messages({
+    'string.pattern.base': 'Nomor rekening harus berupa 6-20 digit angka',
+  }),
+  bank_account_name: Joi.string().min(3).max(100).allow('', null).optional().messages({
+    'string.min': 'Nama pemilik rekening minimal 3 karakter',
+    'string.max': 'Nama pemilik rekening maksimal 100 karakter',
+  }),
 });
 
 

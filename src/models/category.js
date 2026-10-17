@@ -37,7 +37,11 @@ class Category {
     return new Promise((resolve, reject) => {
       this.schema.findAll({
         where: query,
-        sort: {cat_parent_rank: 'as'},
+        // Parents and children live in the same table, so the list is ordered by
+        // cat_sort (the column the admin edits). The views filter the parent
+        // categories out of this flat list (footer "Top Kategori", navbar) and
+        // the nested menu sorts them again, which keeps the admin order.
+        order: [['cat_sort', 'asc']],
         raw: true
       }).then(result => {
         resolve(result)

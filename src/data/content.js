@@ -37,6 +37,27 @@ module.exports = {
     },
   ],
 
+  sellerTypes: [
+    {
+      id: 'collector', selType: 'COLLECTOR', tag: 'SELLER 01', title: 'Seller Collector', icon: 'bi-vinyl-fill',
+      desc: 'Jual koleksi pribadi Anda — CD, Vinyl, kaset, memorabilia atau merchandise. Barang pre-loved Anda adalah buruan kolektor lain.',
+      example: 'Cocok untuk: kolektor yang ingin mengalihkan koleksi',
+      cta: 'Daftar sebagai Collector',
+    },
+    {
+      id: 'shop', selType: 'SHOP', tag: 'SELLER 02', title: 'Seller Shop', icon: 'bi-shop',
+      desc: 'Punya toko merchandise & media musik — fisik maupun online? Baik distro, record store, atau online shop yang aktif di Instagram / marketplace lain, Anda bisa memajang katalog di sini dan menjangkau buyer musik ekstrem se-Indonesia.',
+      example: 'Cocok untuk: distro, record store, toko fisik & online shop',
+      cta: 'Daftar sebagai Shop',
+    },
+    {
+      id: 'official', selType: 'OFFICIAL', tag: 'SELLER 03', title: 'Seller Official', icon: 'bi-patch-check-fill', featured: true,
+      desc: 'Band atau label resmi? Jual official merchandise langsung ke fanbase — harga jujur, tanpa perantara, tanpa potongan.',
+      example: 'Cocok untuk: band, label rekaman, manajemen artis',
+      cta: 'Daftar sebagai Official',
+    },
+  ],
+
   catalogTabs: ['Semua', 'Vinyl', 'CD', 'Kaos', 'Hoodies'],
 
   products: [

@@ -14,6 +14,7 @@ const config = require("./config");
 const cloudinary = require("cloudinary").v2;
 const CategoryModel = require("./models/category");
 const { address, villages } = require("./helpers/address");
+const { buildCategoryTree } = require("./helpers/category");
 
 global.config = config;
 global.express = express;
@@ -151,27 +152,7 @@ const connMysql = async () => {
 
   app.locals.categoryList = findCats;
 
-  const categoriesNested = findCats.filter((cat) => {
-    return cat.cat_parent_id === 0;
-  });
-
-  for (let i = 0; i < categoriesNested.length; i++) {
-    const catChilds = findCats.filter((cat) => {
-      return cat.cat_parent_id === categoriesNested[i].cat_id;
-    });
-
-    categoriesNested[i] = Object.assign(categoriesNested[i], {
-      childs: catChilds.sort((a, b) => {
-        const aIsOther = a.cat_name.toLowerCase() === "others";
-        const bIsOther = b.cat_name.toLowerCase() === "others";
-        if (aIsOther) return 1;
-        if (bIsOther) return -1;
-        return a.cat_name.localeCompare(b.cat_name);
-      }),
-    });
-  }
-
-  app.locals.categories = categoriesNested;
+  app.locals.categories = buildCategoryTree(findCats);
   app.locals.sizes = SIZES;
   app.locals.address = await address();
   app.locals.villages = await villages();

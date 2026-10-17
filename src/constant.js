@@ -21,5 +21,6 @@ module.exports = {
             label: 'Produk Lama',
         }
     },
-    SIZES: ['xs','s', 'm', 'l', 'xl', 'xxl', '3xl', '4xl']
+    SIZES: ['xs','s', 'm', 'l', 'xl', 'xxl', '3xl', '4xl'],
+    SELLER_TYPES: ['COLLECTOR', 'SHOP', 'OFFICIAL']
 }

@@ -13,6 +13,10 @@
   
 
   <div class="mb-3">
+    <%- include ("seller_type.html") %>
+  </div>
+
+  <div class="mb-3">
     <label for="name">Nama Lapak <span class="text-danger">*</span> </label>
     <input type="text" class="form-control" id="name" name="name" value="<%= data.seller.name %>" placeholder="" oninput="generateSlug(this.value)">
 
@@ -80,6 +84,10 @@
 
     <div class="mb-3">
       <%- include ("seller_address.html") %>
+    </div>
+
+    <div class="mb-3">
+      <%- include ("seller_bank.html") %>
     </div>
 
   <div class="mb-3 btn-form-wrapper">
