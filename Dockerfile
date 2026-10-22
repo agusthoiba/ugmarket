@@ -10,8 +10,8 @@ ENV SERVICE_PORT 4000
 # 'WITH_SASL' is required when we are building the kafka client.
 COPY package.json .
 RUN WITH_SASL=0 npm install --production --verbose
-RUN npm run db:migrate up
 COPY . .
+# RUN npm run db:migrate up
 
 # Expose then start the server.
 EXPOSE ${SERVICE_PORT}
