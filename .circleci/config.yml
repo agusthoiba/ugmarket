@@ -53,7 +53,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:xbZ+lXdLpdvcoYj8X8X6huA/Z71TBVg+DErTqiooB4w"
+            - "SHA256:0W8q0DY5KKmhOI1CeDmrlivYcvmPcv4ejkP7ou25SHc"
 
       - run:
           name: Debug SSH
