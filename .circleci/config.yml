@@ -55,10 +55,14 @@ jobs:
           fingerprints:
             - "SHA256:0W8q0DY5KKmhOI1CeDmrlivYcvmPcv4ejkP7ou25SHc"
 
+      #- run:
+      #    name: Debug SSH
+      #    command: |
+      #      ssh -vvv -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "echo 'Testing connection'"
+
       - run:
-          name: Debug SSH
-          command: |
-            ssh -vvv -o StrictHostKeyChecking=no $DO_USER@$DO_IP -p $SSH_PORT "echo 'Testing connection'"
+          name: Add server to known_hosts
+          command: ssh-keyscan -p $SSH_PORT -H $DO_IP >> ~/.ssh/known_hosts
 
       - run:
           name: Deploy Code
